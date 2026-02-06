@@ -646,11 +646,8 @@ function initToggleActive() {
                         $btn.find('.icon-activate').show();
                         $btn.find('.toggle-label-text').text('Activer');
                     } else {
-                        // Article maintenant ACTIF: icône œil barré gris = cliquer pour désactiver
-                        $btn.removeClass('md-tab-action-activate').addClass('md-tab-action-deactivate');
-                        $btn.find('.icon-activate').hide();
-                        $btn.find('.icon-deactivate').show();
-                        $btn.find('.toggle-label-text').text('Désactiver');
+                        // Article maintenant ACTIF: rafraîchir la page pour afficher les données à jour
+                        window.location.reload();
                     }
                 } else {
                     alert(resp.error || 'Erreur');
