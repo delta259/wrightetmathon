@@ -1060,13 +1060,36 @@ class Item extends CI_Model
 	Get search suggestions to find items
 	*/
 	function	get_search_suggestions($search, $limit=50)				// used in items module
-	{				
+	{
 		// Initialise
 		$suggestions 													=	array();
-		
+
 		// set up search keys
 		$search_array													=	array_filter(explode(' ', trim($search)));
-		
+
+		// Check if search is an EAN code (exactly 13 digits) - exact match only
+		$is_ean_search = (count($search_array) == 1 && preg_match('/^\d{13}$/', $search_array[0]));
+		if ($is_ean_search) {
+			$ean_code = $search_array[0];
+			$this->db->from('items');
+			$this->db->join('items_suppliers', 'items.item_id = items_suppliers.item_id');
+			$this->db->where('items_suppliers.supplier_bar_code', $ean_code);
+			$this->db->where('items.branch_code', $this->config->item('branch_code'));
+			switch ($_SESSION['undel'] ?? 0) {
+				case 1:
+					$this->db->where('items.deleted', 1);
+					break;
+				default:
+					$this->db->where('items.deleted', 0);
+					break;
+			}
+			$by_ean = $this->db->get();
+			foreach($by_ean->result() as $row) {
+				$suggestions[] = $row->supplier_bar_code;
+			}
+			return $suggestions;
+		}
+
 		// search by category
 		$this															->	db->from('items');
 		$this															->	db->join('categories', 'items.category_id = categories.category_id');
@@ -1228,9 +1251,25 @@ class Item extends CI_Model
 	{
 		// initialise
 		$suggestions 				=	array();
-		
+
 		// set up search keys
 		$search_array				=	array_filter(explode(' ', trim($search)));
+
+		// Check if search is an EAN code (exactly 13 digits) - exact match only
+		$is_ean_search = (count($search_array) == 1 && preg_match('/^\d{13}$/', $search_array[0]));
+		if ($is_ean_search) {
+			$ean_code = $search_array[0];
+			$this->db->from('items');
+			$this->db->join('items_suppliers', 'items.item_id = items_suppliers.item_id');
+			$this->db->where('items_suppliers.supplier_bar_code', $ean_code);
+			$this->db->where('items.branch_code', $this->config->item('branch_code'));
+			$this->db->where('items.deleted', 0);
+			$by_ean = $this->db->get();
+			foreach($by_ean->result() as $row) {
+				$suggestions[] = $row->item_id.'|'.$row->name;
+			}
+			return $suggestions;
+		}
 
 		if(!isset($_SESSION['supplier_id']) || $_SESSION['supplier_id'] == NULL)
 		{
@@ -1863,16 +1902,25 @@ class Item extends CI_Model
 			break;
 		}
 
-		// Search in name OR item_number (to handle autocomplete selections)
-		// Build manual WHERE clause for CI 2.x compatibility (no group_start/group_end)
-		$search_conditions = array();
-		foreach ($search_array as $search_element)
-		{
-			$escaped = $this->db->escape_like_str($search_element);
-			$search_conditions[] = "(" . $tbl_items . ".name LIKE '%" . $escaped . "%' OR " . $tbl_items . ".item_number LIKE '%" . $escaped . "%')";
-		}
-		if (!empty($search_conditions)) {
-			$this->db->where('(' . implode(' AND ', $search_conditions) . ')', NULL, FALSE);
+		// Check if search is an EAN code (exactly 13 digits)
+		$is_ean_search = (count($search_array) == 1 && preg_match('/^\d{13}$/', $search_array[0]));
+
+		if ($is_ean_search) {
+			// EAN code: exact match on barcode only
+			$ean_code = $search_array[0];
+			$this->db->where($tbl_items_suppliers . '.supplier_bar_code', $ean_code);
+		} else {
+			// Search in name OR item_number (to handle autocomplete selections)
+			// Build manual WHERE clause for CI 2.x compatibility (no group_start/group_end)
+			$search_conditions = array();
+			foreach ($search_array as $search_element)
+			{
+				$escaped = $this->db->escape_like_str($search_element);
+				$search_conditions[] = "(" . $tbl_items . ".name LIKE '%" . $escaped . "%' OR " . $tbl_items . ".item_number LIKE '%" . $escaped . "%')";
+			}
+			if (!empty($search_conditions)) {
+				$this->db->where('(' . implode(' AND ', $search_conditions) . ')', NULL, FALSE);
+			}
 		}
 
 		if (!empty($_SESSION['filter_category_id'])) {
