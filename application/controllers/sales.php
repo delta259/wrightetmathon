@@ -307,6 +307,9 @@ class Sales extends CI_Controller
 		$_SESSION['CSI']['HD']											=	$details_data;
 		$_SESSION['CSI']['HO']											=	$overall_summary_data;
 
+		// get top purchased items for this customer
+		$_SESSION['CSI']['TOP']											=	$this->Sale->get_customer_top_items($customer_id, 3, 12);
+
 		//set day of b
 		$_SESSION['CSI']['SHV']->dob_year = $customer_info->dob_year;
 		$_SESSION['CSI']['SHV']->dob_month = $customer_info->dob_month;
@@ -919,6 +922,7 @@ class Sales extends CI_Controller
 		unset($_SESSION['CSI']['HS']);
 		unset($_SESSION['CSI']['HD']);
 		unset($_SESSION['CSI']['HO']);
+		unset($_SESSION['CSI']['TOP']);
 	}
 
 	function customer_remove()
@@ -969,6 +973,7 @@ class Sales extends CI_Controller
 
 		
 		$_SESSION['sales_offer_value'] = 0.0;
+		$vapeself = 0;
 		foreach ($_SESSION['CSI']['CT'] as $line => $cart_line)
 		{
 			if($_SESSION['CSI']['CT'][$line]->item_number == '123456789')
@@ -1137,6 +1142,17 @@ class Sales extends CI_Controller
 		}
 
 // ALL GOOD, so SAVE sale to database
+
+		// PHP 8 guard: ensure employee_id is a valid integer before INSERT
+		if (empty($_SESSION['CSI']['SHV']->employee_id)) {
+			$_SESSION['CSI']['EI'] = $this->Employee->get_logged_in_employee_info();
+			$_SESSION['CSI']['SHV']->employee_id = $_SESSION['CSI']['EI']->person_id;
+		}
+		if (empty($_SESSION['CSI']['SHV']->employee_id)) {
+			$_SESSION['error_code'] = '05830';
+			$this->_reload();
+			return;
+		}
 
 	// START - save the HEADER
 
@@ -1553,25 +1569,30 @@ class Sales extends CI_Controller
         		//$_SESSION['variable_tampon_booleen']='1';
         		
         		$printer    =    $this->config->item('ticket_printer');
-        	    $ph    =    fopen($printer, "w");
+        	    $ph    =    @fopen($printer, "w");
         	}
         	if($_SESSION['variable_tampon_booleen']=='1')
         	{
         		//Variable pour savoir si le mail peut être envoyé
         	    //$_SESSION['variable_tampon_booleen']='1';
-                
+
         	    //écriture du ticket dans un fichier "poubelle"
-        		$ph_texte = fopen("/var/www/html/wrightetmathon/ticket.txt", "w");
+        		$ph_texte = @fopen("/var/www/html/wrightetmathon/ticket.txt", "w");
         		$ph =$ph_texte;
         		//unset($_SESSION['variable_tampon_booleen']);
         		$imprimante    =    $this->config->item('ticket_printer');
-        		$ph_ouverture_de_caisse = fopen($imprimante, "w");
-                fwrite ($ph_ouverture_de_caisse, chr (27) .chr (112) .chr (48) .chr (55) .chr (121));
+        		$ph_ouverture_de_caisse = @fopen($imprimante, "w");
+			if ($ph_ouverture_de_caisse) {
+                		fwrite ($ph_ouverture_de_caisse, chr (27) .chr (112) .chr (48) .chr (55) .chr (121));
+				fclose($ph_ouverture_de_caisse);
+			}
             }
-        	
-    
+
+
             //fwrite ($ph, "texte à l'imprimante");
-        	fwrite ($ph, chr (27) .chr (112) .chr (48) .chr (55) .chr (121)); //La commande de l'imprimante Epson TM-T88V
+		if ($ph) {
+        		fwrite ($ph, chr (27) .chr (112) .chr (48) .chr (55) .chr (121)); //La commande de l'imprimante Epson TM-T88V
+		}
         	
     
         	// if it opens, print a ticket
@@ -1585,8 +1606,11 @@ class Sales extends CI_Controller
 		if(isset($_SESSION['sales_without_ticket']))
 		{
 			$imprimante    =    $this->config->item('ticket_printer');
-        		$ph_ouverture_de_caisse = fopen($imprimante, "w");
-                fwrite ($ph_ouverture_de_caisse, chr (27) .chr (112) .chr (48) .chr (55) .chr (121));
+        		$ph_ouverture_de_caisse = @fopen($imprimante, "w");
+			if ($ph_ouverture_de_caisse) {
+                		fwrite ($ph_ouverture_de_caisse, chr (27) .chr (112) .chr (48) .chr (55) .chr (121));
+				fclose($ph_ouverture_de_caisse);
+			}
 		}
 		
 
@@ -3360,9 +3384,9 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		$_SESSION['controller_name']									=	strtolower(get_class($this));
 
 		// PHP 8 compatibility: ensure CSI sub-objects exist before property assignment
-		if (!isset($_SESSION['CSI'])) { $_SESSION['CSI'] = []; }
+		if (!isset($_SESSION['CSI']) || !is_array($_SESSION['CSI'])) { $_SESSION['CSI'] = []; }
 		if (!isset($_SESSION['CSI']['SHV']) || !is_object($_SESSION['CSI']['SHV'])) { $_SESSION['CSI']['SHV'] = new stdClass(); }
-		if (!isset($_SESSION['CSI']['CT'])) { $_SESSION['CSI']['CT'] = []; }
+		if (!isset($_SESSION['CSI']['CT']) || !is_array($_SESSION['CSI']['CT'])) { $_SESSION['CSI']['CT'] = []; }
 
 	//-------------------------------------------------------------->
 	// get all the data required for the targets area
@@ -3559,6 +3583,10 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 				}
 			}
 		}
+
+		// load top 3 quick payment methods for sidebar buttons
+		$all_pm = $this->Sale->get_payment_methods();
+		$_SESSION['CSI']['QUICK_PM'] = array_slice($all_pm, 0, 3);
 
 		// output the view
 		// set origin
