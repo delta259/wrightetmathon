@@ -24,6 +24,21 @@ class Sale extends CI_Model
 		return 						$this->db->get();
 	}
 
+	public function get_recent_sales_by_customer($customer_id, $limit = 50)
+	{
+		$this->db->select('s.sale_id, s.sale_time, s.overall_total, s.payment_type, s.comment, CONCAT(e.first_name," ",e.last_name) as employee_name, COUNT(si.line) as item_count', false);
+		$this->db->from('sales s');
+		$this->db->join('people e', 's.employee_id = e.person_id', 'left');
+		$this->db->join('sales_items si', 's.sale_id = si.sale_id AND si.branch_code = s.branch_code', 'left');
+		$this->db->where('s.customer_id', $customer_id);
+		$this->db->where('s.branch_code', $this->config->item('branch_code'));
+		$this->db->where('s.sale_time >=', date('Y-m-d', strtotime('-720 days')));
+		$this->db->group_by('s.sale_id');
+		$this->db->order_by('s.sale_id', 'desc');
+		$this->db->limit($limit);
+		return $this->db->get();
+	}
+
 	function	exists				($sale_id)
 	{
 		$this						->	db->from('sales');
@@ -425,82 +440,39 @@ class Sale extends CI_Model
 
 		fwrite($ph,	$ESC."d".chr(1));
 		
-		if($value==$_SESSION['CSI']['SHV']->fidelity_value) // 5 pour les 10
+		// Email: ligne HTML sous forme de ligne de tableau
+		$value_str = (string)$value;
+		$is_separator = (strlen($value_str) >= 6 && $value_str[5] === '-');
+
+		if ($is_separator)
 		{
-			//ne fait rien
-			$c="<br>" . $c; // points de fidélité à la ligne
-			$line															=	$a.$b.$c;
-		}
-
-		$title_2 = str_replace("\n", "<br>", $line);
-		$title_2 = str_replace("{", "é", $title_2);
-		$title_2 = str_replace("@", "à", $title_2);
-		$title_2 = str_replace("}", "è", $title_2);
-		$title_2 = str_replace("|", "ù", $title_2);
-		$title_2 = str_replace("\\", "ç", $title_2);
-
-		//Pour les tests
-		//$title_2 = str_replace(" ", "&#144", $title_2);
-		//$title_2 = str_replace(" ", ".", $title_2);
-		
-		//Pour forcer à faire l'espace
-        $title_2 = str_replace(" ", "&nbsp;", $title_2);		
-	
-		//Savoir si la ligne est une ligne de: "-" ou pas
-		$c[5]=$value[5];
-        $attention=$c[5];
-
-	    //fwrite($ph, "\r\n");
-		
-		$_SESSION['message_mail']=$_SESSION['message_mail'] . $title_2;
-		if($attention=="-") // 5 pour les 10 // 33
-		{
-			//ne fait rien
+			$_SESSION['message_mail'] .= '<tr><td colspan="2" style="padding:2px 0;"><hr style="border:none;border-top:1px solid #cccccc;margin:0;" /></td></tr>';
 		}
 		else
 		{
-			// Affiche le symbole euro si la ligne contient un prix
-			$_SESSION['message_mail']=$_SESSION['message_mail'] . " €";
+			$title_mail = trim($title);
+			$title_mail = str_replace('{', 'é', $title_mail);
+			$title_mail = str_replace('@', 'à', $title_mail);
+			$title_mail = str_replace('}', 'è', $title_mail);
+			$title_mail = str_replace('|', 'ù', $title_mail);
+			$title_mail = str_replace('\\', 'ç', $title_mail);
+
+			$formatted_value = number_format((float)$value, 2, ',', ' ');
+			$_SESSION['message_mail'] .= '<tr><td style="padding:4px 8px;">' . $title_mail . '</td>';
+			$_SESSION['message_mail'] .= '<td align="right" style="padding:4px 8px;white-space:nowrap;">' . $formatted_value . ' &euro;</td></tr>';
 		}
-		$_SESSION['message_mail']=$_SESSION['message_mail'] . "<br>";
 	}
 	
 	function	write_title($subject, $ph, $ESC, $search, $replace, $formfeed)
 	{
-		$title_1 =$subject;
-		$title															=	str_replace($search, $replace, $subject);
+		// Imprimante: caractères ESC/POS
+		$title = str_replace($search, $replace, $subject);
 		fwrite($ph, $title);
-		
-		$replace_mail																=	array('&#35', '&#36', '&#224', '&#176', '&#231', '&#167', '&#136', '&#8171', '&#233', '&#249', '&#232', '&#34', '&#244');
-		$replace_mail																=	array('#', '$', 'à', '°', 'ç', '§', '^', '`', 'é', 'ù', 'è', '"', 'ô');
-
-		//Remplacement des caractéres spéciaux par leurs expressions adaptés
-		$title_2              = str_replace($search, $replace_mail, $subject);
-		//fwrite($ph, "\r\n");
-        //rajouter str_replace pour les \n
-		$title_2 = str_replace("\n", "<br>", $title_2);
-		$title_2 = str_replace("{", "é", $title_2);
-		$title_2 = str_replace("@", "à", $title_2);
-		$title_2 = str_replace("}", "è", $title_2);
-		$title_2 = str_replace("|", "ù", $title_2);
-		$title_2 = str_replace("\\", "ç", $title_2);
-		//$title_2 = str_replace(" ", "&#144", $title_2);
-        //$title_2 = str_replace(" ", ".", $title_2);
-		$title_2 = str_replace(" ", "&nbsp;", $title_2);
-
 		fwrite($ph,	$ESC."d".chr($formfeed));
 
-		//Il faut trouver une police correct et non proportionnelle
-		$_SESSION['message_mail']=$_SESSION['message_mail'] . $title_2;
-		
-		if($formfeed==1)
-		{
-			$_SESSION['message_mail']=$_SESSION['message_mail'] . "<br>";
-		}
-		else {
-			$_SESSION['message_mail']=$_SESSION['message_mail'] . "<br>";
-		
-		}
+		// Email: texte original (UTF-8)
+		$title_mail = str_replace("\n", "<br>", $subject);
+		$_SESSION['message_mail'] .= $title_mail . "<br>\n";
 	}
 
 	function get_overall_tax_for_sale_with_sale_id($sale_id)
@@ -525,7 +497,7 @@ class Sale extends CI_Model
 		$sale_limit = (int) $sale_limit;
 		$item_limit = (int) $item_limit;
 
-		$sql = "SELECT si.item_id, i.name, i.item_number, i.category,
+		$sql = "SELECT si.item_id, i.name, i.item_number, i.category, i.deleted as item_deleted,
 		               COUNT(*) as purchase_count,
 		               SUM(si.quantity_purchased) as total_qty
 		        FROM {$prefix}sales_items si
@@ -534,12 +506,12 @@ class Sale extends CI_Model
 		            SELECT sale_id FROM (
 		                SELECT sale_id FROM {$prefix}sales
 		                WHERE customer_id = ? AND branch_code = ?
+		                AND mode = 'sales'
 		                ORDER BY sale_time DESC LIMIT {$sale_limit}
 		            ) AS recent_sales
 		        )
 		        AND si.quantity_purchased > 0
-		        AND i.deleted = 0
-		        GROUP BY si.item_id, i.name, i.item_number, i.category
+		        GROUP BY si.item_id, i.name, i.item_number, i.category, i.deleted
 		        ORDER BY purchase_count DESC, total_qty DESC
 		        LIMIT {$item_limit}";
 

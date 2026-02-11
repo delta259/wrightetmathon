@@ -377,6 +377,8 @@ if ($_SESSION['del'] == NULL && $_SESSION['undel'] == NULL)
 
     </div><!-- /md-grid-2col -->
 
+    <?php echo form_hidden('image_file_name', $_SESSION['transaction_info']->image_file_name ?? ''); ?>
+
 <?php
     echo form_close();
 } /* end if undel==NULL && del==NULL */
@@ -450,6 +452,8 @@ function editProductImage(element) {
                 // Rafraîchir aussi la vignette du header
                 $('#header-avatar-image').attr('src', imgSrc);
                 wrapper.attr('data-current-url', newUrl);
+                // Sync hidden form field
+                $('input[name="image_file_name"]').val(newUrl);
                 alert('Image mise à jour avec succès');
             } else {
                 alert('Erreur: ' + (response.error || 'Impossible de sauvegarder'));

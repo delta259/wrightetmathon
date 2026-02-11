@@ -867,6 +867,88 @@ class Items extends CI_Controller
 		}
 	}
 
+	/**
+	 * AJAX: Load full item modal (lightweight, no redirect)
+	 * Used by inventaire/count to open item detail without page reload
+	 */
+	function ajax_view_item($item_id = -1)
+	{
+		if ($item_id < 1) {
+			echo '<p>Erreur : article introuvable</p>';
+			return;
+		}
+
+		// Minimal session setup (same as view() but without redirect)
+		$_SESSION['transaction_info'] = $this->Item->get_info($item_id);
+		$_SESSION['item_tax_info'] = $this->Item_taxes->get_info($item_id);
+		$_SESSION['transaction_warehouse_info'] = $this->Item->get_info_warehouses($item_id);
+		$_SESSION['transaction_supplier_info'] = $this->Item->get_info_suppliers($item_id);
+		$_SESSION['selected_supplier'] = $_SESSION['transaction_info']->supplier_id;
+		$_SESSION['selected_category'] = $_SESSION['transaction_info']->category_id;
+
+		// Pick lists
+		$supplier_pick_list = array();
+		foreach ($this->Supplier->get_all()->result_array() as $row) {
+			$supplier_pick_list[$row['person_id']] = strtoupper($row['company_name']);
+		}
+		$_SESSION['supplier_pick_list'] = $supplier_pick_list;
+
+		$category_pick_list = array();
+		foreach ($this->Category->get_all() as $row) {
+			$category_pick_list[$row['category_id']] = $row['category_name'];
+		}
+		$_SESSION['category_pick_list'] = $category_pick_list;
+
+		$warehouse_pick_list = array();
+		foreach ($this->Warehouse->get_all()->result() as $row) {
+			$warehouse_pick_list[$row->warehouse_code] = $row->warehouse_description;
+		}
+		$_SESSION['warehouse_pick_list'] = $warehouse_pick_list;
+
+		$_SESSION['transaction_tax_info'] = new stdClass();
+		$_SESSION['show_dialog'] = 1;
+		$_SESSION['show_image'] = $this->config->item('show_image');
+		$_SESSION['controller_name'] = 'items';
+		$_SESSION['selected_dluo_indicator'] = $_SESSION['transaction_info']->dluo_indicator;
+		$_SESSION['selected_reorder_policy'] = $_SESSION['transaction_info']->reorder_policy;
+		$_SESSION['selected_giftcard_indicator'] = $_SESSION['transaction_info']->giftcard_indicator;
+		$_SESSION['selected_offer_indicator'] = $_SESSION['transaction_info']->offer_indicator;
+		$_SESSION['selected_DynamicKit'] = $_SESSION['transaction_info']->DynamicKit;
+		$_SESSION['selected_export_to_franchise'] = $_SESSION['transaction_info']->export_to_franchise;
+		$_SESSION['selected_export_to_integrated'] = $_SESSION['transaction_info']->export_to_integrated;
+		$_SESSION['selected_export_to_other'] = $_SESSION['transaction_info']->export_to_other;
+		$_SESSION['offer_value'] = $_SESSION['transaction_info']->offer_value;
+		$_SESSION['undel'] = NULL;
+		$_SESSION['del'] = NULL;
+		$_SESSION['redirection'] = 'inventaire';
+		unset($_SESSION['new']);
+
+		// Profit calculation
+		$cost_price = 0;
+		$item_supplier_info = $this->Item->item_supplier_get_cost($item_id);
+		if ($item_supplier_info != NULL) {
+			$cost_price = $item_supplier_info->supplier_cost_price;
+		}
+		$_SESSION['preferred_supplier_cost_price'] = $cost_price;
+
+		$default_price_list_info = $this->Item->get_default_pricelist()->result_object();
+		if (count($default_price_list_info) == 1) {
+			foreach ($default_price_list_info as $row) {
+				$_SESSION['transaction_info']->unit_price = $row->unit_price;
+			}
+		}
+
+		if ($_SESSION['transaction_info']->unit_price == 0 || $cost_price == 0) {
+			$_SESSION['percentage_profit'] = ($_SESSION['transaction_info']->unit_price == 0) ? 0 : 100;
+		} else {
+			$_SESSION['percentage_profit'] = round(((($_SESSION['transaction_info']->unit_price - $cost_price) / $_SESSION['transaction_info']->unit_price) * 100), 2);
+		}
+
+		$_SESSION['$title'] = $this->lang->line('common_edit') . '  ' . $_SESSION['transaction_info']->name;
+
+		$this->load->view('items/modal_wrapper');
+	}
+
 	function ajax_tab_article()
 	{
 		$_SESSION['show_dialog'] = 1;
@@ -1475,15 +1557,64 @@ class Items extends CI_Controller
 			));
 		}
 
+		// 9. Update active inventory sessions: replace FROM item with TO item
+		$merged_session_id = null;
+		$this->db->select('si.id, si.session_id, si.counted_at, si.counted_quantity, si.comment, si.counted_by');
+		$this->db->from('inventory_session_items si');
+		$this->db->join('inventory_sessions s', 's.id = si.session_id');
+		$this->db->where('si.item_id', $from->item_id);
+		$this->db->where('s.status', 'in_progress');
+		$session_items = $this->db->get()->result();
+
+		foreach ($session_items as $si) {
+			$merged_session_id = $si->session_id;
+			// Check if TO item already exists in this session
+			$this->db->where('session_id', $si->session_id);
+			$this->db->where('item_id', $to->item_id);
+			$existing = $this->db->get('inventory_session_items')->row();
+
+			if ($existing) {
+				// TO already in session: merge counted quantities, remove FROM row
+				$update = array('expected_quantity' => $new_qty);
+				if (!empty($si->counted_at) && empty($existing->counted_at)) {
+					$update['counted_quantity'] = $si->counted_quantity;
+					$update['counted_by'] = $si->counted_by;
+					$update['counted_at'] = $si->counted_at;
+					$update['comment'] = $si->comment;
+				} elseif (!empty($si->counted_at) && !empty($existing->counted_at)) {
+					$update['counted_quantity'] = (float)$existing->counted_quantity + (float)$si->counted_quantity;
+				}
+				$this->db->where('id', $existing->id);
+				$this->db->update('inventory_session_items', $update);
+				$this->db->where('id', $si->id);
+				$this->db->delete('inventory_session_items');
+			} else {
+				// TO not in session: swap item_id and update expected qty
+				$this->db->where('id', $si->id);
+				$this->db->update('inventory_session_items', array(
+					'item_id' => $to->item_id,
+					'expected_quantity' => $new_qty
+				));
+			}
+		}
+
 		// Cleanup session
 		unset($_SESSION['fuzzy_merge_from']);
 		unset($_SESSION['fuzzy_merge_to']);
 
-		echo json_encode(array(
+		$response = array(
 			'success' => true,
 			'message' => $this->lang->line('items_merge_successfull') . ' => ' . $from_item_number . ' => ' . $to_item_number,
-			'redirect' => site_url('items/view/' . $to->item_id)
-		));
+			'redirect' => site_url('items/view/' . $to->item_id),
+			'merged' => array(
+				'from_item_id' => $from->item_id,
+				'to_item_id' => $to->item_id,
+				'to_item_number' => $to_item_number,
+				'to_name' => $to->name,
+				'to_quantity' => $new_qty
+			)
+		);
+		echo json_encode($response);
 
 		} catch (Exception $e) {
 			echo json_encode(array('success' => false, 'error' => 'Erreur: ' . $e->getMessage()));
