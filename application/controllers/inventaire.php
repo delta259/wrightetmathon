@@ -81,11 +81,6 @@ class Inventaire extends CI_Controller
 	 */
 	function save_session()
 	{
-		if (!isset($_SESSION['G']) || !isset($_SESSION['G']->login_employee_id)) {
-			redirect('login');
-			return;
-		}
-
 		$branch_code = $this->config->item('branch_code');
 
 		// Block if active session exists
@@ -132,7 +127,11 @@ class Inventaire extends CI_Controller
 			}
 		}
 
-		$employee_id = $_SESSION['G']->login_employee_id;
+		$employee_id = isset($_SESSION['G']->login_employee_id) ? $_SESSION['G']->login_employee_id : $this->session->userdata('person_id');
+		if (empty($employee_id)) {
+			redirect('login');
+			return;
+		}
 
 		$session_id = $this->Inventory_session->create_and_populate_session($employee_id, $session_type, $params);
 
@@ -192,19 +191,18 @@ class Inventaire extends CI_Controller
 	 */
 	function save_count()
 	{
-		if (!isset($_SESSION['G']) || !isset($_SESSION['G']->login_employee_id)) {
-			header('Content-Type: application/json');
-			echo json_encode(array('success' => false, 'message' => 'Session expirée'));
-			return;
-		}
-
 		$session_id = (int)$this->input->post('session_id');
 		$item_id = (int)$this->input->post('item_id');
 		$counted_qty = floatval($this->input->post('counted_qty'));
 		$comment = $this->input->post('comment');
 		if ($comment === null) $comment = '';
 
-		$employee_id = $_SESSION['G']->login_employee_id;
+		$employee_id = isset($_SESSION['G']->login_employee_id) ? $_SESSION['G']->login_employee_id : $this->session->userdata('person_id');
+		if (empty($employee_id)) {
+			header('Content-Type: application/json');
+			echo json_encode(array('success' => false, 'message' => 'Session expirée'));
+			return;
+		}
 
 		// Validate session is in_progress
 		$session = $this->Inventory_session->get_session($session_id);
@@ -239,12 +237,11 @@ class Inventaire extends CI_Controller
 			return;
 		}
 
-		if (!isset($_SESSION['G']) || !isset($_SESSION['G']->login_employee_id)) {
+		$employee_id = isset($_SESSION['G']->login_employee_id) ? $_SESSION['G']->login_employee_id : $this->session->userdata('person_id');
+		if (empty($employee_id)) {
 			redirect('login');
 			return;
 		}
-
-		$employee_id = $_SESSION['G']->login_employee_id;
 
 		$result = $this->Inventory_session->apply_session_adjustments($id, $employee_id);
 
