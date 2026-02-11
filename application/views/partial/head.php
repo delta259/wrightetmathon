@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link rel="shortcut icon" href="<?php echo base_url();?>favicon.ico" type="image/x-icon" />
   <script>
   // Apply theme + background BEFORE any CSS loads to prevent color flash
   (function(){

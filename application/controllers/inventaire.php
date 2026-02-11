@@ -81,6 +81,11 @@ class Inventaire extends CI_Controller
 	 */
 	function save_session()
 	{
+		if (!isset($_SESSION['G']) || !isset($_SESSION['G']->login_employee_id)) {
+			redirect('login');
+			return;
+		}
+
 		$branch_code = $this->config->item('branch_code');
 
 		// Block if active session exists
@@ -187,6 +192,12 @@ class Inventaire extends CI_Controller
 	 */
 	function save_count()
 	{
+		if (!isset($_SESSION['G']) || !isset($_SESSION['G']->login_employee_id)) {
+			header('Content-Type: application/json');
+			echo json_encode(array('success' => false, 'message' => 'Session expirée'));
+			return;
+		}
+
 		$session_id = (int)$this->input->post('session_id');
 		$item_id = (int)$this->input->post('item_id');
 		$counted_qty = floatval($this->input->post('counted_qty'));
