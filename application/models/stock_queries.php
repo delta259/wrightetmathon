@@ -1,0 +1,268 @@
+<?php
+class Stock_queries extends CI_Model
+{
+	function __construct()
+	{
+		parent::__construct();
+	}
+	
+	public function	getDataColumns	(array $inputs)
+	{
+		// test report type for column headings
+		if ($inputs['report']	==	'NS')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'), 
+								$this->lang->line('reports_count')
+								);
+		}
+		
+		if ($inputs['report']	==	'IS')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('items_reorder_policy'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'),
+								'ATTN', 
+								$this->lang->line('reports_count'),
+								$this->lang->line('reports_value_count'), 
+								$this->lang->line('reports_stock_value'), 
+								$this->lang->line('reports_totalHT')
+								);
+		}
+		
+		if ($inputs['report']	==	'VS')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('items_reorder_policy'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'),
+								'ATTN', 
+								$this->lang->line('reports_count'),
+								$this->lang->line('reports_value_count'), 
+								);
+		}
+		
+		if ($inputs['report']	==	'IL')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'), 
+								$this->lang->line('reports_count'), 
+								$this->lang->line('reports_reorder_level'), 
+								$this->lang->line('reports_reorder_quantity'),
+								$this->lang->line('reports_reorder_value'), 
+								$this->lang->line('reports_totalHT')
+								);
+		}
+		
+		if ($inputs['report']	==	'II')
+		{
+			return array		(
+								$this->lang->line('reports_item_id'), 
+
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('reports_item_name'),
+                $this->lang->line('reports_category'),
+                $this->lang->line('reports_cost_price'),
+								$this->lang->line('reports_count')
+								);
+		}
+		
+		if ($inputs['report']	==	'IR')
+		{
+			return array		(
+								'Fam.',
+								'Réf.',
+								'Désignation',
+								'Stk',
+								$this->lang->line('reports_actual_count'),
+								'Commentaire'
+								);
+		}
+		
+		if ($inputs['report']	==	'DL')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'), 
+								$this->lang->line('reports_count'),
+								$this->lang->line('items_dluo')
+								);
+		}
+		
+		if ($inputs['report']	==	'DD')
+		{
+			return array		(
+								$this->lang->line('reports_category'), 
+								$this->lang->line('reports_item_number'), 
+								$this->lang->line('reports_item_name'), 
+								$this->lang->line('reports_cost_price'), 
+								$this->lang->line('reports_count'),
+								$this->lang->line('items_dluo')
+								);
+		}
+	}
+	
+	public function getData(array $inputs)
+	{
+		$this					->	db->from('items');
+		$this					->	db->join('items_suppliers', 'items.item_id = items_suppliers.item_id');
+		$this					->	db->join('categories', 'categories.category_id = items.category_id', 'full');
+		$this					->	db->where($inputs['where']);
+		$this					->	db->where('items.branch_code', $this->config->item('branch_code'));	
+		$this					->	db->order_by('categories.category_name', 'desc');    //trié par ordre alphabétique :)
+		$this					->	db->order_by('items.name','desc');
+		return 					$this->db->get()->result_array();
+	}
+	
+	public function get_stock_value_data($item_id)
+	{
+		$this					->	db->select();
+		$this					->	db->from('stock_valuation');
+		$this					->	db->where('value_item_id', $item_id);
+		$this					->	db->where('stock_valuation.branch_code', $this->config->item('branch_code'));	
+		$this					->	db->order_by('value_date');
+		
+		return 					$this->db->get()->result_array();
+	}
+	
+	public function	get_sales_item_Data(array $inputs)
+	{
+			$this->db->select	('
+								sales_items.sale_id as transaction_id,
+								date(sale_time) as transaction_date, 
+								CONCAT(employee.first_name," ",employee.last_name) as employee_name,
+								CONCAT(customer.first_name," ",customer.last_name) as transaction_name,
+								subtotal_before_discount,
+								subtotal_discount_percentage_amount,
+								subtotal_discount_amount_amount,
+								subtotal_after_discount,
+								overall_tax,
+								overall_total,
+								overall_tax_percentage,
+								overall_tax_name,
+								overall_cost,
+								overall_profit,
+								amount_change,
+								payment_type, 
+								comment,
+								mode', 
+								false
+								);
+		$this					->	db->from('sales_items');
+		$this					->	db->join('sales', 'sales_items.sale_id = sales.sale_id');
+		$this					->	db->join('people as employee', 'sales.employee_id = employee.person_id');
+		$this					->	db->join('people as customer', 'sales.customer_id = customer.person_id', 'left');
+		$this					->	db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'" and item_id='.$inputs['item_id']);
+		$this					->	db->where('sales_items.branch_code', $this->config->item('branch_code'));
+		$this					->	db->where('sales.branch_code', $this->config->item('branch_code'));
+		$this					->	db->where('employee.branch_code', $this->config->item('branch_code'));
+		$this					->	db->where('customer.branch_code', $this->config->item('branch_code'));
+
+       // $this					->	db->group_by('sales_items.line_category');
+        $this					->	db->order_by('sales_items.line_category', 'desc');
+
+		$data					=	array();
+		$data['summary']		=	$this->db->get()->result_array();
+		$data['details']		=	array();
+		
+		foreach($data['summary'] as $key=>$value)
+		{
+			$this->db->select	('
+								line,
+								category,
+								item_number,
+								name,
+								serialnumber,
+								quantity_purchased,
+								item_cost_price,
+								item_unit_price,
+								discount_percent,
+								line_sales_before_discount,
+								line_discount,
+								line_sales_after_discount,
+								line_tax,
+								line_sales,
+								line_cost,
+								line_profit,
+								line_tax_percentage,
+								line_tax_name
+								');
+			$this				->	db->from('sales_items');
+			$this				->	db->join('items', 'sales_items.item_id = items.item_id');
+			$this				->	db->where('sale_id = '.$value['transaction_id']);
+			$this				->	db->where('sales_items.branch_code', $this->config->item('branch_code'));
+			$this				->	db->where('items.branch_code', $this->config->item('branch_code'));
+			$this				->	db->order_by('sales_items.line_category','desc');
+			$data['details'][$key] = $this->db->get()->result_array();
+		}
+		
+		return 					$data;
+	}
+	
+	public function	getSummaryData(array $inputs)
+	{
+		return 					array();
+	}
+	
+	public function	count_all	($where_select)
+	{
+		$this					->	db->from('items');
+		$this					->	db->where($where_select);
+		$this					->	db->where('items.branch_code', $this->config->item('branch_code'));
+		return 					$this->db->count_all_results();
+	}
+	
+	public function	getData_IR	(array $inputs)
+	{
+		$this					->	db->select();
+		$this					->	db->from('items');
+		$this					->	db->where($inputs['where']);
+		$this					->	db->where('items.branch_code', $this->config->item('branch_code'));
+		$this					->	db->order_by('items.category', 'random' );
+		//$this					->	db->order_by('items.name' );
+		$this					->	db->limit($inputs['limit']);
+
+		return 					$this->db->get()->result_array();
+	}
+	
+	public function	latest_receiving_transaction()
+	{
+		// get max table ID
+		$query					=	$this->db->query('SELECT max(receiving_id) as max_id FROM ospos_receivings'); 
+		$row					=	$query->row_array();
+		$max_id					=	$row['max_id']; 
+		
+		// now retrieve this record
+		$this					->	db->select();
+		$this					->	db->from('receivings');
+		$this					->	db->where('receiving_id', $max_id);
+		$this					->	db->where('receivings.branch_code', $this->config->item('branch_code'));
+		
+		return 					$this->db->get()->row_array();
+	}
+	
+	public function	get_po_line($receiving_id, $item_id)
+	{
+		$this					->	db->select();
+		$this					->	db->from('receivings_items');
+		$this					->	db->where('receiving_id', $receiving_id);
+		$this					->	db->where('item_id', $item_id);
+		$this					->	db->where('receivings_items.branch_code', $this->config->item('branch_code'));
+		
+		return 					$this->db->get()->row_array();
+	}
+}
+?>

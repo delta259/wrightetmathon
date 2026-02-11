@@ -1,0 +1,309 @@
+
+
+/* bouton retour */
+
+.search {
+    -moz-user-select: none;
+    background-image: none;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    text-align: center;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    width: 35%;
+    margin-left: -35px;
+}
+
+/*.search1 img:hover{
+    background:  #bf2b6a80;
+}*/
+.champ_search{
+    background-color: #fff;
+    background-image: none;
+    border-top-color: rgb(204, 204, 204);
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: rgb(204, 204, 204);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: rgb(204, 204, 204);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: rgb(204, 204, 204);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    width:88%;
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 1em;
+    height: 40px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    margin-bottom: 10px;
+    vertical-align: baseline;
+}
+
+.champ_search_with_modal{    
+    background-color: #fff;
+    background-image: none;
+    border-top-color: rgb(204, 204, 204);
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: rgb(204, 204, 204);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: rgb(204, 204, 204);
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: rgb(204, 204, 204);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    width:400px;
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 1em;
+    height: 40px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    margin-bottom: 10px;
+    vertical-align: baseline;
+}
+.search1 .champsearch .img{
+    height: 38px;
+    display:inline-block;
+}
+
+.img_search {
+       
+    width: 37px;
+    height: 37px;
+    align-self: center;
+}
+
+.img_new {
+    width: 40px;
+    height: 40px;
+    margin-left: -39px;
+    margin-top: -7px;
+}
+.btretour
+ {
+    background-image: none;
+    border: 1px solid #43899d;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 5px;
+    min-width: 30%;
+    background-color: #fff;
+    color: #43899d;
+}
+
+.btretour
+:hover, .btretour
+:focus {
+	text-decoration: none;
+	color: #2C9AD2;
+	background-color: #fff;
+	border: 1px solid #1F6E8C;
+}
+
+.btretour
+:active {
+	text-decoration: none;
+	color: #fff;
+	background-color: #1F6E8C;
+	border: 1px solid #1F6E8C;
+}
+
+.btretour
+:disabled, .btretour
+.disabled {
+	cursor:not-allowed;
+	pointer-events:none;
+	opacity:0.65;
+	filter:alpha(opacity=65);
+}
+
+
+
+
+/* Boutons messagerie plus petit : a harmoniser */
+
+.msg_btretour
+ {
+	margin-left: 0;
+	padding: 2px 10px 3px 10px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.msg_btretoulien {
+	margin-left: 0;
+	padding: 3px 10px 4px 10px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+
+
+
+.btactive{
+  font-weight: bold;
+  /* color: #4e8db4; */
+  background: #eef6fb;
+  border: #eef6fb 1px solid;
+}
+/* bouton submit */
+
+.btsubmit a{
+Color:white;
+}
+.btsubmit {
+    background-color: #43899d;
+    color: #fff;
+    background-image: none;
+    border: 1px solid #2C9AD2;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 5px;
+    min-width: 30%;
+}
+
+
+
+.btsubmit:disabled, .btsubmit.disabled {
+	cursor:not-allowed;
+	pointer-events:none;
+	opacity:0.55;
+	filter:alpha(opacity=55);
+}
+/* bouton creation */
+
+.btnewc{
+    float: right;
+    margin-right: 12px;
+}
+
+
+
+
+
+.btnew:disabled, .btnew.disabled {
+	cursor:not-allowed;
+	pointer-events:none;
+	opacity:0.55;
+	filter:alpha(opacity=55);
+}
+
+/* bouton aide ?*/
+
+.help {
+    background: url("../images/help.png") no-repeat scroll 0 0;
+    height: 24px;
+    width: 24px;
+    z-index: 0;
+}
+
+.btaide {
+	background: url("../images/picto_erreur.png") no-repeat scroll 0 50%;
+    height: 20px;
+    width: 20px;
+    z-index: 0;
+    display: inline-block;
+    border: none;
+    vertical-align: middle;
+}
+
+.btaide.codepostal{
+    float: left;
+    margin-right: 5px;
+    margin-top: 10px;
+}
+
+.btaide:hover, .btaide:focus {
+	text-decoration: none;
+	border-bottom: none;
+}
+
+
+/* aide pour champ de saisie */
+.obligatoire{
+  float: right;
+}
+.btobligatoire {
+	background: url("../images/champs_obligatoire.png") no-repeat scroll 0 50%;
+    height: 20px;
+    width: 20px;
+    z-index: 0;
+    display: inline-block;
+    border: none;
+    vertical-align: middle;
+}
+.zone_champ_saisie .aide {
+	display: none;
+	background: transparent url('../images/picto_aide.gif') no-repeat;
+	border-bottom: none;
+}
+
+.zone_champ_saisie .aide:hover, .zone_champ_saisie .aide:focus {
+	background: transparent url('../images/picto_aide_survol.gif') no-repeat;
+	border-bottom: none;
+}
+
+/* lien bouton */
+.btlien {
+	/*padding: 7px 13px;*/
+}
+
+/* petit bouton */
+.btpetit {
+	letter-spacing: 0;
+	padding: 5px;
+	min-width: 0;
+}
+
+/* bouton page de connexion � harmoniser */
+
+
+.body_page #id_body_btn_submit:active {
+	background-color: #7b2a5a;
+}

@@ -1,0 +1,286 @@
+.register_wrapper
+{
+	float:left;
+	width:73%;
+	font-family:Arial;
+	font-size:13px;
+	overflow:scroll;
+	overflow-x:hidden;
+	height:430px;
+}
+
+#sales_register_wrapper
+{
+	float:left;
+	width:73%;
+	font-family:Arial;
+	font-size:13px;
+}
+	#mode_form
+	{
+		position:relative;
+		/*width:100%;*/
+		background-color:#DDD;
+		font-weight:bold;
+		padding: 4px 0px 4px 0px;
+	}
+
+		#show_suspended_sales_button
+		{
+			/*position:absolute;
+			float:right;*/
+			text-align:right;
+			top:0px;
+			bottom:0px;
+			right:0px;	
+		}
+
+		#mode_form span
+		{
+			font-weight:bold;
+		}
+
+	#add_item_form
+	{
+		position:relative;
+		background-color:#C2D9D2;
+		width:100%;
+		font-weight:bold;
+		padding: 4px 0px 4px 0px;
+		border-radius:8px;
+	}
+
+		#new_item_button_register
+		{
+			position:absolute;
+			float:left;
+			text-align:right;
+			top:0px;
+			bottom:0px;
+			right:0px;
+		}
+
+		#add_item_form input
+		{
+			border: 1px solid #106587;
+			padding: 0px;
+			height:30px;
+			font-size: 20px;
+			border-radius:8px;
+		}
+
+#select_customer_form
+{
+	position:relative;
+	background-color:#C2D9D2;
+	width:100%;
+	font-weight:bold;
+	padding: 4px 0px 4px 0px;
+	border-radius:8px;
+}
+
+#select_customer_form input
+{
+	border: 1px solid #106587;
+	padding: 0px;
+	height:30px;
+	font-size: 20px;
+	border-radius:8px;
+}
+
+	#item_label,#customer_label
+	{
+		font-weight:bold;
+	}
+
+	#add_item_form label
+	{
+		margin: 0px 5px 0px 0px;
+	}
+
+	#register
+	{
+		position:relative;
+		width:100%;
+		border-collapse:collapse;
+		font-size:13px;
+		border-radius:8px;		
+	}
+
+		#register th
+		{	
+			background-color:#3F839E;
+			color:#FFFFFF;
+			font-weight:bold;
+			border-radius:8px;
+		}
+
+		#register td
+		{
+			/* background-color:#DDDDDD;*/
+			/*border-radius:8px;*/
+		}
+
+		#register tr
+		{
+			background-color:#DDD;
+			border-radius:8px;
+		}
+		
+#sales_register
+	{
+		position:relative;
+		width:100%;
+		border-collapse:collapse;
+		font-size:13px;
+		border-radius:8px;		
+	}
+
+		#sales_register th
+		{	
+			background-color:#3F839E;
+			color:#FFFFFF;
+			font-weight:bold;
+			border-radius:8px;
+		}
+
+		#sales_register td
+		{
+			/* background-color:#DDDDDD;*/
+			/*border-radius:8px;*/
+		}
+
+		#sales_register tr
+		{
+			background-color:#DDD;
+			border-radius:8px;
+		}
+
+
+
+		tr#line_colour
+		{
+			background-color:lightgreen;
+			border-radius:8px;
+		}
+			
+#overall_sale
+{
+	float:right;
+	margin-left:4px;
+	background-color:#C2D9D2;
+	width:25%;
+	padding:5px;
+	font-family:Arial;
+	font-size:13px;
+	text-align:left;
+	border-radius:8px;
+}
+
+#sales_targets
+{
+	float:right;
+	background-color:#FFD731;
+	width:25%;
+	padding:5px;
+	font-family:Arial;
+	font-size:13px;
+	text-align:center;
+	border-radius:8px;
+	box-shadow:0 0 15px #DFB60B;
+	border: 1px solid #106587;
+}
+
+.cart_contents
+{
+	float:left;
+	width:73%;
+	font-family:Arial;
+	font-size:13px;
+	overflow:scroll;
+	overflow-x:hidden;
+	height:430px;
+}
+
+.sales_cart_contents
+{
+	float:left;
+	width:73%;
+	font-family:Arial;
+	font-size:13px;
+}
+
+#sale_details
+{
+	position:relative;
+	width:100%;
+	margin-top:5px;
+	/*border-top:2px solid #000;*/
+	text-align:left;
+}
+
+#finish_sale
+{
+	position:relative;
+}
+
+#Payment_Types
+{
+	float:left;
+	width:100%;
+	margin-top:5px;
+	background-color:#DDD;
+	margin-bottom:0px;
+	/*clear:both;*/
+	border-radius:8px;
+}
+
+#Cancel_sale
+{
+	position:absolute;
+	float:right;
+	text-align:right;
+	top:7px;
+	bottom:0px;
+	right:0px;	
+}
+#suspended_sales_table th
+{
+	text-align:center;
+}
+
+#suspended_sales_table td
+{
+	padding: 7px;
+}
+
+#credit_card_form fieldset 
+{
+	overflow: auto;
+	border: 0;
+	margin: 0;
+	padding: 0; 
+}
+
+#credit_card_form fieldset div 
+{
+	float: left; 
+}
+
+#credit_card_form fieldset.centered div 
+{
+	text-align: center; 
+}
+
+#credit_card_form label 
+{
+	display: block;
+	margin-bottom: 5px; 
+}
+
+#credit_card_form input.text 
+{
+	border: 1px solid #bfbab4;
+	margin: 0 4px 8px 0;
+}
+

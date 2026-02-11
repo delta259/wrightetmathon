@@ -1,0 +1,1218 @@
+/**
+* Contient les css utilis�s pour la structure g�n�rale (layout, grille, blocs)
+**/
+
+/* Style permettant d'afficher le footer en bas de page */
+.config_row{
+	display: inline-block;
+	font-size: 15px;
+}
+.Fwide{
+	font-weight: bold;
+}
+
+html, body {height: 100%; padding: 0; margin: 0; }
+body { display: table; width: 100%; /*height: 100%;*/ }
+
+
+
+.wlp-bighorn-footer {
+
+	height:1px;
+}
+
+.wlp-bighorn-book {
+	 min-height: 89.20%;
+}
+
+.corps-de-page {
+	padding: 10px;
+	margin-bottom: 20px;
+}
+
+
+
+body
+{
+  margin: 0px auto 0px;
+	width: 100%;
+	height: 100%;
+	line-height: 1.42857;
+}
+
+/*  Toute la vue est prise en dessous de 980 PIXELS */
+@media only screen and (max-width: 979px) {
+	body { width:100%; }
+	.wlp-bighorn-book{
+		width: auto !important;
+		margin: 0 auto;
+	}
+}
+
+
+.wlp-bighorn-header
+{
+	height: 68px;
+	
+}
+
+.wlp-bighorn-book{
+	width: 1473px;
+	margin: 0 auto;
+}
+
+
+
+.tetiere .liens a:hover{
+    text-decoration: none;
+
+
+
+
+}
+.tetiere .liens li a{
+
+    text-decoration: none;
+	}
+
+.tetiere .liens li a:hover{
+
+    text-decoration: none;
+	}
+
+
+.corps-de-page {
+	padding: 10px;
+	min-height: 200px;
+}
+
+#prefooterAme_1 {
+	padding-top:30px;
+}
+
+.wlp-bighorn-footer
+{
+ /*padding-top: 15px;*/
+    clear: both;
+}
+
+.wlp-bighorn-footer #Footer {
+	margin-top: 20px;
+}
+
+
+
+.wlp-bighorn-footer #Footer li:first-child {
+	background-image: none;
+}
+
+.wlp-bighorn-footer #Footer li a {
+    line-height: 50px;
+}
+
+/* image rollover styles */
+
+.wlp-bighorn-image-rollover
+{
+    display: none;
+}
+.wlp-bighorn-image-nonrollover
+{
+    display: inline;
+}
+
+/*
+    This file contains window-related styles for the "bighorn" skin.  This includes titlebars, titlebar button
+    rollovers and window content.
+
+    Note that this styling includes window content overflow handling.  See below for specific notes.
+*/
+
+/* styles for titlebars */
+
+.wlp-bighorn-page-unconnect .wlp-bighorn-titlebar{
+	width: auto;
+}
+
+.wlp-bighorn-titlebar
+{
+    overflow: hidden;
+    border-bottom: 1px solid #bfbfbf;
+	padding-bottom: 0.5em;
+	text-transform: uppercase;
+	margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.wlp-bighorn-titlebar div
+{
+    /* white-space: nowrap; */
+    /* padding: 2px; */
+}
+
+.wlp-bighorn-titlebar img
+{
+    border: 0;
+}
+
+.wlp-bighorn-titlebar-window-icon,
+.wlp-bighorn-titlebar-title-panel
+{
+    font-size: 1.14em;
+    font-weight: normal;
+}
+
+.wlp-bighorn-titlebar-button-panel
+{
+    float: right;
+}
+
+.wlp-bighorn-titlebar-button-panel a
+{
+    vertical-align: middle;
+}
+
+/* styles for image rollovers (titlebar buttons) */
+
+.wlp-bighorn-titlebar-button-panel a:hover > img.wlp-bighorn-image-rollover
+{
+    display: inline;
+}
+
+.wlp-bighorn-titlebar-button-panel a:hover > img.wlp-bighorn-image-nonrollover
+{
+    display: none;
+}
+
+/* styles for windows */
+
+.wlp-bighorn-layout-cell .wlp-bighorn-book
+{
+    border-style: solid;
+    border-width: 1px;
+    margin: 8px;
+    height: 100%;
+}
+
+#as_vos_demandes_page .wlp-bighorn-layout {
+	float:left;
+	margin: 1.1em 0 0 0;
+}
+
+#as_vos_demandes_page .wlp-bighorn-layout-cell {
+	float:left;
+}
+
+#as_vos_demandes_page .wlp-bighorn-layout-cell:last-child {
+	margin-left: 30px;
+}
+
+#as_accueil_page .wlp-bighorn-layout {
+	/*width: 700px;*/
+	float:none;
+}
+
+#messageperso_1{
+	margin-right: 30px;
+}
+fieldset{
+	background: white;
+border: 1px solid lightblue;
+/*margin: 10px 20px 5px 20px;
+padding: 10px 25px 0px 25px;*/
+}
+.wlp-bighorn-page
+{
+    /*padding: 1px;*/
+    height: 100%;
+    position: relative;
+}
+/*
+.wlp-bighorn-window
+{
+    border-style: solid;
+    border-width: 1px;
+    margin: 8px;
+}
+*/
+/*
+    The following style applies to window content that overflows the specified portlet width. If you want to
+    change this behavior for ALL of your portlets, set the appropriate value for the overflow style here.
+    If you want to change this behavior for a SPECIFIC portlet, add the appropriate overflow style to that
+    portlet's Content Presentation Style attribute. See the Portlet Development Guide for more information
+    and examples.
+*/
+/*
+.wlp-bighorn-window-content
+{
+    overflow: auto;
+    width: 100%;
+}
+*/
+/* styles for async content portlets */
+
+.wlp-bighorn-window-content-only
+{
+    border: 0;
+    margin: 0;
+}
+
+
+/** structure page d'accueil **/
+
+.contenu {
+    clear: both;
+    margin: 0 -10px;
+}
+
+.contenu:after {
+    clear: both;
+}
+
+.col {
+    display: block;
+    float: left;
+    width: 27%;
+    padding: 6px;
+    position: relative;
+}
+
+.col .centrepage {
+	width: inherit;
+}
+
+/*  Une seule colonne en dessous de 600 PIXELS */
+@media only screen and (max-width: 659px) {
+	.col {  width:100%; }
+}
+
+/*  Deux colonnes en dessous de 980 PIXELS */
+@media only screen and (max-width: 979px) and (min-width: 659px) {
+	.col {  width:50%; }
+    .col:last-child {clear: both; float: none; margin-left: 0;}
+}
+
+.col:first-child {
+	margin-left: 0%;
+/*	margin-left: 45px;*/
+}
+}
+
+.bloc {
+    margin-top: 20px;
+}
+
+
+.bloc .titre em {
+    font-size: 2.35em;
+    font-style: normal;
+    left: 0;
+    position: relative;
+    text-align: center;
+    top: 5px;
+}
+
+.bloc h1 {
+    color: white;
+    font-size: 1.14em;
+    line-height: 45px;
+    padding: 0 0 0 15px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.prefooter {
+	margin: 15px -15px -30px -15px ;
+}
+
+
+.prefooter #prefooterAme {
+    background-color: #f5f5f5;
+}
+
+.colonne_info_droite {
+	float: right;
+	width: 210px;
+	clear: right;
+	background: #EEF5F9;
+    padding: 10px 0px;
+    margin-top: 0.75em;
+    margin-bottom: 39px;
+}
+
+/** On passe la colonne de droite en dessous et sur toute la largeur **/
+@media only screen and (max-width: 700px) {
+	.colonne_info_droite {
+		width: 100%;
+	}
+}
+
+.cadre_form {
+	width: 97%;
+	padding: 5px 4px 5px 2px;
+	margin: 10px 0px 20px 0px;
+}
+
+.cadre_connexion {
+	width: 93%;
+	border: 1px #DEDFE4 solid;
+	padding: 5px 4px 5px 2px;
+	margin: 10px 0px 20px 0px;
+}
+
+.blocform {
+	margin: 5px 0px 5px 0px;
+	padding: 0px 0px 5px 0px;
+}
+
+.blocform p {
+	margin: 5px 0px 5px 0px;
+	padding: 0px 15px 0px 10px;
+}
+
+.blocform label, .blocform .label {
+	font: bold 0.95em Trebuchet MS, Verdana, sans-serif;
+	color: #0956AE;
+	margin: 0 3px 0 0;
+	padding: 0px;
+	/*Ergo 2.6.1 : aligner label et champ sur une m�me ligne*/
+	display: block;
+    width: 280px;
+    float: left;
+}
+
+
+.blocform h2 {
+	font: bold 1.2em Trebuchet MS, Verdana, sans-serif;
+	color: #25496d;
+	margin: 5px 0px 0px 0px;
+	padding: 0px;
+}
+
+.blocform h4 {
+	font: bold 0.7em Trebuchet MS, Verdana, sans-serif;
+	color: #0956AE;
+	margin: 5px 0px 0px 10px;
+	padding: 0px;
+}
+
+.blocform ul,.blocform ol {
+	margin: 3px 0px 15px 15px;
+	padding: 0px;
+}
+
+.blocform_libelle {
+	background: url(../images/as/fd_filetbleu.gif) repeat-y;
+	margin: 0px 0px 0px 1px;
+	padding: 0px 10px 0px 10px;
+	color: #3F316F;
+	font-size: 1em;
+}
+
+.blocform_libelle b {
+	font-size: 1.2em;
+}
+
+.blocform_libelle li {
+	font-size: 0.9em;
+}
+
+.blocformfond {
+	background: #eef5f9; /* fond bleu tr�s clair */
+	padding: 5px;
+	margin: 10px 1px 1px 1px;
+	line-height: 1.5em;
+}
+
+.blocformfond p {
+	padding: 0px;
+	margin: 5px 10px 5px 0px;
+}
+
+.blocformfond ul {
+	margin-left: 17px;
+}
+
+.blocformfond_radio {
+	display: inline;
+	background: #F4F5E6;
+	vertical-align: middle;
+	margin: 0px 12px 0px 1px;
+}
+
+#as_declarer_naissance_page .blocformfond {
+	background: white;
+	padding: 5px;
+	margin: 20px 1px 10px 1px;
+	line-height: 1.5em;
+	border: solid 5px lightblue;
+	clear: both;
+}
+
+#as_declarer_naissance_page .blocformfond .souspartie{
+	border-top: none;
+}
+
+#as_declarer_naissance_page .blocformfond .souspartie ~ .souspartie{
+	border-top: solid 1px lightblue;
+}
+
+#as_declarer_naissance_page .blocformfond h2 {
+	color: #0062AD;
+	float: left;
+}
+
+#as_declarer_activite_page .blocformfond h2 {
+	color: #0062AD;
+	float: left;
+}
+
+#as_declarer_activite_page .blocformfond {
+	background: white;
+	padding: 5px 5px 10px 5px;
+	margin: 20px 1px 10px 1px;
+	line-height: 1.5em;
+	border: solid 5px lightblue;
+	clear: both;
+}
+
+#as_declarer_activite_page .blocformfond p {
+	clear: both;
+	margin: 10px 0;
+}
+
+.blocfond {
+	background: #eef5f9; /* fond bleu tr�s clair */
+	padding: 0px 0px 0px 10px;
+	margin: 10px 10px 0px 0px;
+}
+
+.blocfond .droite {
+	float: right;
+}
+
+#colcentre,
+.centrepage {
+	/*width: 700px;*/
+	line-height:1.5em;
+	/*float: left;*/
+}
+
+/** La page prend toute la place en dessous de 700 PIXELS **/
+@media only screen and (max-width: 700px) {
+	#colcentre,
+	.centrepage {
+		width: 100%;
+	}
+}
+
+.centrepage h2 {
+	color: #25496d;
+	font-size: 1.2em;
+	margin: 10px 0px 10px 0px;
+	padding: 0px;
+}
+
+.centrepage h3 {
+	color: #25496d;
+	font-size: 1em;
+	margin: 0px;
+	padding: 0px;
+}
+
+.centrepage ul,.centrepage ol {
+	margin: 0px 0px 10px 17px;
+}
+
+.centrepage li {
+	line-height: 1.5em;
+}
+
+.formerreur {
+	margin: 0px;
+	padding: 3px 10px 3px 0px;
+	color: #EE0000;
+	text-align: left;
+}
+
+.lien_droit {
+	text-align: right;
+}
+
+caption {
+	text-align: left;
+	padding: 10px 0px 5px 0px;
+	margin: 0px;
+	font-weight: bold;
+}
+
+.consigne {
+	font-size: 0.8em;
+	color: #0757AC;
+	white-space: normal;
+}
+
+.consigne2 {
+	font-size: 0.95em;
+	margin: 10px 0px 0px 12px;
+}
+
+.centrepage .paragraphe {
+	margin: 0 20px 0 0;
+	padding: 0;
+}
+
+/*Style pour les infos dans un cadre avec fond gris, Label noir, texte noir, titre bleu,*/
+.blocformfond,
+#as_declarer_naissance_page .blocformfond, #as_declarer_activite_page .blocformfond {
+	background: #EEF5F9; /*#e6e6e6; /*#e6e6e6; /* #D2D2D2; /*#B75190; /* /*#E0F0FF;*/
+	padding: 5px;
+	padding-bottom : 20px;
+	margin: 20px 1px 10px 1px;
+	line-height: 1.5em;
+	border: solid 0px lightblue;
+	clear: both;
+}
+.blocformfond .consigne{
+	padding-right:15px ;
+	font-size: 0.8em;
+	color: #0757AC;
+	white-space: normal;
+}
+.blocformfond h2{
+	color: #0062AD; /*#B75190; */
+	font-size: 1.2em;
+	margin: 10px 0px;
+	padding: 0px;
+}
+.blocform label, .blocform .label {
+	text-align: right;
+	}
+.blocform .label {
+	width:170px;
+}
+
+.blocformfond fieldset{
+	background:white;
+	border: 1px solid lightblue; /*#B75190; /*#B75190*/
+    margin: 10px 20px 5px 20px;
+    padding: 10px 25px 0px 25px;
+}
+.blocformfond fieldset legend{
+	color: #0062AD; /*#B75190; /* /* /**/
+	font-size : 1.2em;
+	padding-left:10px;
+	padding-right:10px;
+	position : relative;
+	display:none;
+	}
+.bloc_coord{
+	 margin: 10px 20px 20px 20px;
+	 padding-left : 24px;
+	}
+/*Pour les blocs d'informations de rappel (recapitulatif, et confirmation)*/
+.blocformfond .bloc_infos,
+.bloc_infos_perso .bloc_infos{
+	background: #EEF5F9; /*#e6e6e6; /*; /* /*#D2D2D2; /*#B75190; /* /*#E0F0FF;*/
+	padding: 0px 25px 5px 25px;
+	margin: 10px 20px 5px 20px;
+	line-height: 1.5em;
+	border: solid 1px #BBDAF6; /*#B75190; /**/
+	clear: both;
+}
+
+/*Bloc pour avoir un formulaire align� � gauche, champs prenant toute la place libre*/
+.grid {
+	 width: 100%;
+	 display: table;
+	 table-layout: auto;
+	 padding-bottom : 10px;
+	 }
+label.cell {
+	white-space: nowrap;
+	display: table-cell; }
+span.cell {
+	 width: 100%;
+	 display: table-cell;
+	  }
+span.cell input, span.cell select {
+	width: 100%;
+	}
+
+/* CLASSES AFFICHAGE EXCEPTIONS*/
+
+.blocException {
+	margin-left: 30px;
+}
+
+.traceException {
+	word-wrap: break-word;
+}
+
+/* FIN CLASSES AFFICHAGE EXCEPTIONS*/
+
+.bloc_confirm{
+margin-bottom:10px;
+}
+
+/** FENETRES **/
+
+.fond {
+	background-color: black;
+	position: fixed;
+	margin: 0;
+	padding: 0;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	display: none;
+	z-index: 90;
+}
+
+.fondBleu {
+	background-color: #357BB1;
+    display: none;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    z-index: 90;
+}
+
+.fenetreAttente {
+	background-color: white;
+	position: fixed;
+	margin: 0;
+	padding: 0;
+	top: 50px;
+	display: none;
+	z-index: 95;
+	overflow: hidden;
+	width: 500px;
+	height: 250px;
+	top: 200px;
+	left: 2;
+}
+
+.fenetreAide {
+	background-color: white;
+	position: fixed;
+	top: 270px;
+	display: none;
+	z-index: 95;
+	width: 530px;
+}
+
+.fenetreAideInfoALD{
+display: none;
+	z-index: 95;
+	margin-left: 0;
+    position: absolute;
+    top: 0px;
+    left: -50px;
+}
+.didacticiel {
+	top: 133px;
+	width: auto;
+	margin-left: 20px;
+}
+
+.fenetreAttente .fenetre_entete {
+	position: relative;
+	top: 0;
+	left: 0;
+	height: 24px;
+	width: auto;
+	margin: 0;
+	padding: 0;
+	background: #ddd;
+	z-index: 100;
+}
+
+.fenetreAttente .fenetre_entete h3 {
+	overflow: auto;
+	margin: 0 0 0 5px;
+	font-size: 1em;
+	font-weight: bold;
+	color: #777;
+	line-height: 24px;
+}
+
+.fenetre_entete img {
+	position: absolute;
+	top: 0;
+	right: 0;
+	background: transparent;
+	width: 20px;
+	height: 20px;
+	margin: 2px;
+}
+
+.fenetreAttente .fenetre_contenu p #puce {
+	width: 43px;
+	height: 11px;
+	display: block;
+	margin: 40px auto auto;
+}
+
+.fenetreAide .fenetre_contenu p #puce {
+	width: 43px;
+	height: 11px;
+	display: block;
+	margin: 40px auto auto;
+}
+
+.fenetre_entete a {
+	margin: 0;
+	padding: 0;
+}
+
+.fenetreAttente .fenetre_contenu {
+	width: auto;
+	background: transparent;
+	margin: 20px 30px;
+	z-index: 100;
+}
+
+.fenetreAide .fenetre_contenu {
+	width: auto;
+	background: transparent;
+	margin: 20px 20px;
+	z-index: 100;
+}
+
+.fenetreAttente .fenetre_contenu h3,.fenetreAttente #fenetre_contenu p {
+	overflow: auto;
+}
+
+#aidePopIn h2 {
+	margin-bottom: 0;
+	color: #B75190;
+}
+
+#aidePopIn h3 {
+	margin-bottom: 0;
+	color: #B75190;
+}
+
+#aidePopIn img {
+	float: right;
+/*	height:1em; */
+}
+
+#fenetreDidacticiel img {
+	position: absolute;
+	right: 6px;
+	top: 6px;
+}
+
+/* --- TABLEAU --- */
+/*
+table {
+	border-collapse : separate;
+	border-spacing: 5px;
+}
+
+.tab-box table {
+	background-color: transparent;
+	margin-bottom: 3px;
+	line-height: 1.363em;
+	border-spacing: 0px;
+	border-collapse: separate;
+	table-layout: fixed;
+	cellpadding:0;
+	cellspacing:0;
+	border-bottom : 2px solid #d2d2d2;
+	border-top : 0;
+	border-left : 0;
+	border-right : 0;
+}
+
+.tab-footer{
+	height : 15px;
+	background-color: #FFFFFF;
+	}
+
+.tab-footer{
+	height : 15px;
+	background-color: #FFFFFF;
+	}
+table .premier {
+	padding-left: 10px;
+	border-left: none;
+	}
+
+.pair 	{
+	background: #FFFFFF;
+	min-height: 30px;
+	max-height: 30px;
+	line-height: 10px;
+}
+
+.vue-detail {
+	border-bottom : none;
+}
+
+.vue-detail:hover {
+	border-bottom : none;
+}
+
+.tab-box table td {
+	 height: 30px;
+	 vertical-align: middle;
+	 text-align: left;
+	 padding: 8px;
+	 text-overflow: hidden;
+	 white-space: nowrap;
+	 border-left: none;
+	 border-right: none;
+	 border-bottom: none;
+	 border-top: 1px solid #d2d2d2;
+}
+
+.tab-box table th {
+	background: #eef6fb;
+	vertical-align: middle;
+	font-weight: normal;
+	text-align: left;
+	color: #2270a1;
+	height: 30px;
+	padding: 8px;
+	width: inherit;
+	border-left: none;
+	border-right: none;
+	border-bottom: none;
+	border-top: 1px solid #d2d2d2;
+}
+
+.tab-box table td {
+	border-left: 0;
+	color: #000;
+}
+
+.tab-box table .triable {
+	padding: 0 15px 0 0px;
+	}
+
+.tab-box table th a {
+	color: #0062AD;
+	display: block;
+	display: table-cell;
+	vertical-align: middle;
+	min-height: 30px;
+	line-height: 14px;
+	padding-left: 15px;
+	width: inherit;
+	border-bottom: none;
+	padding-right: 0;
+}
+
+.tab-box table th.triable
+{
+	padding: 0;
+}
+*/
+.tab-box table .triable a {
+	color: #0062AD;
+	background: url(../images/picto_tri.gif) #eef6fb 1px center no-repeat;
+	border-bottom: none;
+}
+.interrog {
+	color:none;
+	background:none!important;
+	border-bottom: none;
+}
+.tab-box table .triable {
+	background: url(../images/picto_tri.gif) #eef6fb 1px center no-repeat;
+}*/
+.interrog{
+	background: none!important;
+}
+.tab-box table .tri-asc a {
+	background: url(../images/picto_tri_asc.gif) #eef6fb 1px center no-repeat;
+	background-color: #eef6fb;
+}
+
+.tab-box table .tri-desc a {
+	background: url(../images/picto_tri_desc.gif) #eef6fb 1px center no-repeat;
+	background-color: #eef6fb;
+}
+
+.tab-box table th a:hover {
+	color: #0062AD;
+	background: url(../images/picto_tri_survol.gif) #eef6fb 1px center no-repeat;
+	border-bottom: none;
+}
+
+.tab-box table th:last-child a:hover {
+	color: #0062AD;
+	background: url(../images/picto_tri_survol.gif) #eef6fb 1px center no-repeat;
+}
+
+.tab-box table td.center
+{
+	text-align: center;
+	padding:0;
+}
+
+.tab-interpage, .tab-interpagebas{
+	background-color:#FFF;
+}
+.tab-interpage, .tab-interpagebas #tabinterpage-bastab_PRN_AAT{
+	width:auto;
+	float:left;
+}
+.tab-interpagebas #tabinterpage-bastab_PRN_AAT{
+	width:100%;
+}
+.td_plusieursLignes, #tabGR_RecapListRdv .cell div {
+	line-height: 1.45em;
+	white-space : pre-line;
+	word-break : keep-all;
+	max-height: 100px;
+}
+
+#tabGR_RecapListRdv td {
+	padding-top:5px;
+	padding-bottom:5px;
+}
+
+/* --- RESULTAT DE RECHERCHE --- */
+
+.resultat {
+	padding-left: 13px;
+	}
+
+
+/* --- NAVIGATION INTERPAGE --- */
+
+.navigation-interpage .page {
+	text-decoration: none;
+	min-width: 1em;
+	}
+.navigation-interpage .dernier{
+	width: auto;
+	margin-left: 5px;
+	}
+.navigation-interpage li{
+	background-color: #ffffff;
+	}
+.page {
+	display: inline-block;
+	text-align: center;
+	width: auto; height: 15px;
+	line-height: 15px;
+	margin:  0 3px;
+	}
+.navigation-interpage .precedent,
+.navigation-interpage .precedentinactif,
+.navigation-interpage .suivantinactif,
+.navigation-interpage .suivant {
+	width: 15px; height: 15px;
+	display: block;
+	border-bottom: none;
+	}
+.navigation-interpage .courant {
+	background: #eef6fb;
+	font-weight: bold;
+	text-decoration: none;
+	}
+
+.invisible{
+	position: absolute !important;
+	top: -2000px !important;
+	left: -2000px !important;
+	display: block !important;
+	width: 0 !important;
+	height: 0 !important;
+	line-height: 0 !important;
+}
+
+.precedent {
+	background: url("../images/biblicnam/interPage/btn_precedent.gif") no-repeat;
+	margin:  0 15px 0 0px;
+}
+.suivant {
+	background: url("../images/biblicnam/interPage/btn_suivant.gif") no-repeat;
+	margin:  0 0px 0 15px;
+}
+a:hover.precedent {
+	background: url("../images/biblicnam/interPage/btn_precedent_survol.gif") no-repeat;
+}
+a:hover.suivant {
+	background: url("../images/biblicnam/interPage/btn_suivant_survol.gif") no-repeat;
+}
+
+/* BULLE */
+
+.bulle {
+	background-color: #df7cb7;;
+	color: white;
+	border-radius:0px;
+}
+
+.bulle .fenetre-header {
+	background-color: #df7cb7;
+	color: white;
+	border-bottom: 1px solid white;
+}
+
+/** On masque le titre qui depasse **/
+@media only screen and (max-width: 520px) {
+	.bulle .fenetre-header {
+		overflow: hidden;
+	}
+}
+
+.bulle .fenetre-header .fenetre-button {
+	background-image: url("../images/icon-close.png");
+	background-position: center;
+}
+
+.bulle a {
+	color: #FFFFFF;
+}
+
+.bulle a:hover {
+	color: #FFFFFF;
+}
+
+/* FIN BULLE */
+
+/* FENETRE MODALE */
+
+.popbg {
+	background-color : #276777;
+	opacity: 0.75;
+}
+
+.fenetre {
+	border-bottom: none;
+	padding: 20px;
+	width: 760px;
+	/* align-content: center; */
+	font-size: 1em;
+	/* margin-left: 300px; */
+	/* margin-top: 3px; */
+}
+
+/** la fenetre prend toute la place **/
+@media only screen and (max-width: 520px) {
+	.fenetre {
+		width: 100%;
+	}
+}
+
+.modale .fenetre-header {
+	background-color: #FFFFFF;
+	color:#276777;
+	font-size: 1.2em;
+	cursor: default;
+	border-bottom: 1px solid #2270a1;
+	padding:0;
+}
+
+.modale p {
+	padding: 0 0 8px;
+}
+
+.modale .fenetre-header .fenetre-button {
+	/*background-image: url("../images/icone_deconnecter.gif");*/
+	background-position: right center;
+	float:right;
+}
+
+.cnamts-hidden {
+	display: none;
+}
+
+.tip-text {
+	border-color: #0062AD;
+}
+
+/**Refonte des �tapes**/
+.moyen li a span > span,
+.moyen li:first-child span > span,
+.moyen li.derniereEtape span > span,
+.moyen li:first-child a,
+.moyen li.dernierEtape,
+.moyen li:first-child a span > span,
+.moyen li a {
+	min-width:0px;
+}
+.moyen li a{
+	border-bottom:0px;
+	min-width:0px;
+}
+
+.grand li a span > span,
+.grand li:first-child span > span,
+.grand li .derniere-etape span>span,
+.grand li:first-child a,
+.grand li .dernier-etape,
+.grand li:first-child a span > span,
+.grand li a {
+	min-width:0px;
+}
+.grand li a{
+	border-bottom:0px;
+	min-width:0px;
+}
+.etapes li a{
+	color:#000000;
+}
+
+
+.etape-active a,
+.etape-active a:hover,
+.etapes a[aria-selected="true"] {
+    background-image: url("../images/biblicnam/chevron1/bib1v_sprite.png");
+    background-position: right -644px;
+    background-repeat: no-repeat;
+}
+
+.etapes li:first-child a[aria-selected="true"] span > span
+{
+    background-image: url("../images/biblicnam/chevron1/chevron_actif.png");
+    background-position: -15px 0;
+    background-repeat: no-repeat;
+    color:#ffffff;
+}
+.etapes a[aria-selected="true"] span > span
+{
+    background-image: url("../images/biblicnam/chevron1/chevron_actif.png");
+    background-repeat: no-repeat;
+    color:#ffffff;
+}
+.etape-courante a,
+.etape-active a,
+.etapes a[aria-selected="false"],
+.etapes a[aria-selected="false"]:hover {
+    background-image: url("../images/biblicnam/chevron1/bib1v_sprite.png");
+    background-position: right -584px;
+    background-repeat: no-repeat;
+}
+
+.etapes li:first-child a[aria-selected="false"]:hover span > span,
+.etapes li:first-child a[aria-selected="false"] span > span
+{
+    background-image: url("../images/biblicnam/chevron1/chevron_nonactif.png");
+    background-position: -15px 0;
+    background-repeat: no-repeat;
+}
+
+.etapes a[aria-selected="false"] span > span,
+.etapes a[aria-selected="false"]:hover span > span {
+    background-image: url("../images/biblicnam/chevron1/bib3v_sprite.png");
+    background-position: left -90px;
+    background-repeat: no-repeat;
+}
+
+.etape-active a:hover span {
+    color: #000000;
+}
+
+.etapes a[aria-disabled="true"], .etapes a[aria-selected="true"] {
+	cursor: default;
+}
+

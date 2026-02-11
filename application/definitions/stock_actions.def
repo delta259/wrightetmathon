@@ -1,0 +1,17 @@
+// this file defines the stock module actions. Fields must be separated by ->
+// lines beginning // are comments and are ignored by the parser. 
+// The parser will select the lines in the order they are presented
+// its structure is as follows, 
+// stock_action_id
+// stock_action_name
+// stock_action_language_file
+// deleted, 0 = active, 1 = non-active. Parser selects active only
+// last -> is added to avoid using rtrim
+//
+10->stock_create->receivings->0->
+20->stock_receive->receivings->0->
+30->stock_adhoc->receivings->0->
+40->stock_suspended->receivings->0->
+50->stock_reorder->receivings->0->
+60->stock_suspended_reception->receivings->0->
+70->stock_import_inventory->receivings->0->

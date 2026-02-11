@@ -1,0 +1,245 @@
+/**
+* Contient quelques astuces basiques et classes conventionnelles d'aides � la composition
+**/
+
+
+
+#logo{
+	background: url('../images/logo_son.png');
+}
+
+
+
+
+/* Box model */
+*,
+*:before,
+*:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+
+/* Blocs */
+.block {
+	display: block;
+	margin-bottom: 1.5em;
+}
+
+.inline {
+	display: inline;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.row {
+ display: table-row;
+ }
+
+/* Positionnement */
+.right {
+	float: right;
+}
+
+.left {
+	float: left;
+}
+.center {
+	margin-right: auto;
+	margin-left: auto;
+}
+.clear_both {
+	clear: both;
+}
+
+.middle {
+	vertical-align: middle;
+}
+
+/* Texte */
+
+.souligne {
+	text-decoration: underline;
+}
+
+.gras {
+	font-weight: bold;
+}
+
+.italique {
+	font-style: italic;
+	font-weight: normal;
+}
+
+.souligne_gras {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.txt_milieu {
+	text-align: center;
+}
+
+.txt_droite {
+	text-align: right;
+}
+
+.txt_gauche {
+	text-align: left;
+}
+#centre{
+	width:780px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.nowrap{
+	white-space:nowrap;
+}
+
+/* Largeurs pixels*/
+
+.taille50 {
+	width: 50px;
+}
+
+.taille100 {
+	width: 100px;
+}
+
+.taille150 {
+	width: 150px;
+}
+
+.taille200 {
+	width: 200px;
+}
+
+.taille250 {
+	width: 250px;
+}
+
+.taille300 {
+	width: 300px;
+}
+
+.taille350 {
+	width: 350px;
+}
+
+.taille400{
+	width: 400px;
+}
+
+.taille450{
+	width: 450px;
+}
+
+.taille500{
+	width: 500px;
+}
+
+.taille520{
+	width: 520px;
+}
+
+.taille550{
+	width: 550px;
+}
+
+.taille600{
+	width: 600px;
+}
+
+.taille650{
+	width: 650px;
+}
+
+.taille700{
+	width: 700px;
+}
+
+.taille750{
+	width: 750px;
+}
+
+.taille800{
+	width: 800px;
+}
+
+.taille850{
+	width: 850px;
+}
+
+.taille900{
+	width: 900px;
+}
+
+.taille950{
+	width: 950px;
+}
+
+.tailleMax980{
+	width: 980px;
+}
+
+/* Largeurs pourcentage */
+
+.taille10p {
+	width: 10%;
+}
+
+.taille20p {
+	width: 20%;
+}
+.taille25p {
+	width: 25%;
+}
+.taille30p {
+	width: 30%;
+}
+.taille33p {
+	width: 33.3333%;
+}
+.taille40p {
+	width: 40%;
+}
+.taille50p {
+	width: 50%;
+}
+.taille60p {
+	width: 60%;
+}
+.taille66p {
+	width: 66.6666%;
+}
+.taille70p {
+	width: 70%;
+}
+.taille75p {
+	width: 75%;
+}
+.taille80p {
+	width: 80%;
+}
+.taille90p {
+	width: 90%;
+}
+.taille100p {
+	width: 100%;
+}
+
+/* Couleurs utiles */
+.rose {
+	color: #C84294;
+}
+
+.bleu {
+	color: #357BB1;
+}
+
+.violet {
+	color: #B75190;
+}

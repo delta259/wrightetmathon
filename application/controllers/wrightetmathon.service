@@ -1,0 +1,10 @@
+[Unit]
+Description=Initialise wrightetmathon POS system
+After=httpd.service
+
+[Service]
+Type=oneshot
+ExecStart=/var/www/html/wrightetmathon/application/controllers/launch.sh
+
+[Install]
+WantedBy=multi-user.target

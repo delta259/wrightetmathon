@@ -1,0 +1,17 @@
+// this file defines the bulk actions that can be applied to items. Fields must be separated by ->
+// lines beginning // are comments and are ignored by the parser. 
+// The parser will select the lines in the order they are presented
+// its structure is as follows, 
+// bulk_action_id
+// bulk_action_name
+// bulk_action_language_file
+// deleted, 0 = active, 1 = non-active. Parser selects active only
+// last -> is added to avoid using rtrim
+//
+10->bulk_deactivate->items->0->
+20->bulk_salespriceTTC->items->0->
+30->bulk_reorderpolicy->items->0->
+40->bulk_reactivate->items->0->
+50->bulk_DLUO->items->0->
+60->bulk_prixachat->items->0->
+70->bulk_supplier->items->0->

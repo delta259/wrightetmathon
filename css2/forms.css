@@ -1,0 +1,594 @@
+/**
+* Contient les css utilis�s pour les formulaires
+**/
+.cadre{
+top:10%;
+border :0px;
+z-index: 103;
+}
+
+.cell{
+    padding-left: 15px;
+    padding-right: 5px;
+
+}
+
+.error_message {
+  margin-top: 8px;
+margin-bottom: 0px;
+  box-shadow: 1px 1px 6px 0px;
+  border: red 1px solid;
+  padding: 10px;
+margin-bottom: 16px;
+font-family: Roboto,Helvetica,Arial,FreeSans,sans-serif;
+  font-size: 16px;
+  color: red;
+  
+  /*margin-top: -70px;*/
+  background: white;
+}
+
+
+
+.warning_message_vente{
+  box-shadow: 1px 1px 6px 0px;
+  border: red 1px solid;
+  padding: 10px;
+    width: 70%;
+  font-size: 17px;
+  color: red;
+margin-bottom: 10px;
+  background: white;
+}
+
+.success_message{
+  box-shadow: 1px 1px 6px 0px;
+  border: green 1px solid;
+  padding: 10px;
+  /*  width: 50%;*/
+  font-size: 17px;
+  color: green;
+  margin-bottom: 10px;
+  background: white;
+}
+
+/* champ input */
+
+.champ {
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    width:88%;
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 1em;
+    height: 34px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    margin-bottom: 10px;
+    vertical-align: baseline;
+}
+
+
+  .zone_champ_saisie input,select{
+    background-color: #fff;
+     background-image: none;
+     /*border: 1px solid #699eb4;*/
+     border-radius: 3px;
+     color: #555;
+     font-size: 1em;
+     height:30px;
+     padding: 3px 6px;
+     transition: border-color 0.55s ease-in-out 0s, box-shadow 0.55s ease-in-out 0s;
+  
+     vertical-align:baseline;
+}
+
+
+
+.zone_champ_saisie_1 input{
+    background-color: #fff;
+     background-image: none;
+     border: 1px solid #699eb4;
+     border-radius: 3px;
+     color: #555;
+     font-size: 1em;
+     height:30px;
+     width: 60px;
+     padding: 3px 6px;
+     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+  
+     vertical-align:baseline;
+  }
+
+/*
+.zone_champ_obligatoire input, select{
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #e2d7d7;//#e05f5f
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 1em;
+    height: 30px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    /*margin-bottom: 5px;
+    vertical-align:baseline;
+}
+*/
+/* .zone_champ_saisie_caisse input,select{
+   background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    font-size: 1em;
+    height:30px;
+    padding: 3px 6px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    margin-bottom: 1.5px;
+    vertical-align:baseline;
+}*/
+
+input[type=file]{
+	margin-bottom: 10px;
+    vertical-align:baseline;
+    font-size: 1em;
+    height: 30px;
+    line-height: 1.42857;
+}
+
+.select_code_pays {
+    margin-bottom: 0px;
+    padding: 0px;
+    height: 20px;
+}
+
+.champ_standard {
+	margin-top: 10px;
+}
+
+.champ_masque {
+	display: none;
+}
+
+.champ_gauche {
+	margin-top: 10px;
+	float: left;
+}
+
+.champ_droite {
+	margin-top: 10px;
+	float: left;
+}
+
+.champ_alignement_droite {
+	margin-top: 10px;
+}
+
+.champ_ecart_superieur_top {
+	margin-top: 20px;
+}
+
+.champ_ecart_superieur_left {
+	margin-left: 40px;
+}
+.champ_moitie {
+	width: 48%;
+}
+.champ_right {
+	padding-top: 10px;
+}
+
+.champ_35percent{
+	width:250px;
+}
+
+/* Labels */
+
+.label {
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.label_cache {
+	position: absolute !important;
+	top: -2000px !important;
+	left: -2000px !important;
+	display: block !important;
+	width: 0 !important;
+	height: 0 !important;
+	line-height: 0 !important;
+}
+
+.blocform .label_violet{
+	width:100px;
+}
+
+.blocform .label{
+	text-align: right;
+	font: normal 1em Trebuchet MS, Verdana, sans-serif;
+	color: black;
+	margin: 0 0px 0 0;
+	padding: 0px;
+	display: block;
+    width: 280px;
+    float: left;
+
+}
+.label_violet {
+	font-weight: bold;
+	color: #A8407F;
+}
+
+.label_bleu {
+	color: #0956AE;
+	font-weight: bold;
+}
+
+.label_cote {
+	font-weight: bold;
+	margin: 10px 10px 0 10px;
+}
+
+.champ_alignement_droite .label {
+	float : left;
+}
+
+.champ_alignement_droite input {
+	float : right;
+}
+
+.placeholder {
+	color:#BEBEDE;
+}
+
+/* Radio */
+.champ_alignement_droite .btradio_gauche_bas {
+	float: right;
+	margin-top: 1em;
+	margin-right: 40px;
+}
+
+.champ_alignement_droite .btradio_gauche_bas label {
+	color: #A8407F;
+	font-weight: bold;
+}
+
+.champ_alignement_droite .btradio_droite_bas {
+	float:right;
+	margin-top: 1em;
+}
+
+.champ_alignement_droite .btradio_droite_bas label{
+	color: #A8407F;
+	font-weight: bold;
+}
+
+.radio_selection_benef {
+	margin: 0 10px 5px 0;
+}
+
+/* calendrier */
+
+.calendrier {
+	background-color: transparent;
+	background-image: url("../images/icon-calendar.png");
+	background-repeat: no-repeat;
+	background-position : right bottom;
+	border-bottom: none;
+}
+
+.calendrier:hover{
+	background-color: transparent;
+	background-image: url("../images/icon-calendar.png");
+	background-repeat: no-repeat;
+	background-position : right bottom;
+	border-bottom: none;
+}
+
+.spinner2
+{
+    position: fixed;
+    top: 50%;
+    left: 52%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+    z-index:1234;
+    /*overflow: auto;*/
+    width: 122px; /* width of the spinner gif */
+    height: 122px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+
+.spinnerarticle
+{
+    position: fixed;
+    top: 38%;
+    left: 50%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+
+    z-index:1234;
+    /*overflow: auto;*/
+    width: 122px; /* width of the spinner gif */
+    height: 122px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+.spinnerrapport
+{
+    position: fixed;
+    top: 40%;
+    left: 86%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+    z-index:1234;
+    /*overflow: auto;*/
+    width: 122px; /* width of the spinner gif */
+    height: 122px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+.spinnerdeconnexion
+{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+    z-index:1234;
+    /*overflow: auto;*/
+    width: 122px; /* width of the spinner gif */
+    height: 122px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+
+.spinner
+{
+    position: fixed;
+    top: 75%;
+    left: 80%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -100px; /* half height of the spinner gif */
+
+    z-index:1234;
+  /*  overflow: auto;*/
+    width: 200px; /* width of the spinner gif */
+    height: 200px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+
+.spinner_message
+{
+    position: fixed;
+    top: 85%;
+    left: 50%;
+    margin-left: -100px; /* half width of the spinner gif */
+    margin-top: -150px; /* half height of the spinner gif */
+    text-align:center;
+    z-index:1234;
+    overflow: auto;
+    width: 500px; /* width of the spinner gif */
+    height: 50px; /*height of the spinner gif +2px to fix IE8 issue */
+}
+
+.calendrier:active{
+	background-color: transparent;
+	background-image: url("../images/icon-calendar.png");
+	background-repeat: no-repeat;
+	background-position : right bottom;
+	border-bottom: none;
+}
+
+.datepicker {
+	border-color: #5999c9;
+	height: auto;
+	padding-bottom: 0.8em;
+}
+
+.datepicker .selected {
+	background-color: #5999c9 !important;
+}
+
+.datepicker .current {
+	background-color: #E0F0FF !important;
+}
+
+.titre_navigation_mois, .titre_navigation_annee {
+	background-color: #FFD9DF;
+}
+
+.titre_navigation_annee_prec, .titre_navigation_mois_prec {
+	background-image: url('../images/btn_precedent.gif');
+	background-position: left;
+}
+
+.titre_navigation_annee_prec:hover, .titre_navigation_mois_prec:hover {
+	background-image: url('../images/btn_precedent_survol.gif');
+	background-position: left;
+}
+
+.titre_navigation_annee_suiv, .titre_navigation_mois_suiv {
+	background-image: url('../images/btn_suivant.gif');
+	background-position: right;
+}
+
+.titre_navigation_annee_suiv:hover, .titre_navigation_mois_suiv:hover {
+	background-image: url('../images/btn_suivant_survol.gif');
+	background-position: right;
+}
+
+.titre_aujourdhui {
+	color: #b75190;
+	text-decoration: none;
+	border-bottom: 1px dotted #b75190;
+}
+
+.titre_aujourdhui:hover {
+	color: #b75190;
+	text-decoration: none;
+	border-bottom: 1px solid #b75190;
+}
+
+.titre_aujourdhui[aria-disabled="true"]{
+	display: none;
+}
+
+
+/** Modification du calendrier pour qu'il soit plus compact **/
+@media only screen and (max-width: 659px) {
+	.datepicker.dpstandard {
+		width: 16em;
+	}
+
+	.titre_navigation_mois {
+		width: 5em;
+	}
+
+	.titre_navigation_annee {
+		width: 3em;
+	}
+
+	.dpstandard .days .day {
+		width: 1em;
+	}
+
+	.datepicker .body {
+		margin-left: 0em;
+	}
+}
+
+/** Repositionnement du calendrier "astuce pour le voir" **/
+@media only screen and (max-width: 338px) {
+	.datepicker {
+		margin-left: 10em;
+	}
+}
+
+/* Message d'erreur */
+
+.erreur {
+	background: transparent url('../images/picto_erreur.gif') no-repeat left;
+	width: 21px;
+	height: 20px;
+	margin-left: 10px;
+ 	margin-right: 5px;
+	margin-top: 10px;
+	float: right;
+	border-bottom: none;
+}
+
+.erreur:hover {
+	border-bottom: none;
+}
+
+b.erreur_champ {
+	background-position: right 10px;
+	background-image: url('../images/picto_erreur.png');
+}
+
+.erreur_choix {
+	background-image: url('../images/picto_erreur.png');
+}
+
+.zone-alerte {
+	border: 1px solid #ebccd1;
+    padding: 15px;
+    background-image: none;
+    background-color: #f2dede;
+    color: #a94442;
+    display: table;
+    width: 100%;
+}
+
+.zone-warning {
+	padding: 15px;
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+    border: 1px solid #faebcc;
+}
+
+.zone-ok {
+    padding: 15px;
+    background-color: #dff0d8;
+    color: #3c763d;
+    border: 1px solid #d6e9c6;
+    background-image: none;
+    display: table;
+    width: 100%;
+}
+
+.zone-alerte .close, .zone-ok .close {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.zone-alerte .close button, .zone-ok .close button{
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.2;
+    filter: alpha(opacity=20);
+    border: 0;
+    background: transparent;
+    padding:0;
+}
+
+.zone-alerte .close button:hover, .zone-ok .close button:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
+}
+
+.champ_alignement_droite b.erreur_champ {
+	float : right;
+	margin-left : 5px;
+	padding-left : 32px;
+	margin-right : 0px;
+	padding-right : 0px;
+	background-position: left 10px;
+}
+
+.msg_erreur {
+	color: #C84294; /* rose */ /*#EE0000; rouge*/
+	font-weight: bold;
+}
+
+/* aide */
+ /*.aide, .obligatoire, .listesupp {
+	margin-left:5px;
+	margin-right: 5px;
+	vertical-align: middle;
+	padding-left: 0;
+}
+*/
+/* Saisie obligatoire */
+/*
+span.obligatoire {
+	color: #0B57AD;
+	vertical-align: middle;
+}
+
+.obligatoire {
+	width: 100%;
+	margin-bottom: 5px;
+	text-align : right;
+}*/
+
+/** Separateur **/
+hr {
+	background-color: #c2c2c2;
+    border: 0 none;
+    color: #c2c2c2;
+    height: 1px;
+}
+
+
+/** choix biblicnam **/
+.zone_choix {
+	margin-bottom: 10px;
+}

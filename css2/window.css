@@ -1,0 +1,11 @@
+/*
+    The "borderless" skin theme simply disables window borders and makes window content background transparent.
+    These style rules are more specific than other rules applicable to the window and window content.
+*/
+
+.wlp-bighorn-theme-borderless .wlp-bighorn-window
+{
+    border: 0;
+}
+
+

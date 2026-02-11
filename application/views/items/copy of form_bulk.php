@@ -1,0 +1,587 @@
+<div id="required_fields_message"><?php echo $this->lang->line('common_fields_required_message'); ?></div>
+<ul id="error_message_box"></ul>
+<?php
+// when clicked use the controller, items, selecting method save and passing it the item ID. 
+// Use jquery validate to validate the input and submit the form.
+echo form_open('items/bulk_update/'.$item_info->item_id.'/'.$origin, array('id'=>'item_form'));
+?>
+<fieldset id="item_basic_info">
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_name').':', 'name',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'name',
+				'id'=>'name',
+				'value'=>$item_info->name)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_category').':', 'category',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'category',
+				'id'=>'category',
+				'value'=>$item_info->category)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_supplier').':', 'supplier',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_dropdown('supplier_id', $suppliers, $selected_supplier);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_cost_price').':', 'cost_price',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'cost_price',
+				'size'=>'8',
+				'id'=>'cost_price',
+				'value'=>$item_info->cost_price)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_unit_price').':', 'unit_price',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'unit_price',
+				'size'=>'8',
+				'id'=>'unit_price',
+				'value'=>$item_info->unit_price)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_tax_1').':', 'tax_percent_1',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'tax_names[]',
+				'id'=>'tax_name_1',
+				'size'=>'8',
+				'value'=> isset($item_tax_info[0]['name']) ? $item_tax_info[0]['name'] : $this->config->item('default_tax_1_name'))
+			);?>
+			</div>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'tax_percents[]',
+				'id'=>'tax_percent_name_1',
+				'size'=>'5', // Wright modified 18/01/2014 to show all decimals
+				'value'=> isset($item_tax_info[0]['percent']) ? $item_tax_info[0]['percent'] : $default_tax_1_rate)
+			);?>
+			%
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_tax_2').':', 'tax_percent_2',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'tax_names[]',
+				'id'=>'tax_name_2',
+				'size'=>'8',
+				'value'=> isset($item_tax_info[1]['name']) ? $item_tax_info[1]['name'] : $this->config->item('default_tax_2_name'))
+			);?>
+			</div>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'tax_percents[]',
+				'id'=>'tax_percent_name_2',
+				'size'=>'5', // Wright modified 18/01/2014 to show all decimals
+				'value'=> isset($item_tax_info[1]['percent']) ? $item_tax_info[1]['percent'] : $default_tax_2_rate)
+			);?>
+			%
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend> <?php echo $this->lang->line('items_reorder'); ?> </legend>
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_reorder_policy').' Y/N :', 'reorder_policy',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'reorder_policy',
+				'id'=>'reorder_policy',
+				'value'=>$item_info->reorder_policy)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_reorder_level').':', 'reorder_level',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'reorder_level',
+				'id'=>'reorder_level',
+				'value'=>$item_info->reorder_level)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_reorder_quantity').':', 'reorder_quantity',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'reorder_quantity',
+				'id'=>'reorder_quantity',
+				'value'=>$item_info->reorder_quantity)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_reorder_pack_size').':', 'reorder_pack_size',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'reorder_pack_size',
+				'id'=>'reorder_pack_size',
+				'value'=>$item_info->reorder_pack_size)
+			);?>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend> <?php echo $this->lang->line('items_dluo_indicator'); ?> </legend>
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_dluo_indicator').':', 'dluo_indicator',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'dluo_indicator',
+				'id'=>'dluo_indicator',
+				'value'=>$item_info->dluo_indicator)
+			);?>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend> <?php echo $this->lang->line('items_giftcard_indicator'); ?> </legend>
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_giftcard_indicator').':', 'giftcard_indicator',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'giftcard_indicator',
+				'id'=>'giftcard_indicator',
+				'value'=>$item_info->giftcard_indicator)
+			);?>
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend> <?php echo $this->lang->line('items_DynamicKit'); ?> </legend>
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_DynamicKit').'  =>  '.$this->lang->line('items_kit_reference').':', 'DynamicKit',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_checkbox(array(
+				'name'=>'DynamicKit',
+				'id'=>'DynamicKit',
+				'value'=>1,
+				'checked'=>($item_info->DynamicKit)? 1 : 0)
+			);?>
+			</div>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'kit_reference',
+				'id'=>'kit_reference',
+				'value'=>$item_info->kit_reference)
+			);?>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<div class="field_row clearfix">	
+		<?php echo form_label($this->lang->line('items_location').':', 'location',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'location',
+				'id'=>'location',
+				'value'=>$item_info->location)
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_description').':', 'description',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_textarea(array(
+				'name'=>'description',
+				'id'=>'description',
+				'value'=>$item_info->description,
+				'rows'=>'2', //Wright modified 18/01/2014
+				'cols'=>'30') //Wright modified 18/01/2014
+			);?> 
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_allow_alt_desciption').':', 'allow_alt_description',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_checkbox(array(
+				'name'=>'allow_alt_description',
+				'id'=>'allow_alt_description',
+				'value'=>1,
+				'checked'=>($item_info->allow_alt_description)? 1 : 0) // Wright modified 18/01/2014
+			);?>
+			</div>
+		</div>
+
+		<div class="field_row clearfix">
+		<?php echo form_label($this->lang->line('items_is_serialized').':', 'is_serialized',array('class'=>'wide')); ?>
+			<div class='form_field'>
+			<?php echo form_checkbox(array(
+				'name'=>'is_serialized',
+				'id'=>'is_serialized',
+				'value'=>1,
+				'checked'=>($item_info->is_serialized)? 1 : 0)
+			);?>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<!-- end Wright added -->
+
+	<!--  GARRISON ADDED 4/21/2013 -->
+	<div class="field_row clearfix">	
+	<?php
+	if($this->config->item('custom1_name') != NULL)
+	{
+		echo form_label($this->config->item('custom1_name').':', 'custom1',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom1',
+				'id'=>'custom1',
+				'value'=>$item_info->custom1)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom2_name') != NULL)
+	{
+		echo form_label($this->config->item('custom2_name').':', 'custom2',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom2',
+				'id'=>'custom2',
+				'value'=>$item_info->custom2)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom3_name') != NULL)
+	{
+		echo form_label($this->config->item('custom3_name').':', 'custom3',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom3',
+				'id'=>'custom3',
+				'value'=>$item_info->custom3)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom4_name') != NULL)
+	{
+		echo form_label($this->config->item('custom4_name').':', 'custom4',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom4',
+				'id'=>'custom4',
+				'value'=>$item_info->custom4)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom5_name') != NULL)
+	{
+		echo form_label($this->config->item('custom5_name').':', 'custom5',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom5',
+				'id'=>'custom5',
+				'value'=>$item_info->custom5)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom6_name') != NULL)
+	{
+		echo form_label($this->config->item('custom6_name').':', 'custom6',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom6',
+				'id'=>'custom6',
+				'value'=>$item_info->custom6)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom7_name') != NULL)
+	{
+		echo form_label($this->config->item('custom7_name').':', 'custom7',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom7',
+				'id'=>'custom7',
+				'value'=>$item_info->custom7)
+			);?>
+		</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom8_name') != NULL)
+	{
+		echo form_label($this->config->item('custom8_name').':', 'custom8',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom8',
+				'id'=>'custom8',
+				'value'=>$item_info->custom8)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom9_name') != NULL)
+	{
+		echo form_label($this->config->item('custom9_name').':', 'custom9',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom9',
+				'id'=>'custom9',
+				'value'=>$item_info->custom9)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<div class="field_row clearfix">
+	<?php
+	if($this->config->item('custom10_name') != NULL)
+	{
+		echo form_label($this->config->item('custom10_name').':', 'custom10',array('class'=>'wide')); ?>
+		<div class='form_field'>
+			<?php echo form_input(array(
+				'name'=>'custom10',
+				'id'=>'custom10',
+				'value'=>$item_info->custom10)
+			);?>
+			</div>
+		</div>
+	<?php }//end if?>
+
+	<!--   END GARRISON ADDED -->
+
+	<?php
+	echo form_submit	(array	(
+									'name'	=>	'submit',
+									'id'	=>	'submit',
+									'value'	=>	$this->lang->line('common_submit'),
+									'class'	=>	'btmodification'
+								)
+						);
+?>
+</fieldset>
+<?php
+	echo form_close();
+?>
+
+<?php
+	// show delete button - only of client exist already
+	if ($item_info->item_id != '')
+	{
+?>
+		<br />
+		<fieldset>
+			<?php						
+				echo form_open		(
+									'items/delete/'.$item_info->item_id,
+									array('id'=>'item_delete_form')
+									);
+											
+				echo form_submit	(	array	(
+												'name'	=>	'delete',
+												'id'	=>	'delete',
+												'value'	=>	$this->lang->line('items_delete'),
+												'class'	=>	'btmodification'
+												)
+									);
+				echo form_close();
+			?>			
+		</fieldset>
+<?php
+	}
+?>
+
+<script type='text/javascript'>
+
+//validation and submit handling
+$(document).ready(function()
+{
+	$("#category").autocomplete("<?php echo site_url('items/suggest_category');?>",{max:100,minChars:0,delay:10});
+    $("#category").result(function(event, data, formatted){});
+	$("#category").search();
+
+/** GARRISON ADDED 5/18/2013 **/	
+	$("#location").autocomplete("<?php echo site_url('items/suggest_location');?>",{max:100,minChars:0,delay:10});
+    $("#location").result(function(event, data, formatted){});
+	$("#location").search();
+
+	$("#custom1").autocomplete("<?php echo site_url('items/suggest_custom1');?>",{max:100,minChars:0,delay:10});
+    $("#custom1").result(function(event, data, formatted){});
+	$("#custom1").search();
+
+	$("#custom2").autocomplete("<?php echo site_url('items/suggest_custom2');?>",{max:100,minChars:0,delay:10});
+    $("#custom2").result(function(event, data, formatted){});
+	$("#custom2").search();
+
+	$("#custom3").autocomplete("<?php echo site_url('items/suggest_custom3');?>",{max:100,minChars:0,delay:10});
+    $("#custom3").result(function(event, data, formatted){});
+	$("#custom3").search();
+
+	$("#custom4").autocomplete("<?php echo site_url('items/suggest_custom4');?>",{max:100,minChars:0,delay:10});
+    $("#custom4").result(function(event, data, formatted){});
+	$("#custom4").search();
+
+	$("#custom5").autocomplete("<?php echo site_url('items/suggest_custom5');?>",{max:100,minChars:0,delay:10});
+    $("#custom5").result(function(event, data, formatted){});
+	$("#custom5").search();
+
+	$("#custom6").autocomplete("<?php echo site_url('items/suggest_custom6');?>",{max:100,minChars:0,delay:10});
+    $("#custom6").result(function(event, data, formatted){});
+	$("#custom6").search();
+
+	$("#custom7").autocomplete("<?php echo site_url('items/suggest_custom7');?>",{max:100,minChars:0,delay:10});
+    $("#custom7").result(function(event, data, formatted){});
+	$("#custom7").search();
+
+	$("#custom8").autocomplete("<?php echo site_url('items/suggest_custom8');?>",{max:100,minChars:0,delay:10});
+    $("#custom8").result(function(event, data, formatted){});
+	$("#custom8").search();
+
+	$("#custom9").autocomplete("<?php echo site_url('items/suggest_custom9');?>",{max:100,minChars:0,delay:10});
+    $("#custom9").result(function(event, data, formatted){});
+	$("#custom9").search();
+
+	$("#custom10").autocomplete("<?php echo site_url('items/suggest_custom10');?>",{max:100,minChars:0,delay:10});
+    $("#custom10").result(function(event, data, formatted){});
+	$("#custom10").search();
+/** END GARRISON ADDED **/
+	
+	
+	$('#item_delete_form').submit	(
+									function()
+									{
+										if (!confirm('<?php echo $this->lang->line("items_confirm_delete"); ?>'))
+										return false;
+									}
+									);
+	
+	
+	$('#item_form').validate({
+		/*document.write(form);*/
+		submitHandler:function(form)
+		{
+			form.submit();
+		},
+		errorLabelContainer: "#error_message_box",
+ 		wrapper: "li",
+		rules:
+		{
+			cost_price:
+			{
+				number:true
+			},
+
+			unit_price:
+			{
+				number:true
+			},
+			tax_percent:
+			{
+				number:true
+			},
+			quantity:
+			{
+				number:true
+			},
+			reorder_level:
+			{
+				number:true
+			},
+			reorder_quantity:
+			{
+				number:true
+			},
+			reorder_pack_size:
+			{
+				number:true
+			}
+   		},
+		messages:
+		{
+			cost_price:
+			{
+				number:"<?php echo $this->lang->line('items_cost_price_number'); ?>"
+			},
+			unit_price:
+			{
+				number:"<?php echo $this->lang->line('items_unit_price_number'); ?>"
+			},
+			tax_percent:
+			{
+				number:"<?php echo $this->lang->line('items_tax_percent_number'); ?>"
+			},
+			quantity:
+			{
+				number:"<?php echo $this->lang->line('items_quantity_number'); ?>"
+			},
+			reorder_level:
+			{
+				number:"<?php echo $this->lang->line('items_reorder_level_number'); ?>"
+			},
+			reorder_quantity:
+			{
+				number:"<?php echo $this->lang->line('items_reorder_quantity_number'); ?>"
+			},
+			reorder_pack_size:
+			{
+				number:"<?php echo $this->lang->line('items_reorder_pack_size_number'); ?>"
+			}
+		}
+	});
+});
+</script>

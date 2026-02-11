@@ -1,0 +1,60 @@
+// This file defines all the parameters related to a module. 
+// A module relates to all the actions pertaining to a subject such as Customers, or Items etc
+// Users are given permissions to a module by user_id and module_id
+// 
+// The structure of the data is,
+//	FIELD									DESCRIPTION												ARRAY FIELD ORDER 
+// 	module_id								unique													0
+//	name_lang_key							the key of the language element for the name			1
+//	desc_lang_key							same for the long description							2
+//	sort									the sort order for the module							3
+//	module_name								name of the module										4
+//	show_new_button							whether to show the create new button, 1=yes, 0=no		5
+//	show_clone_button						ditto for clone											6
+//	show_merge_button						ditto for merge											7
+//	show_undel_button						ditto for undelete										8
+//	show_exit_button						ditto for exit button									9
+//	show_in_header							whether to show module icon in header					10
+//	user_menu								whether to show module in user menu						11
+//	admin_menu								ditto admin menu										12
+//	sys_admin_menu							ditto sys_admin menu									13
+//	icon_file								the path and name of the icon file for this module		14
+//	deleted									whether module is active, 0=yes, 1=no					15
+//
+// elements are separated by ->
+// don't forget the terminating on each line ->
+//
+// When loading the module definitions an array is loaded starting with array index 0
+// Modules are loaded during login in login.php
+//
+DEF->module_id->name_lang_key->desc_lang_key->sort->module_name->show_new_button->show_clone_button->show_merge_button->show_undel_button->show_exit_button->show_in_header->user_menu->admin_menu->sys_admin_menu->icon_file->deleted->
+1->module_branches->module_branches_desc->60->branches->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+2->module_cashtills->module_cashtills_desc->1300->cashtills->0->0->0->0->0->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+3->module_catalogue->module_catalogue_desc->1400->catalogue->1->1->1->1->1->Y->N->Y->N->path/to/icon/file/icon_name.ext->0->
+4->module_categories->module_categories_desc->150->categories->1->0->0->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+5->module_config->module_config_desc->20->config->0->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+6->module_countries->module_countries_desc->25->countries->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+7->module_currencies->module_currencies_desc->30->currencies->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+8->module_currency_definitions->module_currency_definitions_desc->40->currency_definitions->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+9->module_customers->module_customers_desc->100->customers->1->0->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+10->module_customer_profiles->module_customer_profiles_desc->93->customer_profiles->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+11->module_drive->module_drive_desc->1100->drive->1->1->1->1->1->Y->N->Y->N->path/to/icon/file/icon_name.ext->0->
+12->module_employees->module_employees_desc->800->employees->1->0->0->0->1->Y->N->Y->N->path/to/icon/file/icon_name.ext->0->
+13->module_fdjs->module_fdjs_profiles_desc->750->fdjs->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+14->module_giftcards->module_giftcards_desc->900->giftcards->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->1->
+15->module_items->module_items_desc->200->items->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+16->module_item_kits->module_item_kits_desc->300->item_kits->1->0->0->0->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->1->
+17->module_messages->module_messages_desc->80->messages->1->0->0->0->1->N->N->N->Y->path/to/icon/file/icon_name.ext->1->
+18->module_paymethods->module_paymethods_desc->70->paymethods->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+19->module_pricelists->module_pricelists_desc->90->pricelists->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+20->module_receivings->module_receivings_desc->20->receivings->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+21->module_reports->module_reports_desc->500->reports->0->0->0->0->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+22->module_sales->module_sales_desc->700->sales->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+23->module_security->module_security_desc->1200->security->1->1->1->1->1->Y->Y->N->N->path/to/icon/file/icon_name.ext->0->
+24->module_suppliers->module_suppliers_desc->400->suppliers->1->0->0->1->1->Y->N->Y->N->path/to/icon/file/icon_name.ext->0->
+25->module_targets->module_targets_desc->95->targets->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+26->module_timezones->module_timezones_desc->25->timezones->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+27->module_warehouses->module_warehouses_desc->50->warehouses->1->0->0->0->1->N->N->Y->N->path/to/icon/file/icon_name.ext->0->
+28->module_modules->module_modules_desc->85->modules->1->0->0->0->1->N->N->N->Y->path/to/icon/file/icon_name.ext->1->
+29->module_imports->module_imports_desc->85->imports->1->0->0->0->1->N->N->N->Y->path/to/icon/file/icon_name.ext->0->
+61->module_trackers->module_trackers_desc->85->trackers->1->0->0->0->0->N->N->N->Y->path/to/icon/file/icon_name.ext->0->

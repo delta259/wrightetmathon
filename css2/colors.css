@@ -1,0 +1,146 @@
+/**
+* Contient les css utilis�s pour les couleurs et les polices
+**/
+
+.colorobligatoire{
+    border: 1px solid #cf2b23;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+.colornormal {
+  border: 1px solid #699eb4;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+/*.colornormal input,select{
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}*/
+/*.colorobligatoire input,select{
+/*    border: 1px solid #cf2b23;
+}*/
+
+html {
+  background-color: white;
+}
+
+body {
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 0.875em;
+  background-color: white;
+  color: #000;
+}
+
+/* Couleurs des liens */
+
+
+a:hover.rose {
+	color: #C84294;
+}
+
+a:hover.bleu {
+	color: #357BB1;
+}
+
+a:hover.violet {
+	color: #B75190;
+}
+
+.wlp-bighorn-header
+{
+	/*background-color: #d2d2d2;*/
+}
+
+.wlp-bighorn-footer #Footer
+{
+    background-color: white;
+}
+
+.wlp-bighorn-footer #Footer li a
+{
+	color: white;
+}
+
+/* colors for windows */
+
+.wlp-bighorn-titlebar
+{
+    color: #2270a1;
+}
+
+.wlp-bighorn-titlebar-button-panel a:hover
+{
+    background-color: #727EA3;
+}
+
+.wlp-bighorn-book-content
+{
+    /* background-color: white; */
+}
+
+.wlp-bighorn-window
+{
+    border-color: #807059;
+}
+
+.wlp-bighorn-window-content
+{
+    /* background-color: white; */
+}
+
+.wlp-bighorn-layout-cell .wlp-bighorn-book
+{
+    border-color: #807059;
+}
+
+/* colors for menus */
+
+
+.wlp-bighorn-menu-menu-panel > ul > li > ul > li:hover > a, .wlp-bighorn-menu-menu-panel > ul > li > ul > li > a:focus
+{
+    color: white;
+}
+
+.wlp-bighorn-menu-menu-panel > ul > li > ul > li > ul > li:hover > a, .wlp-bighorn-menu-menu-panel > ul > li > ul > li > ul > li > a:focus
+{
+    color: white;
+}
+
+
+
+.wlp-bighorn-menu-menu-panel ul ul {
+	background-color: white;
+}
+
+.wlp-bighorn-menu {
+	font-size: 0.925em;
+}
+
+.titreSousMenu {
+	color: #636466;
+}
+
+/* colors for menus within nested books */
+
+.wlp-bighorn-book-content .wlp-bighorn-menu
+{
+    background-color: #727EA3;
+}
+
+.wlp-bighorn-book-content .wlp-bighorn-menu-menu-panel ul
+{
+    background-color: #727EA3;
+}
+
+.wlp-bighorn-book-content .wlp-bighorn-menu-menu-panel ul li:hover, .wlp-bighorn-book-content .wlp-bighorn-menu-menu-panel ul li a:focus
+{
+    background-color: #6078BF;
+}
+
+.wlp-bighorn-book-content .wlp-bighorn-menu-menu-panel ul li.wlp-bighorn-menu-active
+{
+    background-color: #E6DCCF;
+    color: #596380;
+}
+
+.ac_even ac_over{
+  background: #eef6fb;
+}

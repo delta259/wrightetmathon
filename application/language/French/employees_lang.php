@@ -1,0 +1,29 @@
+<?php
+$lang['employees_employees']='Salariés';
+$lang['employees_employee']='Salarié';
+$lang['employees_new']='Ajouter';
+$lang['employees_update']='Mise a jour salarié';
+$lang['employees_confirm_delete']='Etes-vous sûr de vouloir désactiver les salariés sélectionnés?';
+$lang['employees_none_selected']='Vous n\'avez sélectionné aucun salarié';
+$lang['employees_error_adding_updating'] = 'Erreur ajout / MaJ salarié';
+$lang['employees_successful_adding']='Salarié ajouté avec succès';
+$lang['employees_successful_updating']='Salarié MaJ avec succès';
+$lang['employees_successful_deleted']='Salarié désactivé avec succès';
+$lang['employees_one_or_multiple']='salarié(s)';
+$lang['employees_cannot_be_deleted']='Impossible de désactiver un salarié s\'ils a déjà traité des ventes';
+$lang['employees_username']='Nom Utilisateur';
+$lang['employees_password']='Mot de passe';
+$lang['employees_repeat_password']='Répéter mot de passe';
+$lang['employees_username_required']='Nom d\'utilisateur est un champ obligatoire';
+$lang['employees_username_minlength']='Le nom d\'utilisateur doit comporter au moins 5 caractères';
+$lang['employees_password_required']='Mot de passe est requis';
+$lang['employees_password_minlength']='Les mots de passe doivent avoir au moins 8 caractères';
+$lang['employees_password_must_match']='Les mots de passe ne correspondent pas';
+$lang['employees_basic_information']='Information des Salariés';
+$lang['employees_login_info']='Infos de connexion Utilisateur';
+$lang['employees_permission_info']='Droits d\'accès Salarié';
+$lang['employees_permission_desc']='Cochez les cases ci-dessous pour accorder les droits d\'accès associés à chaque module';
+$lang['employees_error_updating_demo_admin'] = 'Vous ne pouvez pas changer le mode démo admin';
+$lang['employees_error_deleting_demo_admin'] = 'Vous ne pouvez pas supprimer l\'utilisateur démo admin';
+$lang['employees_soldby'] = 'Vendu par';
+?>

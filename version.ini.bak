@@ -1,0 +1,78 @@
+# Version of Wright et Mathon POS 
+version="Version V14.2.0.11"
+
+- Version V14.2.0.11 : Correction bug calcule pt de fidélité à 0.3 avec recalcul des points existants"
+- Version V14.2.0.10 : Passage de la valeur du pt de fidélité à 0.3 avec recalcul des points existants"
+- Version V14.2.0.09 :  Ajout du mode de paiement : CB Sans contact
+- Version V14.2.0.06   : bandeau inutile supprimés dans les pdf générer lors d'une commande
+          -Gestion et affichage de la TVA 5.5%
+          -Mouvement de stock pour les kits lors d'une commande et de la réception
+          -vérification des mouvements de stock général pour les kits 
+          -vérification que le code barre n'est pas déjà utilisé
+          -ajout du bonton VENTE SANS TICKET 
+          -ajout des procédures 10 et 11
+          -affichage cherché des n° de téléphone et adresse email avec un boolean
+          -ajout de l'heure à l'affichage de la date pour les ventes
+          -correction de l'heure de vente dans la table ospos_sales pour le vapeself 
+          -affichage du de chaque taux de TVA associé à leur montant lors de la réimppression des factures
+          -première utilisation de la notification
+          -répércution du chargement du prix d'achat d'un produit sur les kits qui le posséde
+          -vérification que le code barre d'un kit n'est pas déjà atribué à un autre kit
+          -ajout de l’icône Activer/désactiver à la Liste des Kits 
+          -attribuer les stocks au composant des kits lors de la réception d'une commande [STOCK/RÉCEPTIONNER]
+          -correction du conflit entre ventes annulées et ventes suspendues
+          -ajout de la zone contenant le nombre total de produit commandé
+
+
+- Version V14.2.0.05   : ajout du code pour envoyer les SMS
+         -mise à jour des Kits dès le lancement du POS
+         -plusieurs changements pour la barre de recherche et pour l'affichage (code barre, ... ) des kits
+         -la vérification que le fichier STOCK_LOGISTIQUE.csv existe avant le chargement des données pour le stock de la centrale 
+
+- Version V14.2.0.04   : Ajout de la notification
+- Version V14.2.0.01   : Consultation des stock entrêpot - écran article & commande produit
+- Version V14.2.0.beta : Ajout des fonctionnalités pour la machine VapeSelf
+
+- Version V14.1.5.09 : Vérification des points de fidélité pour payer
+        - bon de commande par stock uniquement
+        - Rapport Configurations Produits
+        - blindage du bon de commande par ventes pour les articles ayant `supplier_reorder_pack_size`="0"
+        - préselection du moyen de paiment en espéce pour rembourser un client dans la page des ventes
+        - choix des moyens de payments et des montants pour effectuer un avoir
+
+- Version V14.1.5.08 : option multi vendeur sur le même POS
+
+- Version V14.1.5.07 : Affichage de toutes les commandes en attente de réception
+        - alarte profil client non complet
+
+- Version V14.1.5.06 : Affichage des photos de produits
+        - choix de la période pour effectuer le bon de commande automatique
+
+- Version V14.1.5.05 : 
+
+- Version V14.1.5.03 : Recherche Produit : 
+	- gestion du focus sur la ligne (conservation de la position)
+	- cadenas sur la zone de recherche
+	- stock tournant / Article :  affichage de l'icone Active/Desactive
+	- Produit : affichage des prix en TTC & du nombre de ligne
+	- vente : modification de la quantité par +/-
+	- Saisie des identifiants de la carte personnelle
+	- Rapport / Détail par Fournisseur 
+
+- Version V14.1.5.02 : Consultation du Rapport/TicketZ
+
+
+- Version V14.1.5.01 : Ajout de l'envoi du ticket de caisse par mail
+	- Désactivation des produits sur les tableaux articles, stock tournant, Bon de commande
+	- Versement banque après fermeture caisse
+
+- Version V14.1.4.03 : Correection affichage dÃ©callÃ© : 1ere ligne model/item.php
+	- changer prix d achat en modification multiple
+	- ouverture du tiroir caisse
+
+- Version V14.1.4.02 : Correction de la mise Ã  jour des prix lors de la mise Ã  jour de base article
+
+
+
+
+				

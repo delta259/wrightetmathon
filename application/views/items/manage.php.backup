@@ -1,0 +1,623 @@
+<?php $this->load->view("partial/header"); ?>
+
+<script type="text/javascript">
+$(document).ready  (
+                  function()
+                  {
+                     // this allows search
+                     $("#search").autocomplete        (
+                                                   '<?php echo site_url("sales/item_search"); ?>',
+                                                   {
+                                                      minChars:2,
+                                                      max:100,
+                                                      selectOnly: true,
+                                                      delay:1, //delay:10,
+                                                      formatItem: function(row)
+                                                      {
+                                                         return row[1];
+                                                      }
+                                                   }
+                                                );
+
+                     $("#search").result                (
+                                                   function(event, data, formatted)
+                                                   {
+                                                      $("#search_form").submit();
+                                                   }
+                                                );
+                                                
+
+                     // this allows the row to be highlighted when the cursor moves over it. function found in manage.tables.js
+                     enable_row_selection();
+                  }
+               );
+</script>
+
+<div class="body_cadre_gris">
+
+   <!-- table header -->
+
+   <div class="submenu">
+   
+       <ul>
+           <li class="search" >
+               <?php echo form_open($_SESSION['controller_name'].'/search',array('id'=>'search_form')); ?>
+               
+               <input id='search'  placeholder="Recherche " tabindex="5" size="18" name='search' type='text' class="champ_search" title="rechercher" value="<?php echo $_SESSION['filtre_recherche'] ?>" >
+             <!--  <img src="<?php echo $_SESSION['url_image'];?>/search.png" class="img_search"    style=" margin-bottom: -16.5px;margin-left: -46px;"/>
+<!-- -->               </form>
+           </li>
+           <?php if($_SESSION['reactivation']!=1)
+                { ?>
+                    <a href="<?php echo site_url("items/items_list_new"); ?>" ><img src="<?php echo $_SESSION['url_image']; ?>/new.png"  height="30px" title="Liste des nouveautés" id="avanced_search_desactif" ></a>
+            <style>
+                #avanced_search_desactif
+                {
+                    position: relative;
+                    top:8px;
+                    right:10px;
+                }
+            </style>
+
+          <?php } ?>
+           
+<?php
+//Affichage de l'icône correspondant à l'action de la recherche avancée
+switch($_SESSION['items_avanced_search'])
+		{
+            //Si la recherche avancée est active alors l'icône est coloré
+			case 1:
+            ?>
+            <a href="<?php echo site_url("items/items_avanced_search"); ?>" ><img src="<?php echo $_SESSION['url_image']; ?>/recherche_avancee.png"  height="30px" title="Désactiver la recherche avancée" id="avanced_search_actif" ></a>
+            <style>
+                #avanced_search_actif
+                {
+                    position: relative;
+                    top:8px;
+                    right:10px;
+                }
+            </style>
+            <?php
+			break;
+
+            //Si la recherche avancée n'est pas active alors l'icône est coloré
+			default:
+            ?>
+            
+            <a href="<?php echo site_url("items/items_avanced_search"); ?>" ><img src="<?php echo $_SESSION['url_image']; ?>/recherche_avancee_gris.png"  height="30px" title="Activer la recherche avancée" id="avanced_search_desactif" ></a>
+            <style>
+                #avanced_search_desactif
+                {
+                    position: relative;
+                    top:8px;
+                    right:10px;
+                }
+            </style>
+            <?php
+			break;
+		}
+?>
+
+
+<?php
+//Affichage de l'icône correspondant à l'action de filtrer ou défiltrer
+switch($_SESSION['filtre'])
+		{
+            //Si le filtre est actif alors l'icône est grisé
+			case 1: 
+            ?>
+            <a href="<?php echo site_url("items/filtre"); ?>" ><img src="<?php echo $_SESSION['url_image']; ?>/filtre_actif.png" width="25px" height="30px" title="Désactiver le verrou" id="filtre_desactif" ></a>
+            <style>
+                #filtre_desactif
+                {
+                    position: relative;
+                    top:4px;
+                    right:1px;
+                }
+            </style>
+            <?php
+			break;
+
+            //Si le filtre n'est pas actif alors l'icône est coloré 
+			default: 
+            ?>
+            <a href="<?php echo site_url("items/filtre"); ?>" ><img src="<?php echo $_SESSION['url_image']; ?>/filtre_desactif.png" title="Activer le verrou" id="filtre_actif" width="25px" height="30px" ></a>
+            <style>
+                #filtre_actif
+                {
+                    position: relative;
+                    top:4px;
+                    right:1px;
+                }
+            </style>
+            <?php
+			break;
+		}
+?>
+           <span class="btnewc">
+           <style>
+                #filtre_actif
+                {
+                    position: relative;
+                    top:4px;
+                    right:1px;
+                }
+            </style>
+                       <?php
+                       include('../wrightetmathon/application/views/partial/show_buttons.php');
+                       ?>
+
+                   </span>
+       </ul>
+   </div>
+
+<!-- output messages if not modal -->
+<?php
+if (!isset($_SESSION['show_dialog']))
+   {
+      include('../wrightetmathon/application/views/partial/show_messages.php');
+   }
+?>
+
+<!-- Get number parms -->
+<?php
+$pieces                                                    =  array();
+$pieces                                                 =  explode("/", $this->config->item('numberformat'));
+$parms['decimals']                                        =  $pieces[0];
+$parms['dec_point']                                           =  $pieces[1];
+$parms['thousands_sep']                                        =  $pieces[2];
+
+// set up parms for retrieving report data
+$parms['specific_function']                                     =  'Specific_'.rtrim($_SESSION['controller_name'], "s");
+$parms['start_date']                                       =  date('Y-m-d', 0);
+$parms['end_date']                                            =  date('Y-m-d');
+$parms['transaction_subtype']                                =  'sales';
+$parms['export_excel']                                     =  0;
+$parms['history']                                         =  3;
+
+// set line number
+$_SESSION['line_number']            =  0;
+?>
+
+
+
+    <div class="span3" style ='margin="0px 0px"' >
+        <input  value ="Imprimer" type="submit" media="print" style ="float: right;" title="impression" class="btsubmit" OnClick="Printer.print(document.getElementById('sortable_table').innerHTML);"/>
+
+    </div>
+
+    <div class="span3">
+        
+        <?php
+        echo form_open($_SESSION['controller_name'].'/exportation',array('id'=>'exportation'));
+        ?>
+        <input  value ="Exporter" type="submit" style ="float: right;" title="exportation" class="btsubmit" />
+        </form><!--  -->
+
+        <!--
+        <a href="<?php echo site_url("items/exportation") ?>" class="btsubmit" >
+    EXPORTER</a><!--  -->
+    </div>
+
+<!-- output the data -->
+<div style=" overflow-y:scroll; overflow-x:hidden;margin-top: 0px;    max-height: 515px;     min-height: 340px; width: 100%;border:#f5f5f5 1px solid;">
+    <table style ="font-size: 15px;" class="table table-striped table-bordered table-hover tablesorter" id="sortable_table">
+
+   <thead>
+      <tr>
+          <?php if($_SESSION['reactivation']==1)
+                { ?>
+                    <th align="center" ><?php /*echo "<b>Réactiver</b>";*/ ?></th>
+
+          <?php }
+                else 
+                { ?>
+                    <th align="center" ><?php /*echo "<strong>Désactiver</strong>";*/ ?></th>
+          <?php }
+
+            ?>
+          <th align="center" ><i class="fa fa-sort"><?php echo $this->lang->line('items_code_bar_barcode'); ?></i></th>
+          <th align="center" ><i class="fa fa-sort"><?php echo $this->lang->line('items_item_number'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_name'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_category'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_volume'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_nicotine'); ?></i></th>
+          <th align="center" title="<?php echo $this->lang->line('items_cost_price').' '.$this->lang->line('items_supplier_preferred'); ?>"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_cost_price'); ?></i></th>
+          <th align="center" title="<?php echo $this->lang->line('items_unit_price_with_tax').' '.$this->lang->line('pricelists_pricelist_default'); ?>"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_unit_price_with_tax'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('modules_receivings'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('module_central'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('common_det'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_dluo'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_kit'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_total_sold_quantity'); ?></i></th>
+          <th align="center"  ><i class="fa fa-sort"><?php echo $this->lang->line('items_total_sold_value'); ?></i></th>
+      </tr>
+   </thead>
+   <tbody>
+      <?php
+      foreach ($items->result() as $item)
+      {
+         // Set line colour
+         $_SESSION['line_number']                           += 1;
+         $this->Common_routines->set_line_colour();
+
+         // create anchor
+         $anchor                                        =  '/reports/'
+                                                         .$parms['specific_function']
+                                                         .'/'
+                                                         .$parms['start_date']
+                                                         .'/'
+                                                         .$parms['end_date']
+                                                         .'/'
+                                                         .$item->item_id
+                                                         .'/'
+                                                         .$parms['transaction_subtype']
+                                                         .'/'
+                                                         .$parms['export_excel']
+                                                         .'/'
+                                                         .$parms['history'];
+
+         // set item_number if NULL - why would this ever happen?
+         if ($item->item_number == NULL)
+         {
+            $item->item_number                                = $this->lang->line('common_edit');
+         }
+         ?>
+<?php
+if($_SESSION['autofocus_avec_item_id_manage'] == $item->item_id)
+{
+?>
+<tr id="line_couleur" >
+<?php
+}
+else
+{
+?>
+         <!-- set up the table data row -->
+         <tr style="background-color:<?php echo $_SESSION['line_colour']; ?>">
+
+  <?php  }     ?>
+          <!-- Oeil de désactivation -->
+          <?php 
+          $tout=(string)$item->item_id . ":" . (string)$_SESSION['line_number'] . ":" . 'items';
+          if ($item->deleted == "0")
+			{
+            ?>		
+                <td style="text-align:center;"><a href="<?php echo site_url("receivings/desactive/$tout");/* $tout  $cur_item_info->item_id:$line  %$line   $cur_item_info->item_id?$line    item_id=$cur_item_info->item_id&line=$line*/ ?>" title="Désactiver" ><img src="<?php echo base_url().$_SESSION['url_image'].'/reactive.png';?>" width="21px" height="14px" alt="Désactiver" ></a></td>
+				<?php
+			}
+			else
+			{
+			?>
+				<td style="text-align:center;"><a href="<?php echo site_url("receivings/desactive/$tout");/* $tout  $cur_item_info->item_id:$line  %$line   $cur_item_info->item_id?$line    item_id=$cur_item_info->item_id&line=$line*/ ?>" title="Activer" ><img src="<?php echo base_url().$_SESSION['url_image'].'/desactive.png';?>" width="21px" height="14px" alt="Activer" ></a></td>		
+            <?php
+            }
+            ?>
+       
+       <?php if(isset($item->supplier_bar_code) && (strlen($item->supplier_bar_code) > 5))
+       {
+           ?>
+           <td align="center" title="code barre existant"><a href="<?php echo site_url("items/codebarre/$tout"); ?>" title="code barre existant" ><img src="<?php echo base_url().$_SESSION['url_image'].'/codebarre.png';?>" width="20px" height="20px" alt ></td>
+            
+           <?php
+       }
+       if(!isset($item->supplier_bar_code) || ((strlen($item->supplier_bar_code) <= 5)))
+       {
+           ?>
+           <td align="center" title="code barre manquant"><a href="<?php echo site_url("items/codebarre/$tout"); ?>" title="code barre manquant" ><img src="<?php echo base_url().$_SESSION['url_image'].'/codebarre_gris.png';?>" width="20px" height="20px" alt ></td>
+           
+           <?php
+       }
+       ?>
+            
+            <td align="center" title="<?php echo $this->lang->line('sales_item_det'); ?>"><?php echo anchor(
+                                                      $_SESSION['controller_name'].'/view/'.$item->item_id."/IA",
+                                                      $item->item_number
+                                                      ); 
+                                                      if($_SESSION['autofocus_avec_item_id_manage'] == $item->item_id)
+                                                      {
+                                                          echo form_button(array('autofocus' => 'autofocus', 'type' => 'hidden'));
+                                                      }
+                                                    
+                                                      ?>
+                                                    </td>
+            <td align="left" title="<?php echo $this->lang->line('sales_remote_stock'); ?>"><?php /*echo anchor(
+                                                      $_SESSION['controller_name'].'/remote_stock/'.$item->item_id,
+                                                      $item->name,"class='sablier'"
+                                                      );//*/
+                                                      echo $item->name;
+                                                      
+                                                      ?></td>
+            <td align="center"><?php echo $item->category; ?></td>
+            <td align="right"><?php echo $item->volume; ?></td>
+            <td align="right"><?php echo $item->nicotine; ?></td>
+
+            <!-- get cost price from default supplier -->
+            <?php
+            $item_supplier_info                               =  $this->Item->item_supplier_get_cost($item->item_id);
+            if ($item_supplier_info == NULL)
+            {
+               $cost_price                                  =  0;
+            }
+            else
+            {
+               $cost_price                                  =  $item_supplier_info->supplier_cost_price;
+            }
+            ?>
+            <td align="right"><?php echo number_format($cost_price, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep']); ?></td>
+
+            <!-- get unit price from default price list - no validity to consider as price is from default price list -->
+            <?php
+            $item_price_info                              =  $this->Item->get_info_item_price($item->item_id, $this->config->item('pricelist_id'));
+            if     (count($item_price_info) == 1)
+            {
+               foreach ($item_price_info as $item_price);
+               {
+                  $unit_price                               =  $item_price->unit_price_with_tax;
+               }
+            }
+            else
+            {
+               $unit_price                                  =  0;
+            }
+            ?>
+
+            <td align="right"><?php if($unit_price <= $cost_price){
+                        echo anchor(
+                            $_SESSION['controller_name'].'/label_form/'.$item->item_id,
+                            number_format($unit_price, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep']),'style="color:red;"'
+                        );
+                    } else{
+                        echo anchor(
+                            $_SESSION['controller_name'].'/label_form/'.$item->item_id,
+                            number_format($unit_price, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep'])
+                        );
+                    }?></td>
+            <td align="right"><?php echo anchor(
+                                                      $_SESSION['controller_name'].'/inventory/'.$item->item_id,
+                                                      round($item->quantity, 0)
+                                                      //number_format($item->quantity, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep'])
+                                                      ); ?></td>
+
+            <td align="right"><?php echo round($item->quantity_central, 0); ?></td>
+            
+            <td align="center"  title="Mouvement de stock"><?php echo anchor(
+                                                      $_SESSION['controller_name'].'/count_details/'.$item->item_id,
+                                                      $this->lang->line('common_det')
+                                                      ); ?></td>
+            <!-- DLUO -->
+            <?php
+            if ($item->dluo_indicator == 'Y')
+            {
+               ?>
+               <td align="center" title="<?php echo  $this->lang->line('items_dluo');?>"><?php echo anchor(
+                                                      $_SESSION['controller_name'].'/dluo_form/'.$item->item_id,
+                                                      $this->lang->line('items_dluo_x')
+                                                      ); ?></td>
+               <?php
+            }
+            else
+            {
+               ?>
+               <td align="center"><?php echo $this->lang->line('common_space'); ?></td>
+               <?php
+            }
+            ?>
+            <!-- kit -->
+            <?php
+            if ($item->DynamicKit == 'Y')
+            {
+               ?>
+               <td align="center"><?php echo anchor(
+                                                      $_SESSION['controller_name'].'/kit/'.$item->item_id,
+                                                      $this->lang->line('items_kit')
+                                                      ); ?></td>
+               <?php
+            }
+            else
+            {
+               ?>
+               <td align="center"><?php echo $this->lang->line('common_space'); ?></td>
+               <?php
+            }
+            ?>
+            <td align="right"><?php echo anchor(
+                                                      $anchor,
+                                                      round($item->sales_qty,0)
+                                                      //number_format($item->sales_qty, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep'])
+                                                      ); ?></td>
+            <td align="right"><?php echo anchor    (
+                                                      $anchor,
+                                                      number_format($item->sales_ht, $parms['decimals'], $parms['dec_point'], $parms['thousands_sep'])
+                                                      ); ?></td>
+         </tr>
+      <?php
+      }
+      ?>
+   </tbody>
+</table>
+</div>
+
+    <div>
+        <br/>
+        <?php
+
+
+
+
+switch($_SESSION['filtre'])
+		{
+			case 1: 
+                echo "";
+			break;
+
+			default:
+            echo $links . "<br>";
+			break;
+		}
+
+       echo $_SESSION['line_number'] . " " . $this->lang->line('items_items');
+
+
+        ?></div>
+
+
+</div><!--  
+<script type="text/javascript">
+$(document).ready(function()
+{
+	document.getElementById("search").focus();
+});
+</script><!--  -->
+
+<script type="text/javascript">
+
+    var Printer=new Object();
+    Printer.print=function (HTML) {
+        var win = window.open(location,null,null);
+        win.blur();
+        window.focus();
+        win.document.title="Aperçu de l'impression en cours";
+        win.document.write("<html><head><title>"+document.title+"</title></head><body id='print'><h2>Articles</h2><h3></h3><table border=2 width='100%' class='printtable' style='font-size: 11.5px; border-collapse: collapse;  '>" + HTML +"</table><br/><br/></body></html>");
+        win.print();
+        win.close();
+    };
+    window.top.Printer=Printer;
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function()
+        {
+            $("#sortable_table").tablesorter();
+            document.getElementById("search").focus();
+        }
+    );
+</script>
+
+<?php $this->load->view("partial/pre_footer"); ?>
+<?php $this->load->view("partial/footer"); ?>
+<!-- div for spinner -->
+<div id="spinneritem" class="spinnerarticle" style="display:none;">
+
+    <div id="floatingCirclesG">
+        <div class="f_circleG" id="frotateG_01"></div>
+        <div class="f_circleG" id="frotateG_02"></div>
+        <div class="f_circleG" id="frotateG_03"></div>
+        <div class="f_circleG" id="frotateG_04"></div>
+        <div class="f_circleG" id="frotateG_05"></div>
+        <div class="f_circleG" id="frotateG_06"></div>
+        <div class="f_circleG" id="frotateG_07"></div>
+        <div class="f_circleG" id="frotateG_08"></div>
+    </div>
+</div>
+
+<!-- script for spinner -->
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('.sablier').click(function()
+        {
+            $('#spinneritem').show();
+        });
+    });
+</script>
+
+<?php
+// show dialog depending on show dialog
+switch ($_SESSION['show_dialog'])
+{
+    // show item data entry
+    case   1:
+        include('../wrightetmathon/application/views/items/form.php');
+        break;
+
+    // show clone
+    case   2:
+        include('../wrightetmathon/application/views/items/clone_form.php');
+        break;
+
+    // show inventory
+    case   3:
+        include('../wrightetmathon/application/views/items/inventory.php');
+        break;
+
+    // show count details
+    case   4:
+        include('../wrightetmathon/application/views/items/count_details.php');
+        break;
+
+    // show merge
+    case   5:
+        include('../wrightetmathon/application/views/items/merge_form.php');
+        break;
+
+    // show DLUO
+    case   6:
+        include('../wrightetmathon/application/views/items/dluo_form.php');
+        break;
+
+    // show price label
+    case   7:
+        include('../wrightetmathon/application/views/items/label_form.php');
+        break;
+
+    // show remote stock
+    case   8:
+        include('../wrightetmathon/application/views/items/form_remote_stock.php');
+        break;
+
+    // show supplier entry
+    case   9:
+        include('../wrightetmathon/application/views/items/form_item_supplier.php');
+        break;
+
+    // show warehouse entry
+    case   10:
+        include('../wrightetmathon/application/views/items/form_item_warehouse.php');
+        break;
+
+    // show pricelist entry
+    case   11:
+        include('../wrightetmathon/application/views/items/form_item_pricelist.php');
+        break;
+
+    // show bulk actions
+    case   12:
+        include('../wrightetmathon/application/views/items/form_bulk_actions.php');
+        break;
+
+    // show bulk actions, enter SET data and WHERE data
+    case   13:
+        include('../wrightetmathon/application/views/items/form_bulk_actions_select.php');
+        break;
+
+    // show bulk actions, confirm the sql
+    case   14:
+        include('../wrightetmathon/application/views/items/form_bulk_actions_confirm.php');
+        break;
+
+    // show kit structure
+    case   15:
+        include('../wrightetmathon/application/views/items/kit_structure.php');
+        break;
+
+    // show kit detail
+    case   16:
+        include('../wrightetmathon/application/views/items/kit_detail.php');
+        break;
+    //ajout d'un cas pour receivings
+    case   17:
+        include('../wrightetmathon/application/views/items/inventory.php');
+        break;
+
+    //ajout d'un cas pour le tableau receivings, colonne n°article
+    case   18:
+        include('../wrightetmathon/application/views/items/form.php');
+        break;
+
+}
+?>
+
+
+

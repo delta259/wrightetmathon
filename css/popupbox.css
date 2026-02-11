@@ -1,0 +1,154 @@
+#required_fields_message
+{
+	width: 100%;
+	text-align: center;
+	margin-bottom: 3px;
+	font-style: italic;
+}
+
+#customer_basic_info,#item_basic_info,#item_number_info,#supplier_basic_info
+{
+	padding: 5px;
+}
+
+#scan_item_number.loading
+{
+	background-image: url(../images/spinner_small.gif);
+	background-position:center right;
+	background-repeat:no-repeat;	
+}
+
+#info_provided_by
+{
+	display:none;
+	font-weight:bold;
+}
+
+#employee_basic_info
+{
+	float:left;
+	width:47%;
+	padding:5px;
+}
+
+#employee_login_info
+{
+	float:left;
+	width:47%;
+	margin-left:5px;
+	padding:5px;
+}
+
+#permission_list
+{
+	list-style:none;
+}
+
+#permission_list li
+{
+	padding:0px;	
+}
+
+#permission_list input
+{
+	top:3px;
+}
+
+#employee_permission_info
+{
+	float:left;
+	width:47%;
+	margin-left:5px;
+	padding:5px;
+}
+#employee_permission_info p
+{
+	font-weight:bold;
+}
+
+#employee_permission_info span.small
+{
+	font-style:italic;
+	font-size:80%;
+}
+
+#error_message_box
+{
+	margin-bottom:7px;
+	margin-left:20px;
+	color:red;	
+}
+#item_kit_items_title
+{
+	text-align: center;
+}
+#item_kit_items
+{
+	width: 100%;
+}
+
+#item_kit_items th
+{
+	text-align: center;
+	font-weight: bold;
+}
+
+#item_kit_items td
+{
+	text-align: center;
+}
+
+.dialog
+{
+	position:fixed;
+	width:60%;
+	top: 10%;
+	left: 20%;
+	background:#FDFDB4;
+	outline: 9999px solid rgba(0,0,0,0.5);
+}
+
+.dialog_wide
+{
+	position:fixed;
+	width:95%;
+	top: 10%;
+	left: 2.5%;
+	background:#FDFDB4;
+	outline: 9999px solid rgba(0,0,0,0.5);
+}
+
+.table_row
+{
+	font-size:16px;
+}
+
+.table_center
+{
+	font-size:20px;
+	margin-left:auto; 
+    margin-right:auto;
+    background:yellow;
+    border:2px solid black;
+    border-radius:8px;   
+}
+
+.table_left
+{
+	font-size:20px;
+	margin-left:0; 
+    margin-right:auto;
+    background:yellow;
+    border:2px solid black;
+    border-radius:8px;   
+}
+
+.table_right
+{
+	font-size:20px;
+	margin-left:auto; 
+    margin-right:0;
+    background:yellow;
+    border:2px solid black;
+    border-radius:8px;   
+}

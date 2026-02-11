@@ -1,0 +1,512 @@
+/**
+ * Modern Admin Modal Styles
+ * Overrides old form styles for a cleaner look in admin modals
+ */
+
+/* ========== CSS Variables ========== */
+:root {
+    --modal-bg: #ffffff;
+    --modal-header-bg: #f8fafc;
+    --modal-border: #e2e8f0;
+    --modal-text: #1e293b;
+    --modal-text-muted: #64748b;
+    --modal-primary: #0A6184;
+    --modal-primary-hover: #085a7a;
+    --modal-success: #22c55e;
+    --modal-danger: #ef4444;
+    --modal-warning: #f59e0b;
+    --modal-input-bg: #ffffff;
+    --modal-input-border: #cbd5e1;
+    --modal-input-focus: #0A6184;
+    --modal-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --modal-bg: #1e293b;
+    --modal-header-bg: #0f172a;
+    --modal-border: #334155;
+    --modal-text: #f1f5f9;
+    --modal-text-muted: #94a3b8;
+    --modal-primary: #3b82f6;
+    --modal-primary-hover: #2563eb;
+    --modal-input-bg: #0f172a;
+    --modal-input-border: #475569;
+}
+
+/* ========== Reset & Base ========== */
+.popbg {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px);
+}
+
+/* ========== Modal Window ========== */
+.fenetre.modale {
+    background: var(--modal-bg) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    overflow: hidden;
+    max-width: 600px;
+    margin: 40px auto;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.fenetre.modale.modal-sm { max-width: 400px; }
+.fenetre.modale.modal-md { max-width: 600px; }
+.fenetre.modale.modal-lg { max-width: 800px; }
+.fenetre.modale.modal-xl { max-width: 1000px; }
+
+/* ========== Modal Header ========== */
+.fenetre-header {
+    background: var(--modal-header-bg) !important;
+    border-bottom: 1px solid var(--modal-border) !important;
+    padding: 16px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+}
+
+.fenetre-title {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: var(--modal-text) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+/* Exit button in header */
+.fenetre-header .exit_button,
+.fenetre-header a[href*="common_exit"] {
+    background: transparent !important;
+    border: none !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s !important;
+    color: var(--modal-text-muted) !important;
+    text-decoration: none !important;
+}
+
+.fenetre-header .exit_button:hover,
+.fenetre-header a[href*="common_exit"]:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: var(--modal-danger) !important;
+}
+
+/* ========== Modal Content ========== */
+.fenetre-content {
+    padding: 24px !important;
+    background: var(--modal-bg) !important;
+}
+
+.centrepage {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.blocformfond {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* ========== Fieldset ========== */
+fieldset.fieldset {
+    border: 1px solid var(--modal-border) !important;
+    border-radius: 8px !important;
+    padding: 20px !important;
+    margin: 0 0 20px 0 !important;
+    background: var(--modal-bg) !important;
+    box-shadow: none !important;
+}
+
+fieldset.fieldset legend {
+    font-weight: 600 !important;
+    color: var(--modal-text) !important;
+    padding: 0 10px !important;
+    font-size: 0.9rem !important;
+}
+
+/* ========== Form Table ========== */
+.table_center {
+    width: 100% !important;
+    border-collapse: separate !important;
+    border-spacing: 0 12px !important;
+}
+
+.table_center tr {
+    background: transparent !important;
+}
+
+.table_center td {
+    padding: 0 !important;
+    vertical-align: middle !important;
+}
+
+/* ========== Form Inputs ========== */
+.zone_champ_saisie input,
+.zone_champ_saisie select,
+.zone_champ_saisie textarea,
+input.colorobligatoire,
+input.colornormal,
+select.colorobligatoire,
+select.colornormal {
+    width: 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.95rem !important;
+    border: 1px solid var(--modal-input-border) !important;
+    border-radius: 8px !important;
+    background: var(--modal-input-bg) !important;
+    color: var(--modal-text) !important;
+    transition: all 0.2s ease !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+}
+
+.zone_champ_saisie input:focus,
+.zone_champ_saisie select:focus,
+.zone_champ_saisie textarea:focus,
+input.colorobligatoire:focus,
+input.colornormal:focus {
+    outline: none !important;
+    border-color: var(--modal-input-focus) !important;
+    box-shadow: 0 0 0 3px rgba(10, 97, 132, 0.15) !important;
+}
+
+input.colorobligatoire {
+    border-left: 3px solid var(--modal-danger) !important;
+}
+
+/* Placeholder styling */
+.zone_champ_saisie input::placeholder {
+    color: var(--modal-text-muted) !important;
+    font-weight: 400 !important;
+}
+
+/* Help buttons */
+.btaide {
+    display: none !important;
+}
+
+/* ========== Buttons ========== */
+.txt_milieu {
+    display: flex !important;
+    gap: 12px !important;
+    justify-content: flex-end !important;
+    padding-top: 20px !important;
+    border-top: 1px solid var(--modal-border) !important;
+    margin-top: 20px !important;
+}
+
+/* Business action buttons: green glassmorphism */
+.btsubmit,
+input[type="submit"].btsubmit,
+button.btsubmit,
+.confirm_submit_button,
+div.btsubmit,
+a.btsubmit {
+    background: rgba(16, 185, 129, 0.1) !important;
+    backdrop-filter: blur(10px);
+    color: #10b981 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    padding: 12px 24px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+}
+
+.btsubmit:hover,
+input[type="submit"].btsubmit:hover,
+.confirm_submit_button:hover,
+div.btsubmit:hover,
+a.btsubmit:hover {
+    background: rgba(16, 185, 129, 0.2) !important;
+    border-color: #10b981 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
+    color: #10b981 !important;
+}
+
+/* Dark mode: modal business buttons */
+[data-theme="dark"] .btsubmit,
+[data-theme="dark"] input[type="submit"].btsubmit,
+[data-theme="dark"] .confirm_submit_button,
+[data-theme="dark"] div.btsubmit,
+[data-theme="dark"] a.btsubmit {
+    background: rgba(16, 185, 129, 0.08) !important;
+    border-color: rgba(16, 185, 129, 0.25) !important;
+    color: #34d399 !important;
+}
+
+[data-theme="dark"] .btsubmit:hover,
+[data-theme="dark"] .confirm_submit_button:hover {
+    background: rgba(16, 185, 129, 0.18) !important;
+    border-color: #34d399 !important;
+    color: #34d399 !important;
+}
+
+/* Technical action button for modals (secondary actions) */
+.btn-action-modal,
+a.btn-action-modal {
+    background: var(--modal-bg) !important;
+    color: var(--modal-text) !important;
+    border: 1px solid var(--modal-border) !important;
+    padding: 12px 24px !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.btn-action-modal:hover,
+a.btn-action-modal:hover {
+    background: var(--modal-header-bg) !important;
+    border-color: var(--modal-text-muted) !important;
+    color: var(--modal-text) !important;
+    text-decoration: none !important;
+}
+
+.btretour,
+a .btretour,
+.btretour.btlien {
+    background: var(--modal-bg) !important;
+    color: var(--modal-text) !important;
+    border: 1px solid var(--modal-border) !important;
+    padding: 12px 24px !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    min-width: auto !important;
+}
+
+.btretour:hover,
+a .btretour:hover {
+    background: var(--modal-header-bg) !important;
+    border-color: var(--modal-text-muted) !important;
+}
+
+/* ========== Vendor Login Form ========== */
+.vendor-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.vendor-login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.vendor-login-field label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--modal-text);
+}
+
+.vendor-login-field input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid var(--modal-input-border);
+    border-radius: 8px;
+    background: var(--modal-input-bg);
+    color: var(--modal-text);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.vendor-login-field input.colorobligatoire {
+    border-left: 3px solid var(--modal-danger);
+}
+
+.vendor-login-field input:focus {
+    outline: none;
+    border-color: var(--modal-input-focus);
+    box-shadow: 0 0 0 3px rgba(10, 97, 132, 0.15);
+}
+
+.vendor-login-field input::placeholder {
+    color: var(--modal-text-muted);
+}
+
+/* ========== Required Field Message ========== */
+#required_fields_message,
+.obligatoire {
+    font-size: 0.8rem !important;
+    color: var(--modal-text-muted) !important;
+    margin-top: 16px !important;
+    padding: 10px 14px !important;
+    background: var(--modal-header-bg) !important;
+    border-radius: 6px !important;
+    border-left: 3px solid var(--modal-danger) !important;
+}
+
+.btobligatoire {
+    display: none !important;
+}
+
+/* ========== Messages ========== */
+.message_erreur {
+    margin-bottom: 16px !important;
+}
+
+.error_message,
+.success_message,
+.warning_message {
+    padding: 14px 16px !important;
+    border-radius: 8px !important;
+    margin-bottom: 16px !important;
+    font-size: 0.9rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    box-shadow: none !important;
+}
+
+.error_message {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border: 1px solid rgba(239, 68, 68, 0.3) !important;
+    color: var(--modal-danger) !important;
+}
+
+.success_message {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    color: var(--modal-success) !important;
+}
+
+.warning_message {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    color: var(--modal-warning) !important;
+}
+
+/* ========== Checkbox & Radio ========== */
+input[type="checkbox"],
+input[type="radio"] {
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: var(--modal-primary) !important;
+}
+
+/* ========== Select Dropdown ========== */
+select {
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 16px !important;
+    padding-right: 40px !important;
+}
+
+/* ========== Tables in Forms ========== */
+.fenetre-content table.tablesorter,
+.fenetre-content .data-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-top: 16px !important;
+}
+
+.fenetre-content table.tablesorter th,
+.fenetre-content .data-table th {
+    background: var(--modal-header-bg) !important;
+    color: var(--modal-text) !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 12px 14px !important;
+    border-bottom: 2px solid var(--modal-border) !important;
+    text-align: left !important;
+}
+
+.fenetre-content table.tablesorter td,
+.fenetre-content .data-table td {
+    padding: 12px 14px !important;
+    border-bottom: 1px solid var(--modal-border) !important;
+    color: var(--modal-text) !important;
+    font-size: 0.9rem !important;
+}
+
+.fenetre-content table.tablesorter tbody tr:hover,
+.fenetre-content .data-table tbody tr:hover {
+    background: var(--modal-header-bg) !important;
+}
+
+/* ========== Scrollbar ========== */
+.fenetre-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.fenetre-content::-webkit-scrollbar-track {
+    background: var(--modal-header-bg);
+    border-radius: 4px;
+}
+
+.fenetre-content::-webkit-scrollbar-thumb {
+    background: var(--modal-border);
+    border-radius: 4px;
+}
+
+.fenetre-content::-webkit-scrollbar-thumb:hover {
+    background: var(--modal-text-muted);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .fenetre.modale {
+        margin: 20px !important;
+        max-width: calc(100% - 40px) !important;
+    }
+
+    .txt_milieu {
+        flex-direction: column-reverse !important;
+    }
+
+    .btsubmit,
+    .btretour {
+        width: 100% !important;
+        text-align: center !important;
+    }
+}

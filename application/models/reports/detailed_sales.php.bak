@@ -1,0 +1,483 @@
+<?php
+require_once("report.php");
+class Detailed_sales extends Report
+{
+	function __construct()
+	{
+		parent::__construct();
+	}
+	
+	public function getDataColumns()
+	{
+		return array('summary' => array($this->lang->line('reports_sale_id'), $this->lang->line('reports_date'), $this->lang->line('reports_items_purchased'), $this->lang->line('reports_sold_by'), $this->lang->line('reports_sold_to'), $this->lang->line('reports_subtotal'), $this->lang->line('reports_total'), $this->lang->line('reports_tax'), $this->lang->line('reports_profit'), $this->lang->line('reports_payment_type'), $this->lang->line('reports_comments')),
+					'details' => array($this->lang->line('reports_category'), $this->lang->line('reports_name'), $this->lang->line('reports_quantity_purchased'), $this->lang->line('reports_subtotal'), $this->lang->line('reports_total'), $this->lang->line('reports_tax'), $this->lang->line('reports_profit'),$this->lang->line('reports_discount'))
+		);		
+	}
+	
+	public function getData(array $inputs)
+	{
+		// get summary line data
+		$this->db->select	(
+							'sale_id as transaction_id,
+							sales.customer_id,
+							sale_time as transaction_date, 
+							CONCAT(employee.first_name," ",employee.last_name) as employee_name,
+							CONCAT(customer.first_name," ",customer.last_name) as transaction_name,
+							subtotal_before_discount,
+							subtotal_discount_percentage_amount,
+							subtotal_discount_amount_amount,
+							subtotal_after_discount,
+							overall_tax,
+							overall_total,
+							overall_tax_percentage,
+							overall_tax_name,
+							overall_cost,
+							overall_profit,
+							amount_change,
+							payment_type, 
+							comment,
+							mode', 
+							false
+							);
+							
+		$this->db->from('sales');
+		$this->db->join('people as employee', 'sales.employee_id = employee.person_id', 'left');
+		$this->db->join('people as customer', 'sales.customer_id = customer.person_id', 'left');
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+		
+		$this->db->group_by('sale_id');
+		$this->db->order_by('sale_id', 'desc');
+
+		$data = array();
+		$data['summary'] = $this->db->get()->result_array();		
+		
+		// get details
+		$data['details'] = array();
+		
+		foreach($data['summary'] as $key=>$value)
+		{
+			$this->db->select	('
+								line,
+								category,
+								item_number,
+								name,
+								serialnumber,
+								quantity_purchased,
+								item_cost_price,
+								item_unit_price,
+								discount_percent,
+								line_sales_before_discount,
+								line_discount,
+								line_sales_after_discount,
+								line_tax,
+								line_sales,
+								line_cost,
+								line_profit,
+								line_tax_percentage,
+								line_tax_name
+								');
+			$this->db->from('sales_items');
+			$this->db->join('items', 'sales_items.item_id = items.item_id');
+			$this->db->where('sale_id = '.$value['transaction_id']);
+			$this->db->order_by('line',"asc");
+			$data['details'][$key] = $this->db->get()->result_array();
+		}
+		return $data;
+	}
+
+	//Fonction pour récupérer l'item_id des articles par fournisseur
+/*	public function get_item_by_supplier($transaction_sortby)
+	{
+		/*
+		SELECT `item_id`, `supplier_id` FROM `ospos_items_suppliers` WHERE `supplier_id`='4'; 
+        SELECT `item_id`, `supplier_id` FROM `ospos_items_suppliers` WHERE `supplier_id`='5'; 
+        //*/
+		
+		
+		/*
+		$this->db->select('ospos_items_suppliers.item_id, supplier_id');
+		
+        $this->db->from('items_suppliers');
+        $this->db->join('sales_items', 'sales.item_id = sales_items.item_id', 'INNER');
+		$this->db->where('item_id = '.$transaction_sortby);
+//*/
+/*$this->db->select('ospos_items_suppliers.item_id, supplier_id');
+		
+        $this->db->from('items_suppliers');
+        $this->db->join('sales_items', 'items_suppliers.item_id = sales_items.item_id', 'INNER');
+        $this->db->where('item_id = '.$transaction_sortby);
+//*/
+/*		$this->db->select('sales_items.item_id');
+		$this->db->distinct();
+		$this->db->from('sales_items');
+//        $this->db->from('items_suppliers');
+//        $this->db->join('sales_items', 'items_suppliers.item_id = sales_items.item_id', 'INNER');
+        //$this->db->join('items_suppliers', 'items_suppliers.item_id = sales_items.item_id', 'INNER');
+        $this->db->join('items_suppliers', 'items_suppliers.item_id = sales_items.item_id');
+        $this->db->where('supplier_id = '.$transaction_sortby);
+        
+		/*
+		$data = array();
+        $data['summary'] = $this->db->get()->result_array();
+		//*/
+/*		$list_item_by_supplier=$this->db->get()->result_array();
+		return $list_item_by_supplier;
+	}
+
+//Take articles by supplier
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+Request David ems SQL Manager (Windows)
+SELECT
+  `ospos_categories`.`category_name`,
+  `ospos_items`.`item_number`,
+  `ospos_items`.`name`,
+  sum(`ospos_sales_items`.`quantity_purchased`) AS `quantity_purchased`,
+  `AVG`(`ospos_sales_items`.`item_unit_price`) AS `item_unit_price`,
+  sum(`ospos_sales_items`.`line_sales`) AS `line_sales`,
+  sum(`ospos_sales_items`.`line_tax`) AS `line_tax`,
+  sum(`ospos_sales_items`.`line_cost`) AS `line_cost`,
+  sum(`ospos_sales_items`.`line_profit`) AS `line_profit`,
+  sum(`ospos_sales_items`.`line_sales_before_discount`) AS `line_sales_before_discount`
+FROM
+  `ospos_items_suppliers`
+  INNER JOIN `ospos_sales_items` ON (`ospos_items_suppliers`.`item_id` = `ospos_sales_items`.`item_id`)
+  INNER JOIN `ospos_sales` ON (`ospos_sales_items`.`sale_id` = `ospos_sales`.`sale_id`)
+  INNER JOIN `ospos_items` ON (`ospos_sales_items`.`item_id` = `ospos_items`.`item_id`)
+  INNER JOIN `ospos_categories` ON (`ospos_items`.`category_id` = `ospos_categories`.`category_id`)
+WHERE
+  `ospos_items_suppliers`.`supplier_preferred` = 'Y' AND
+  `ospos_sales`.`sale_time` > '2019-08-01' AND
+  `ospos_sales`.`sale_time` <= '2019-09-01' AND
+  `ospos_items_suppliers`.`supplier_id` = 1493
+GROUP BY
+  `ospos_categories`.`category_name`,
+  `ospos_items`.`item_number`,
+  `ospos_items`.`name`,
+  item_unit_price
+ORDER BY
+  `ospos_categories`.`category_name`,
+  `ospos_items`.`name`  
+
+///////////////////////////////////////////////////////*/
+public function getData_by_suppliers(array $inputs)
+{
+	
+	$this->db->select('
+		categories.category_name,
+		items.item_number,
+		items.name,
+		sum(ospos_sales_items.quantity_purchased) AS `quantity_purchased`,
+		AVG(ospos_sales_items.item_unit_price) AS item_unit_price,
+		sum(ospos_sales_items.line_sales) AS line_sales,
+		sum(ospos_sales_items.line_tax) AS line_tax,
+		sum(ospos_sales_items.line_cost) AS line_cost,
+		sum(ospos_sales_items.line_profit) AS line_profit,
+		sum(ospos_sales_items.line_sales_before_discount) AS line_sales_before_discount,
+		mode,
+		items.quantity'
+	);
+
+	$this->db->from('items_suppliers');
+	
+	$this->db->join('sales_items', 'items_suppliers.item_id = sales_items.item_id', 'INNER');
+	$this->db->join('sales', 'sales_items.sale_id = sales.sale_id', 'INNER');
+  $this->db->join('items', 'sales_items.item_id = items.item_id', 'INNER');
+	$this->db->join('categories', 'items.category_id = categories.category_id', 'INNER');
+
+	$this->db->where('items_suppliers.supplier_preferred', 'Y');
+	$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+	$this->db->where('items_suppliers.supplier_id = ' . $inputs['transaction_sortby']);
+	
+	$this->db->group_by('categories.category_name');	
+  $this->db->group_by('items.item_number');
+	$this->db->group_by('items.name');    
+  $this->db->group_by('item_unit_price');
+  
+  $this->db->order_by('categories.category_name');
+	$this->db->order_by('items.name');
+	
+	$data = $this->db->get()->result_array();
+    return $data;
+}
+
+
+/*
+public function getData_by_suppliers(array $inputs)
+{
+	//Test
+
+/*	foreach($inputs['list_item_by_supplier'] as $a =>$b)
+	{
+		//
+		//$inputs['list_item_by_supplier']=$b;
+		$tableau[$a]=$b;
+	}
+	//////////////////////////////////////////*/
+/*
+	// get summary line data
+	$this->db->select	(
+						'sale_id as transaction_id,
+						sales.customer_id,
+						date(sale_time) as transaction_date, 
+						CONCAT(employee.first_name," ",employee.last_name) as employee_name,
+						CONCAT(customer.first_name," ",customer.last_name) as transaction_name,
+						subtotal_before_discount,
+						subtotal_discount_percentage_amount,
+						subtotal_discount_amount_amount,
+						subtotal_after_discount,
+						overall_tax,
+						overall_total,
+						overall_tax_percentage,
+						overall_tax_name,
+						overall_cost,
+						overall_profit,
+						amount_change,
+						payment_type, 
+						comment,
+						mode', 
+						false
+						);
+						
+	$this->db->from('sales');
+	$this->db->join('people as employee', 'sales.employee_id = employee.person_id', 'left');
+	$this->db->join('people as customer', 'sales.customer_id = customer.person_id', 'left');
+	$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+	
+	$this->db->group_by('sale_id');
+	$this->db->order_by('sale_id', 'desc');
+
+	$data = array();
+	$data['summary'] = $this->db->get()->result_array();		
+	
+	// get details
+	$data['details'] = array();
+	
+	foreach($data['summary'] as $key=>$value)
+	{
+		$this->db->select	('
+							line,
+							category,
+							item_number,
+							name,
+							serialnumber,
+							quantity_purchased,
+							item_cost_price,
+							item_unit_price,
+							discount_percent,
+							line_sales_before_discount,
+							line_discount,
+							line_sales_after_discount,
+							line_tax,
+							line_sales,
+							line_cost,
+							line_profit,
+							line_tax_percentage,
+							line_tax_name
+							');
+		$this->db->from('sales_items');
+		$this->db->join('items', 'sales_items.item_id = items.item_id');
+		$this->db->join('items_suppliers', 'sales_items.item_id = items_suppliers.item_id');
+
+	//	$this->db->where_in('sales_items.item_id', $inputs['list_item_by_supplier'][1]);
+	//    $this->db->where_in('sales_items.item_id', $tableau);
+/*
+
+		$this->db->where('sale_id = '.$value['transaction_id']);
+		$this->db->where('items_suppliers.supplier_id = ' . $inputs['transaction_sortby']);
+		
+/////////////////
+/*
+WHERE `ospos_sales_items`.`item_id` IN (SELECT `ospos_items_suppliers`.`item_id` FROM `ospos_items_suppliers` WHERE `ospos_items_suppliers`.`supplier_id`='4')
+
+/////////////////
+//*/
+
+        //$this->db->where_in('item_id',"SELECT `ospos_items_suppliers`.`item_id` FROM `ospos_items_suppliers` WHERE `ospos_items_suppliers`.`supplier_id`='4'");
+/*
+		$this->db->order_by('line',"asc");
+		$data['details'][$key] = $this->db->get()->result_array();
+	}
+	return $data;
+}//*/
+/*
+public function getData_by_suppliers(array $inputs)
+	{
+		
+		// get summary line data
+		$this->db->select	(
+							'sale_id as transaction_id,
+							sales.customer_id,
+							date(sale_time) as transaction_date, 
+							CONCAT(employee.first_name," ",employee.last_name) as employee_name,
+							CONCAT(customer.first_name," ",customer.last_name) as transaction_name,
+							subtotal_before_discount,
+							subtotal_discount_percentage_amount,
+							subtotal_discount_amount_amount,
+							subtotal_after_discount,
+							overall_tax,
+							overall_total,
+							overall_tax_percentage,
+							overall_tax_name,
+							overall_cost,
+							overall_profit,
+							amount_change,
+							payment_type, 
+							comment,
+							mode', 
+							false
+							);
+						//	SELECT * FROM `ospos_items_suppliers`   request à imbriquer
+		$this->db->from('sales');
+		$this->db->join('people as employee', 'sales.employee_id = employee.person_id', 'left');
+		$this->db->join('people as customer', 'sales.customer_id = customer.person_id', 'left');
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+        
+		
+
+
+
+		$this->db->group_by('sale_id');
+		$this->db->order_by('sale_id', 'desc');
+
+		$data = array();
+		$data['summary'] = $this->db->get()->result_array();		
+		
+		// get details
+		$data['details'] = array();
+		
+		foreach($data['summary'] as $key=>$value)
+		{
+			$this->db->select	('
+								line,
+								category,
+								item_number,
+								name,
+								serialnumber,
+								quantity_purchased,
+								item_cost_price,
+								item_unit_price,
+								discount_percent,
+								line_sales_before_discount,
+								line_discount,
+								line_sales_after_discount,
+								line_tax,
+								line_sales,
+								line_cost,
+								line_profit,
+								line_tax_percentage,
+								line_tax_name,
+								supplier_id
+								');               //ajout de la colonne supplier_id
+			$this->db->from('sales_items');
+			$this->db->join('items', 'sales_items.item_id = items.item_id');
+            //	SELECT * FROM `ospos_items_suppliers`   request à imbriquer
+			
+			$this->db->join('items_supplier', 'sales_items.item_id = items_suppliers.item_id');
+
+		    //by supplier
+		    //Request: ~
+		    //SELECT `ospos_items_suppliers`.`supplier_id`, `ospos_items_suppliers`.`item_id` FROM `ospos_items_suppliers` WHERE `ospos_items_suppliers`= '$_POST['transaction_sortby']' ;
+		    $this->db->where('items_suppliers.supplier_id=" '. $inputs['transaction_sortby']. '"');
+
+
+			$this->db->where('sale_id = '.$value['transaction_id']);
+			
+
+			////$this->db->where_in('sale_id', );
+			
+
+			//$this->db->where('item_id = '.$inputs['transaction_sortby']);
+			
+			
+			
+			$this->db->order_by('line',"asc");
+			$data['details'][$key] = $this->db->get()->result_array();
+			//$data['summary_new'][$key]=$data['details'][$key];
+		}
+		$data['summary_new']=$data['details'];
+		return $data;
+	}
+//*/
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	
+	public function getSummaryData(array $inputs)
+	{
+		$this->db->select('sum(overall_total) as total, 
+							sum(overall_tax) as tax, 
+							sum(subtotal_after_discount) as subtotal, 
+							sum(overall_cost) as cost, 
+							sum(overall_profit) as profit, 
+							count(sale_id) as invoice_count');
+		$this->db->from('sales');
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+		
+		return $this->db->get()->row_array();		
+	}	
+	
+	/*
+	public function getSummaryData_by_supplier(array $inputs)
+	{
+		$this->db->select('sum(overall_total) as total, 
+							sum(overall_tax) as tax, 
+							sum(subtotal_after_discount) as subtotal, 
+							sum(overall_cost) as cost, 
+							sum(overall_profit) as profit, 
+							count(ospos_sales.sale_id) as invoice_count');
+		
+		$this->db->from('sales_items');
+		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
+		$this->db->join('items_suppliers', 'sales_items.item_id = items_suppliers.item_id');
+							/*
+		$this->db->from('sales');
+		$this->db->join('sales_items', 'sales.sale_id = sales_items.sale_id');
+		$this->db->join('items_suppliers', 'sales.item_id = items_suppliers.item_id');	
+		//*/
+		/*
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+		$this->db->where('items_suppliers.supplier_id = ' . $inputs['transaction_sortby']);
+		
+		
+		return $this->db->get()->row_array();		
+	}//*/
+
+	// Attention la jointure fait apparaître les lines en double, donc il faut faire la somme des lines des articles  
+	public function getSummaryData_by_supplier(array $inputs)
+	{
+		$this->db->select('sum(ospos_sales_items.line_sales) as total, 
+							sum(ospos_sales_items.line_tax) as tax, 
+							sum(ospos_sales_items.line_sales_after_discount) as subtotal, 
+							sum(ospos_sales_items.line_cost) as cost, 
+							sum(ospos_sales_items.line_profit) as profit, 
+							count(DISTINCT ospos_sales.sale_id) as invoice_count');    //Nombre de factures distinctes
+
+		$this->db->from('sales_items');
+		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
+		$this->db->join('items_suppliers', 'sales_items.item_id = items_suppliers.item_id');
+							/*
+		$this->db->from('sales');
+		$this->db->join('sales_items', 'sales.sale_id = sales_items.sale_id');
+		$this->db->join('items_suppliers', 'sales.item_id = items_suppliers.item_id');	
+		//*/
+		
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+		$this->db->where('items_suppliers.supplier_id = ' . $inputs['transaction_sortby']);
+		
+		
+		return $this->db->get()->row_array();		
+	}
+	
+	public function offered_count(array $inputs)
+	{
+		$this->db->select('count(discount_percent) as offered_count');
+		$this->db->from('sales_items');
+		$this->db->join('sales', 'sales_items.sale_id = sales.sale_id');
+		$this->db->where('date(sale_time) BETWEEN "'. $inputs['start_date']. '" and "'. $inputs['end_date'].'"');
+		$this->db->where('discount_percent = 100');
+		
+		return $this->db->get()->row_array();
+	}
+}
+?>

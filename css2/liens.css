@@ -1,0 +1,64 @@
+/**
+* Contient les css utilis�s pour le comportement g�n�ral des liens
+**/
+
+#client a{
+background: none;
+border: none;
+text-decoration: underline;
+font-weight: bold;
+}
+
+.info_client{
+  font-size: 15px;
+}
+a {
+  text-decoration: none;
+  cursor: pointer;
+  /*border-bottom: dotted 1px;*/
+}
+
+
+/* Pas de bordure autour des images dans les liens */
+
+a img {
+  border: none;
+}
+
+.lien_image {
+	border-bottom: none;
+}
+
+.lien_image:hover {
+	border-bottom: none;
+}
+
+/* Chevron utilise pour les liens */
+
+.chevron {
+	font-size: 1.4em; /*medium;*/
+	vertical-align: middle;
+	margin-left: 0.3em;
+	line-height: 0;
+	/*text-decoration: none;*/
+}
+
+
+/* Lien pdf avec icone */
+
+.lien_pdf:before {
+	background : transparent url(../images/refonte/messagerie/telecharger_pdf.png) no-repeat scroll 0px 0px;
+	content:"";
+	padding-left: 14px;
+	font-size: 1em;
+	margin-left: -14px;
+}
+
+.lien_pdf {
+	margin-left: 14px;
+}
+
+.help_aide
+{
+	font-size: 20px;
+}

@@ -1,0 +1,35 @@
+/* RESET GENERAL (correction biblicnam) */
+
+* {
+	font-family: Roboto,Helvetica,Arial,FreeSans,sans-serif;
+}
+
+.droite {
+	text-align: left !important;
+}
+
+ul {
+	list-style-position: outside;
+}
+
+label {
+	color: #276777;
+	font-weight: normal;
+	padding-right: 2px;
+	text-align: left;
+}
+
+td {
+	vertical-align : middle;
+}
+/*
+form {
+	 display: block;
+}
+*/
+p {
+	margin: 0.75em 0;
+}
+h4{
+	font-size: 1em;
+}

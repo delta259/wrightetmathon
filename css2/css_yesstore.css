@@ -1,0 +1,457 @@
+.c_btcouleur{
+    color: white;
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: #e9f6c3;
+}
+#img_sup{
+  background:black;
+}
+.targets_sale{
+
+  background:#e9f6c3;
+}
+
+#targets_sale_title{
+  background: #e9f6c3;
+  border-bottom: solid 0px #276777;
+}
+.colorwhite{
+  color: white;
+}
+.btmodification{
+  background-color: #2767779e;
+  color: #000;
+  background-image: none;
+  border: 1px solid #276777;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: normal;
+  line-height: 1.42857;
+  padding: 3px 3px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 5px;
+  min-width: 20%;
+}
+.btncaisse a:hover{
+	background-color: #fbdf1278;
+	color: black;
+}
+a:hover {
+  text-decoration: none;
+color:#fbdf1278;
+}
+
+.bttotal {
+  background-image: none;
+    border: 1px solid #0062ad;
+    border-radius: 3px;
+    /* display: inline-block; */
+    font-size: 1.5em;
+    font-weight: bold;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 5px;
+    min-width: 30%;
+    background-color: #fff;
+    color: #0062ad;
+}
+
+.bttotal:hover, .btretour:focus {
+	text-decoration: none;
+	color:  #276777
+
+;
+	background-color: #fff;
+	border: 1px solid  #276777
+
+;
+}
+
+.btsubmit:hover, .btsubmit:focus {
+	background-color:  #276777
+
+;
+	border: 1px solid  #276777
+
+;
+    color: #fff;
+    text-decoration : none;
+}
+
+.btsubmit:active {
+	background-color:  #276777
+
+;
+	border: 1px solid  #276777
+
+;
+    color: #fff;
+    text-decoration : none;
+}
+
+.btnnew a{
+    text-decoration: none;
+}
+.btnew:hover, .btnew:focus {
+  background-color: #276777
+
+;
+border: 1px solid #276777
+
+;
+color: #fbdf12;
+text-decoration: none;
+}
+
+
+.btnp a {
+      background-color:  #276777
+
+;
+    color: #fff;
+    background-image: none;
+    border: 1px solid  #276777
+
+;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 5px;
+       width: 235px;
+    height: 45px;
+    padding: 0px;
+}
+.btnp a img {
+    margin-right: 5px;
+}
+.btnew:active {
+	background-color:  #276777
+
+;
+	border: 1px solid  #276777
+
+;
+    color: #fff;
+    text-decoration : none;
+}
+.btnew {
+    background-color:  #276777;
+    background-image: none;
+    border: 1px solid  #276777;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin:5px;
+    width: auto;
+  /*  height:40px;*/
+
+}
+
+
+.body_page #id_body_btn_submit {
+	width: 40%;
+	margin-left: 10px;
+	background-color:  #276777
+
+;
+	border-color:  #276777
+
+;
+}
+
+.body_page #id_body_btn_submit:hover, .body_page #id_body_btn_submit:focus {
+	background-color:  #276777
+
+;
+}
+
+
+.c_couleur{
+      color: #276777;
+}
+
+.c_couleur a{
+      color: #276777
+
+;
+}
+
+.c_bgcouleur {
+      background: #276777
+
+;
+}
+
+a {
+  color: #2b84bf;
+    text-decoration: none;
+}
+
+a:hover { /* A �tudier pour la navigation au clavier : a:focus, a:active */
+    color: #fbdf00;/*  color: #65b9e4;*/
+}
+.bloc .titre {
+/*    background: none repeat scroll 0 0 #636466;*/
+    height: 45px;
+    position: relative;
+}
+
+
+.wlp-bighorn-menu-menu-panel > ul > li:hover > a, .wlp-bighorn-menu-menu-panel > ul > li > a:focus
+{
+    background-color: #679cb2;
+    color: white;
+}
+.wlp-bighorn-menu-menu-panel ul li a {
+     /*color: #b43782;*/
+     font-size: 17px;
+ }
+ .body_colonneD h2{
+    color: #276777
+
+;
+    font-size: 1.14em;
+    font-weight: normal;
+	line-height: 45px;
+	text-transform: uppercase;
+	background-color: #fff;
+	text-align: left;
+	font-weight: bold;
+	border-bottom: solid 1px #276777
+
+;
+}
+.btncaisse a{
+    background-color: #276777
+
+;
+    color: #fff;
+    background-image: none;
+    border: 1px solid #276777
+
+;
+    border-radius: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 5px;
+
+}
+
+.btnmodif a{
+       background-color: #276777
+
+;
+    background-image: none;
+    border: 1px solid #679cb2;
+    border-radius: 3px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: normal;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    text-transform: uppercase;
+    /*letter-spacing: 0.1em;*/
+    margin: 5px;
+
+}
+
+.demarches .titre {
+	background-color: #276777
+
+;
+}
+
+.demarches .titre:hover {
+	background-color: #276777
+
+;
+}
+.bloc-message .nouveau-msg:focus {
+	background-color:#276777
+
+;
+}
+.wlp-bighorn-header {
+	background-color:white;
+	/*display: table-row;*/
+	height:68px;
+}
+
+
+.tetiere {
+	height:85px;
+	text-align: center;
+}
+
+.tetiere h1 {
+	float: left;
+	font-size: 1.8em;
+	color:white ;
+    margin-top: 5px;
+	padding-left:10px;
+	font-style:italic;
+	position: relative;
+	height: 40px;
+}
+
+.tetiere .bandeau {
+	height: 40px;
+	background-color:#276777
+
+;
+}
+
+.tetiere .liens {
+	float: right;
+	color: white;
+	    font-size: 14px;
+    vertical-align: middle;
+	height: 36px;
+	line-height:36px;
+/*	padding-right:300px;*/
+	position: relative;
+}
+
+.tetiere .liens a {
+	color: white;
+	text-decoration: none;
+	padding : 0;
+  font-size: 14px;
+  border-bottom: 0;
+}
+
+.tetiere .liens li > ul > li > a{
+	color:#097182;
+}
+
+.tetiere .logoam {
+	margin-top: -40px;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-radius: 0 0 10px 10px;
+  height:100px;
+}
+
+.wlp-bighorn-footer #Footer ul {
+    list-style-type: none;
+    list-style-position: outside;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: table;
+    height: 50px;
+    background-color: #276777
+
+;
+}
+
+.wlp-bighorn-footer #Footer li {
+    display: table-cell;
+    width: 19.3%;
+		color: white;
+    margin-right: 0.5%;
+    text-align: center;
+    position: relative;
+    /*background: url("../images/menu-separateur.png") no-repeat scroll left center;*/
+}
+
+/** Footer sur une colonne orient� verticalement **/
+@media only screen and (max-width: 659px) {
+	.wlp-bighorn-footer #Footer li {
+		display: block;
+		width: 100%;
+		background-image: none;
+		border-bottom: 1px solid ;
+	}
+}
+.wlp-bighorn-menu-menu-panel > ul > li > a
+{
+    height: 35px;
+    line-height: 35px;
+    border-bottom: solid 1px #679cb2;
+    display: block;
+    text-decoration: none;
+}
+
+
+/* Fin Menu horizontal */
+
+/* Menu vertical niveau 1*/
+.wlp-bighorn-menu-menu-panel>ul>li>ul {
+	position: absolute;
+	top: -2000px;
+	left: -2000px;
+	display: block;
+	width: 0;
+	height: 0;
+	line-height: 0;
+	max-width: 25em;
+	border: 1px solid #679cb2;
+	padding: 0.5em 0 1.5em 1em;
+	z-index: 100;
+}
+.wlp-bighorn-menu-menu-panel > ul > li > ul > li:hover > a,.wlp-bighorn-menu-menu-panel>ul>li>ul>li>a:focus
+{
+	background: url("../images/picto-fleche-action-blanc.png") no-repeat scroll left 0.75em #679cb2;
+}
+.wlp-bighorn-theme-borderless .wlp-bighorn-window-content
+{
+    background-color: #276777
+
+;
+}
+
+.wlp-bighorn-menu-menu-panel > ul > li > ul > li > a
+{
+    display: block;
+    line-height: 1.5em;
+    padding: 10px 50px 8px 20px;
+    height: auto;
+    background: url("../images_yes/picto-fleche-action.png") no-repeat scroll left 0.75em;
+    border: none;
+
+}

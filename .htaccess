@@ -1,0 +1,12 @@
+# Wright et Mathon POS - .htaccess
+# Enable mod_rewrite
+RewriteEngine On
+
+# Pass Authorization header to PHP
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
+# Remove index.php from URL (optional, for cleaner URLs)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]

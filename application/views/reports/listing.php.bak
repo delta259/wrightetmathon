@@ -1,0 +1,1013 @@
+
+<?php
+	$this->load->view("partial/header");
+?>
+
+
+
+<div class="body_cadre_gris">
+
+
+
+    <?php
+	if($error != '')
+	{
+		echo "<div class='error_message'>".$error."</div>";
+	}
+?>
+
+
+<!-- output messages -->
+<div class="message_erreur">
+    <?php
+    include('../wrightetmathon/application/views/partial/show_messages.php');
+    ?>
+</div>
+
+<div id="welcome_message"><?php echo $this->lang->line('reports_welcome_message'); ?></div>
+
+<div id="report_list" style="width: 100%;
+    margin-left: 126px;">
+
+    <div class="col" >
+        <div class="bloc demarches">
+            <div class="titre">
+                <h1><?php echo $this->lang->line('reports_summary_reports'); ?></h1>
+
+            </div>
+        </div>
+
+        <div class="item">
+
+            <h2>
+                 <div class="titre">
+                    <a href="<?php echo site_url('reports/summary_transations_ticket_z');?>"><span><?php echo $this->lang->line('reports_summary_ticket_z_report'); ?></span></a>
+                 </div>
+            </h2>
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre">
+                    <a href="<?php echo site_url('reports/summary_transactions');?>"><span><?php echo $this->lang->line('reports_summary_transactions_report'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre">
+                    <a href="<?php echo site_url('reports/summary_transactions_graphical');?>"><span><?php echo $this->lang->line('reports_graphical_reports'); ?></span></a>
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+
+
+
+
+<br/>
+
+
+
+
+
+
+
+
+        <div class="bloc demarches">
+                    <div class="titre">
+                        <h1><?php echo $this->lang->line('reports_detailed_reports'); ?></h1>
+
+                    </div>
+                </div>
+
+                <div class="item">
+
+                        <h2>
+                            <div class="titre sablier">
+                                <a href="<?php echo site_url('reports/specific_customer_input');?>"><span><?php echo $this->lang->line('reports_customer'); ?></span></a>
+
+
+                            </div>
+                        </h2>
+
+
+                </div>
+
+                <div class="item">
+
+                        <h2>
+                            <div class="titre sablier">
+                                <a href="<?php echo site_url('reports/specific_employee_input');?>"><span><?php echo $this->lang->line('reports_employee'); ?></span></a>
+
+                            </div>
+                        </h2>
+
+
+                </div>
+                <div class="item">
+
+                        <h2>
+                            <div class="titre sablier">
+                                <a href="<?php echo site_url('reports/specific_category_input');?>"><span><?php echo $this->lang->line('reports_category'); ?></span></a>
+
+                            </div>
+                        </h2>
+
+
+                </div>
+
+                <div class="item ">
+
+                        <h2>
+                            <div class="titre sablier">
+                                <a href="<?php echo site_url('reports/detailed_transactions'); ?>" title="RAPPORT DETAILLES" ><span><?php echo $this->lang->line('reports_detailed_reports'); ?></span></a>
+
+                            </div>
+                        </h2>
+
+
+                </div>
+                <div class="item">
+                        <h2>
+                            <div class="titre sablier">
+                              <a href="<?php echo site_url('reports/transition'); ?>" title="RAPPORT DETAILLE PAR FOURNISSEUR" ><span><?php echo "Rapport détaillé par Fournisseur"; /*$this->lang->line('reports_customer');*/ ?></span></a>
+                            </div>
+                        </h2>
+
+
+                </div><div class="item">
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/rapport_detaille_famille'); ?>" title="RAPPORT DETAILLE PAR FAMILLE" ><span><?php echo "Rapport détaillé par Famille"; /*$this->lang->line('reports_customer');*/ ?></span></a>
+                        </div>
+                    </h2>
+                </div>
+
+        <br/>
+
+        <div class="bloc demarches">
+            <div class="titre">
+                <h1><?php echo $this->lang->line('reports_data_mining'); ?></h1>
+
+            </div>
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/inventory_nosale');?>"><span><?php echo $this->lang->line('reports_inventory_nosale'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/inventory_slowmoving');?>"><span><?php echo $this->lang->line('reports_inventory_slowmoving'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/inventory_invalid_item_number');?>"><span><?php echo $this->lang->line('reports_invalid_item_number'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/top_items_by_value');?>"><span><?php echo $this->lang->line('reports_top_items_by_value'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/top_items_by_quantity');?>"><span><?php echo $this->lang->line('reports_top_items_by_quantity'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/customer_sales_profile');?>"><span><?php echo $this->lang->line('reports_client_sales_profile'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/top_clients');?>"><span><?php echo $this->lang->line('reports_top_clients'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/top_employees');?>"><span><?php echo $this->lang->line('reports_top_employees'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+    </div> <!--fin  div col 1-->
+
+
+<div class="col">
+        <div class="bloc demarches">
+            <div class="titre">
+                <h1><?php echo 'Fin de mois'; ?></h1>
+            </div>
+        </div>
+
+        <div class="item">
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/month_end_routines');?>"><span><?php echo 'Cloture fin de mois'; ?></span></a>
+                </div>
+            </h2>
+        </div>
+
+        <div class="item">
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/cogs');?>"><span><?php echo 'Exécution du rapport détaillé COGS '; ?></span></a>
+                </div>
+            </h2>
+        </div>
+
+        <div class="item">
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/rapport_configurations_produits');?>" title="Rapport configurations produits"><span><?php echo 'Rapport configurations produits'; ?></span></a>
+                </div>
+            </h2>
+        </div>
+
+        <div class="item">
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/rapport_suivi_modification_stock');?>" title="Suivi des modifications de stock"><span><?php echo 'Suivi des modifications de stock'; ?></span></a>
+                </div>
+            </h2>
+        </div>
+    <br/>
+
+
+
+            <div class="bloc demarches">
+                <div class="titre">
+                    <h1><?php echo $this->lang->line('reports_daily'); ?></h1>
+
+                </div>
+            </div>
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/inventory_rolling');?>"><span><?php echo $this->lang->line('reports_rolling'); ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+            </div>
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/dluo_qty_error');?>"><span><?php echo $this->lang->line('reports_dluo_qty_error'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/inventory_negative_stock');?>"><span><?php echo $this->lang->line('reports_negative_stock'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+            </div>
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/inventory_value_record_integrity');?>"><span><?php echo 'VÉRIFIER ET CORRIGER LES QUANTITÉS EN STOCK'; /*echo $this->lang->line('reports_value_record_integrity');*/ ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+
+
+
+
+<br/>
+
+  <div class="bloc demarches">
+                <div class="titre">
+                    <h1><?php echo $this->lang->line('reports_inventory_reports'); ?></h1>
+
+                </div>
+            </div>
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/inventory_low_get_data');?>"><span><?php echo $this->lang->line('reports_low_inventory'); ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+            </div>
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/inventory_summary');?>"><span><?php echo $this->lang->line('reports_inventory_summary'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/specific_item_input');?>"><span><?php echo $this->lang->line('reports_item'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+
+           
+
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/dluo_past_date');?>"><span><?php echo $this->lang->line('reports_dluo_date_past'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+ <!--                           <a href="<?php echo site_url('reports/dluo_future_date');?>"><span><?php echo $this->lang->line('reports_dluo_date_future'); ?></span></a>
+
+                        <!-- <a href="<?php echo site_url('reports/dluo_future_date');?>"><span><?php echo $this->lang->line('reports_dluo_date_future'); ?></span></a>
+<!--  --> 
+                      
+                            <a href="<?php echo site_url('reports/choix_du_nombre_de_mois');?>"><span><?php echo $this->lang->line('reports_dluo_date_future_choix_mois'); ?></span></a>
+<!--  -->
+                        </div>
+                    </h2>
+
+
+            </div>
+
+
+            <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('receivings/reprint');?>"><span><?php echo $this->lang->line('recvs_reprint'); ?></span></a>
+
+                        </div>
+                    </h2>
+
+
+            </div>
+            <div class="item">
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/date_last_inventory');?>"><span><?php echo $this->lang->line('reports_date_last_inventory'); ?></span></a>
+                        </div>
+                    </h2>
+            </div>
+
+
+
+</div> <!-- fin col 2--->
+
+
+<div class="col">
+
+
+
+
+
+    <!--<li><h3><?php /*echo $this->lang->line('fdj_reporting'); */?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php /*echo site_url('reports/fdj_reporting');?>"><?php echo $this->lang->line('fdj_reporting');*/ ?></a></li>
+		</ul>
+	</li>
+-->
+
+
+    <!-- only show this section if admin user is logged in -->
+    <?php
+    if ($_SESSION['G']->login_employee_info->admin == 1)
+    {
+        ?>
+
+        <div class="bloc demarches">
+            <div class="titre">
+                <h1><?php echo 'Update the DB'; ?></h1>
+
+            </div>
+        </div>
+
+
+                <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('updates/index');?>"><span><?php echo 'CHARGER les données de la feuille de calcul FOURNI PAR UITLISATEUR à la base de données ARTICLE '; ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+                </div>
+
+
+                <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/updatedb_sales_items');?>"><span><?php echo 'Update sales items'; ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+                </div>
+
+                <div class="item ">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/updatedb_sales_headers');?>"><span><?php echo 'Update sales headers'; ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+                </div>
+
+
+                <div class="item">
+
+                    <h2>
+                        <div class="titre sablier">
+                            <a href="<?php echo site_url('reports/updatedb_customers_sales_total');?>"><span><?php echo 'Update customer sales totals'; ?></span></a>
+
+
+                        </div>
+                    </h2>
+
+
+                </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/updatedb_employees_sales_total');?>"><span><?php echo 'Update employee sales totals'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/updatedb_items_sales_total');?>"><span><?php echo 'Update item sales totals'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/updatedb_branch_code');?>"><span><?php echo 'Update branch code in all tables in the database'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/update_sales_items_CV');?>"><span><?php echo 'Update Sales Items CV'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/update_stock_valuation_records');?>"><span><?php echo 'Create the stock valuation records. Normally one time only. For this to work you need to set the createstockvaluationrecords tag in the configuration record to Y.'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/update_category_records');?>"><span><?php echo 'Create category records. Normally one time only. For this to work you need to set the createcategoryrecords tag in the configuration record to Y.'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/update_items_category_id');?>"><span><?php echo 'Update category_id in ITEMS table. Normally one time only.'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/update_sales_items_category_id');?>"><span><?php echo 'Update category_id in SALES_ITEMS table. Normally one time only.'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('defects/create_defects');?>"><span><?php echo 'Create DEFECT item codes. File DEFECTS.csv must exist in => '.$this->config->item('PPsavepath'); ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/updatedb_volume');?>"><span><?php echo 'Try to update the VOLUME field with data found in item name field'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+
+        <div class="item">
+
+            <h2>
+                <div class="titre sablier">
+                    <a href="<?php echo site_url('reports/updatedb_nicotine');?>"><span><?php echo 'Try to update the NICOTINE field with data found in item name field'; ?></span></a>
+
+
+                </div>
+            </h2>
+
+
+        </div>
+
+
+        <?php
+    }
+    ?>
+
+</div> <!-- fin col 3-->
+
+</div>
+
+</div>
+
+
+
+
+
+<?php
+// Show the dialogs
+switch ($_SESSION['show_dialog'])
+	{
+		// show specific item data entry
+		case	1:
+				include('../wrightetmathon/application/views/reports/specific_input.php');
+		break;
+
+		// show clone
+		case	2:
+				include('../wrightetmathon/application/views/items/clone_form.php');
+		break;
+
+		// show inventory
+		case	3:
+				include('../wrightetmathon/application/views/items/inventory.php');
+		break;
+
+		// show count details
+		case	4:
+				include('../wrightetmathon/application/views/items/count_details.php');
+		break;
+
+		// show merge
+		case	5:
+				include('../wrightetmathon/application/views/items/merge_form.php');
+		break;
+
+		// show DLUO
+		case	6:
+				include('../wrightetmathon/application/views/items/dluo_form.php');
+		break;
+
+		// show price label
+		case	7:
+				include('../wrightetmathon/application/views/items/label_form.php');
+		break;
+
+        // Affichage du message d'alarme: warning message
+        case    8:
+                include('../wrightetmathon/application/views/items/shutdown_warning.php');
+        break;
+                
+		default:
+		break;
+	}
+?>
+
+<?php $this->load->view("partial/pre_footer"); ?>
+<?php $this->load->view("partial/footer"); ?>
+
+
+<!-- div for spinner -->
+<div id="spinner" class="spinnerrapport" style="display:none;">
+
+
+    <div id="floatingCirclesG">
+        <div class="f_circleG" id="frotateG_01"></div>
+        <div class="f_circleG" id="frotateG_02"></div>
+        <div class="f_circleG" id="frotateG_03"></div>
+        <div class="f_circleG" id="frotateG_04"></div>
+        <div class="f_circleG" id="frotateG_05"></div>
+        <div class="f_circleG" id="frotateG_06"></div>
+        <div class="f_circleG" id="frotateG_07"></div>
+        <div class="f_circleG" id="frotateG_08"></div>
+    </div>
+</div>
+
+<!-- script for spinner -->
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('.sablier').click(function()
+        {
+            $('#spinner').show();
+        });
+    });
+</script>
+
+
+
+<!--
+<?php /*
+	$this->load->view("partial/header");
+
+	if($error != '')
+	{
+		echo "<div class='error_message'>".$error."</div>";
+	}
+?>
+
+<div id="title_bar">
+	<div id="page_title" class="float_left">
+		<?php
+			echo $this->lang->line('reports_reports');
+			include('../wrightetmathon/application/views/partial/show_buttons.php');
+		?>
+	</div>
+</div>
+
+<!-- output messages -->
+<?php
+	include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
+
+<div id="welcome_message"><?php echo $this->lang->line('reports_welcome_message'); ?>
+
+<ul id="report_list">
+
+<br/>
+
+	<!-- only show this section if admin user is logged in -->
+	<?php
+		if ($_SESSION['G']->login_employee_info->admin == 1)
+		{
+		?>
+			<li><h3><?php echo 'Month End Routines'; ?></h3>
+					<ul>
+						<br/>
+						<li><a href="<?php echo site_url('reports/month_end_routines');?>"><?php echo 'Run month end closure'; ?></a></li>
+						<li><a href="<?php echo site_url('reports/cogs');?>"><?php echo 'Run detailed COGS report'; ?></a></li>
+					</ul>
+				</li>
+
+			<br/>
+		<?php
+		}
+	?>
+
+	<li><h3><?php echo $this->lang->line('reports_summary_reports'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/summary_transactions');?>"><?php echo $this->lang->line('reports_summary_transactions_report'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/summary_transactions_graphical');?>"><?php echo $this->lang->line('reports_graphical_reports'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+	<li><h3><?php echo $this->lang->line('reports_detailed_reports'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/specific_customer_input');?>"><?php echo $this->lang->line('reports_customer'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/specific_employee_input');?>"><?php echo $this->lang->line('reports_employee'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/specific_category_input');?>"><?php echo $this->lang->line('reports_category'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/detailed_transactions');?>"><?php echo $this->lang->line('reports_detailed_reports'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+	<li><h3><?php echo $this->lang->line('reports_daily'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/inventory_rolling');?>"><?php echo $this->lang->line('reports_rolling'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/dluo_qty_error');?>"><?php echo $this->lang->line('reports_dluo_qty_error'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/inventory_negative_stock');?>"><?php echo $this->lang->line('reports_negative_stock'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/inventory_value_record_integrity');?>"><?php echo $this->lang->line('reports_value_record_integrity'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+	<li><h3><?php echo $this->lang->line('reports_inventory_reports'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/inventory_low_get_data');?>"><?php echo $this->lang->line('reports_low_inventory'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/inventory_summary');?>"><?php echo $this->lang->line('reports_inventory_summary'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/specific_item_input');?>"><?php echo $this->lang->line('reports_item'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/dluo_past_date');?>"><?php echo $this->lang->line('reports_dluo_date_past'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/dluo_future_date');?>"><?php echo $this->lang->line('reports_dluo_date_future'); ?></a></li>
+			<li><a href="<?php echo site_url('receivings/reprint');?>"><?php echo $this->lang->line('recvs_reprint'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+	<li><h3><?php echo $this->lang->line('reports_data_mining'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/inventory_nosale');?>"><?php echo $this->lang->line('reports_inventory_nosale'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/inventory_slowmoving');?>"><?php echo $this->lang->line('reports_inventory_slowmoving'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/inventory_invalid_item_number');?>"><?php echo $this->lang->line('reports_invalid_item_number'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/top_items_by_value');?>"><?php echo $this->lang->line('reports_top_items_by_value'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/top_items_by_quantity');?>"><?php echo $this->lang->line('reports_top_items_by_quantity'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/customer_sales_profile');?>"><?php echo $this->lang->line('reports_client_sales_profile'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/top_clients');?>"><?php echo $this->lang->line('reports_top_clients'); ?></a></li>
+			<li><a href="<?php echo site_url('reports/top_employees');?>"><?php echo $this->lang->line('reports_top_employees'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+	<li><h3><?php echo $this->lang->line('fdj_reporting'); ?></h3>
+		<ul>
+			<br/>
+			<li><a href="<?php echo site_url('reports/fdj_reporting');?>"><?php echo $this->lang->line('fdj_reporting'); ?></a></li>
+		</ul>
+	</li>
+
+<br/>
+
+<!-- only show this section if admin user is logged in -->
+<?php
+	if ($_SESSION['G']->login_employee_info->admin == 1)
+	{
+	?>
+		<li><h3><?php echo 'Update the DB'; ?></h3>
+				<ul>
+					<br/>
+					<li><a href="<?php echo site_url('updates/index');?>"><?php echo 'CHARGER les données de la feuille de calcul FOURNI PAR UITLISATEUR à la base de données ARTICLE '; ?></a></li>
+					<li></li>
+					<li><a href="<?php echo site_url('reports/updatedb_sales_items');?>"><?php echo 'Update sales items'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_sales_headers');?>"><?php echo 'Update sales headers'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_customers_sales_total');?>"><?php echo 'Update customer sales totals'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_employees_sales_total');?>"><?php echo 'Update employee sales totals'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_items_sales_total');?>"><?php echo 'Update item sales totals'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_branch_code');?>"><?php echo 'Update branch code in all tables in the database'; ?></a></li>
+
+					<li><a href="<?php echo site_url('reports/update_sales_items_CV');?>"><?php echo 'Update Sales Items CV'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/update_stock_valuation_records');?>"><?php echo 'Create the stock valuation records. Normally one time only. For this to work you need to set the createstockvaluationrecords tag in the configuration record to Y.'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/update_category_records');?>"><?php echo 'Create category records. Normally one time only. For this to work you need to set the createcategoryrecords tag in the configuration record to Y.'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/update_items_category_id');?>"><?php echo 'Update category_id in ITEMS table. Normally one time only.'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/update_sales_items_category_id');?>"><?php echo 'Update category_id in SALES_ITEMS table. Normally one time only.'; ?></a></li>
+					<li><a href="<?php echo site_url('defects/create_defects');?>"><?php echo 'Create DEFECT item codes. File DEFECTS.csv must exist in => '.$this->config->item('PPsavepath'); ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_volume');?>"><?php echo 'Try to update the VOLUME field with data found in item name field'; ?></a></li>
+					<li><a href="<?php echo site_url('reports/updatedb_nicotine');?>"><?php echo 'Try to update the NICOTINE field with data found in item name field'; ?></a></li>
+				</ul>
+			</li>
+
+		<br/>
+	<?php
+	}
+?>
+
+<br/>
+
+</ul>
+<?php
+// Show the dialogs
+switch ($_SESSION['show_dialog'])
+	{
+		// show specific item data entry
+		case	1:
+				include('../wrightetmathon/application/views/reports/specific_input.php');
+		break;
+
+		// show clone
+		case	2:
+				include('../wrightetmathon/application/views/items/clone_form.php');
+		break;
+
+		// show inventory
+		case	3:
+				include('../wrightetmathon/application/views/items/inventory.php');
+		break;
+
+		// show count details
+		case	4:
+				include('../wrightetmathon/application/views/items/count_details.php');
+		break;
+
+		// show merge
+		case	5:
+				include('../wrightetmathon/application/views/items/merge_form.php');
+		break;
+
+		// show DLUO
+		case	6:
+				include('../wrightetmathon/application/views/items/dluo_form.php');
+		break;
+
+		// show price label
+		case	7:
+				include('../wrightetmathon/application/views/items/label_form.php');
+		break;
+
+		default:
+		break;
+	}
+?>
+
+<?php $this->load->view("partial/footer");*/ ?>-->

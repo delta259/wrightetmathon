@@ -1,0 +1,69 @@
+<?php
+$lang['recvs_register']='Commande/Réception/Retour Articles';
+$lang['recvs_mode']='Mode retour, réception ou commande';
+$lang['recvs_select_mode']='Sélectionnez le mode ...';
+$lang['recvs_receiving']='Stock - RECEPTIONNER';
+$lang['recvs_return']='Stock - RETRAIT';
+$lang['recvs_purchaseorder']='Stock - APPROVISIONNER';
+$lang['recvs_total']='Total';
+$lang['recvs_cost']='Cout HT';
+$lang['recvs_quantity']='Qté.';
+$lang['recvs_discount']='Remise %';
+$lang['recvs_edit']='MaJ';
+$lang['recvs_new_supplier'] = 'Nouveau Fournisseur';
+$lang['recvs_supplier'] = 'Fournisseur';
+$lang['recvs_jours'] = 'jours';
+$lang['recvs_ventes_sur_historique_correct'] = 'Ventes sur ';
+$lang['recvs_commande_pour_nbre_jour_prevision_stock_correct'] = 'Commande pour ';
+$lang['Methodologie'] = 'Méthodologie:';
+$lang['metho_by_stock'] = "Stock / Ventes ";
+$lang['metho_by_sales'] = "Ventes entre: ";
+$lang['recvs_select_supplier']='Selection Fournisseur';
+$lang['recvs_start_typing_supplier_name']='Nom fournisseur ...';
+$lang['recvs_unable_to_add_item']='Conformément à la politique de réapprovisionnement, cet article ne peut être commandé';
+$lang['recvs_error_editing_item']='Erreur d\'édition article';
+$lang['recvs_receipt']='Bordereau Retour/Reception/Commande';
+$lang['recvs_complete_receiving']='Terminer';
+$lang['recvs_confirm_finish_receiving'] = 'Confirmation définitive du retour/réception/commande ?';
+$lang['recvs_confirm_cancel_receiving'] = 'Confirmation définitive de l\'effacement de ce retour/réception/commande ? Tous les articles seront effacés.';
+$lang['recvs_find_or_scan_item']='Saisir ou scanner Article';
+$lang['recvs_find_or_scan_item_or_receipt']='Saisir ou scanner Article';
+$lang['recvs_id']='ID retour/réception/commande';
+$lang['recvs_item_name'] = 'Nom Article';
+$lang['recvs_transaction_failed'] = 'Transaction retour/réception/commande echouée';
+$lang['recvs_cancel'] = 'Annuler ';
+$lang['recvs_cancelpurchaseorder'] = 'Annuler CMDE';
+$lang['recvs_comment'] = 'Commentaires';
+$lang['recvs_reprint'] = 'Ré-imprimer stock transaction';
+$lang['recvs_enter_code'] = 'Code de la transaction à ré-imprimer(format:  ABCD-12345)    ';
+$lang['recvs_invalid_transaction_code'] = 'Code transaction inconnu';
+$lang['receivings_supplier_email_invalid'] = 'ATTENTION - la transaction a été créée dans la base de données mais la commande fournisseur n\'a pas été envoyé car l\'adresse e-mail du fournisseur n\'est pas valide.';
+
+// stock actions
+$lang['receivings_stock_actions'] 										=	'Stock Actions';
+$lang['receivings_stock_action_picklist']								=	'Précisez votre choix parmi les options suivantes';
+//$lang['receivings_stock_create'] 										=	'Approvisionner';
+$lang['receivings_stock_create'] 										=	'Passer une commande';
+$lang['receivings_stock_receive'] 										=	'Receptionner';
+$lang['receivings_stock_adhoc'] 										=	'Mouvement de stock divers';
+$lang['receivings_stock_delete'] 										=	'Annuler stock mouvement';
+$lang['receivings_stock_suspended'] 									=	'Gestion des bons de commande en attente';
+$lang['receivings_stock_reorder'] 										=	'Création automatique d’un bon de commande';
+$lang['receivings_stock_import_inventory'] 								=	'Importer Inventaire';
+$lang['receivings_suspend'] 											=	'Mise en attente';
+$lang['receivings_confirm_suspend_receiving']							=	'Confirmation définitive de la mise en attente de cette commande ? ';
+$lang['receivings_id']		 											=	'Référence';
+$lang['receivings_suspended'] 											=	'Commande en attente';
+$lang['receivings_stock_suspended_reception'] 							=	'Gestion des réceptions en attente';
+$lang['receivings_suspended_reception'] 								=	'Réception en attente';
+$lang['receivings_confirm_suspend_reception']							=	'Confirmation définitive de la mise en attente de cet réception ? ';
+$lang['receivings_action']		 										=	'Action';
+$lang['receivings_reactivate']		 									=	'Restorer';
+$lang['receivings_select']                                              =   'Sélectionner';
+$lang['receivings_delete']		 										=	'Ecraser';
+$lang['receivings_merge']		 										=	'Fusionner';
+$lang['receivings_stock_select_merge']		 							=	'Sélectionnez l\'ordre suspendu que vous voulez fusionner avec';
+
+$lang['recvs_metho_by_only_stock'] = 'Stock uniquement';
+
+?>

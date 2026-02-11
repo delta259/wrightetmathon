@@ -1,0 +1,43 @@
+<?php
+$lang['customers_customers']='Clients';
+$lang['customers_new']='Ajouter';
+$lang['customers_customer']='Client';
+$lang['customers_update']='MaJ client';
+$lang['customers_confirm_delete']='Etes-vous sûr de vouloir désactiver les clients sélectionnés ?';
+$lang['customers_none_selected']='Vous n\'avez sélectionné aucun client';
+$lang['customers_error_adding_updating'] = 'Erreur Ajout / MaJ client';
+$lang['customers_successful_adding']='Client ajouté avec succès';
+$lang['customers_successful_updating']='Client MaJ avec succès';
+$lang['customers_successful_deleted']='Client désactivé avec succès';
+$lang['customers_unsuccessful_deleted']='Erreur désactivation client';
+$lang['customers_one_or_multiple']='client(s)';
+$lang['customers_cannot_be_deleted']='Impossible de désactiver les Clients sélectionnés';
+$lang['customers_basic_information']='Information client';
+$lang['customers_account_number']='Compte Client';
+$lang['customers_taxable']='Appliquer TVA?';
+$lang['customers_comments']='Commentaires';
+$lang['customers_delete']='Désactiver';
+$lang['customers_merge']='Fusionner';
+$lang['customers_merge_from_client']='Fusion - Code client d\'origine';
+$lang['customers_merge_to_client']='Fusion - Code client de destination';
+$lang['customers_merge_customer_codes_blank']='Vous devez entrer les deux codes';
+$lang['customers_invalid_client']='Code client invalide';
+$lang['customers_merge_successfull']='Données clients fusionnés avec succès';
+$lang['customers_on_stop_manage']='Gestion Impayé';
+$lang['customers_on_stop_indicator']='Client en Impayé';
+$lang['customers_on_stop_amount']='Montant dû ';
+$lang['customers_on_stop_reason']='Motif ? ';
+$lang['customers_on_stop_indicator_required']='Vous devez entrer l\'indicateur Impayés';
+$lang['customers_on_stop_amount_numeric']='Valeur doit être numerique';
+$lang['customers_undelete']= 'Réactiver';
+$lang['customers_is_not_deleted']= 'Client non désactivé, réactivation impossible';
+$lang['customers_code_blank']= 'Entrez un code si vous plait';
+$lang['customers_successful_undeleted']='Client réactivé avec succès';
+$lang['customers_enter_phone_number']='Il manque le numero de téléphone';
+
+$lang['customers_fidelity']												=	'Fidelité';
+$lang['customers_points']												=	'Points';
+$lang['customers_fidelity_flag']										=	'Accumuler des points de fidélité pour ce client ?';
+$lang['customers_fidelity_points']										=	'Solde actuelle des points de fidélité';
+$lang['customers_fidelity_value']										=	'Valeur actuelle des points de fidélité';
+?>
