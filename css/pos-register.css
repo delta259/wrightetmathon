@@ -55,10 +55,6 @@
     gap: 10px;
 }
 
-.pos-history {
-    grid-column: 1 / -1;
-}
-
 /* ============================================
    POS Card (shared component)
    ============================================ */
@@ -270,8 +266,8 @@
 
 .pos-customer-search .pos-search-input {
     flex: 1;
-    padding: 10px 14px;
-    font-size: 16px;
+    padding: 12px 16px;
+    font-size: 30px;
     background: var(--bg-input);
     border: 1px solid var(--input-border);
     border-radius: var(--radius-md);
@@ -290,14 +286,16 @@
     font-weight: 600;
     color: var(--accent-blue);
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 8px 14px;
+    border: 1px solid var(--accent-blue);
     border-radius: var(--radius-sm);
     transition: all var(--transition-fast);
     white-space: nowrap;
 }
 
 .pos-customer-search .pos-link:hover {
-    background: rgba(56, 189, 248, 0.1);
+    background: var(--accent-blue);
+    color: #fff;
 }
 
 /* Customer info (when selected) */
@@ -322,7 +320,7 @@
 }
 
 .pos-customer-info .pos-customer-name {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
@@ -423,6 +421,26 @@
     box-shadow: var(--accent-blue-glow);
 }
 
+.pos-inline-msg {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    border-radius: var(--radius-md);
+    white-space: nowrap;
+    animation: pos-msg-flash 0.6s ease-out;
+}
+.pos-inline-msg--warning { background: var(--accent-red, #ef4444); }
+.pos-inline-msg--error   { background: var(--accent-red, #ef4444); }
+.pos-inline-msg--success { background: var(--success, #22c55e); }
+
+@keyframes pos-msg-flash {
+    0%   { opacity: 0; transform: scale(0.85); }
+    50%  { transform: scale(1.05); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
 /* ============================================
    Cart Table
    ============================================ */
@@ -481,15 +499,15 @@
 .pos-cart .pos-cart-table th:nth-child(4),
 .pos-cart .pos-cart-table td:nth-child(4)  { width: 44px; }   /* kit dyn */
 .pos-cart .pos-cart-table th:nth-child(5),
-.pos-cart .pos-cart-table td:nth-child(5)  { width: 50px; }   /* stock */
+.pos-cart .pos-cart-table td:nth-child(5)  { width: 60px; }   /* stock */
 .pos-cart .pos-cart-table th:nth-child(6),
 .pos-cart .pos-cart-table td:nth-child(6)  { width: 76px; }   /* prix TTC */
 .pos-cart .pos-cart-table th:nth-child(7),
 .pos-cart .pos-cart-table td:nth-child(7)  { width: 66px; }   /* qté */
 .pos-cart .pos-cart-table th:nth-child(8),
-.pos-cart .pos-cart-table td:nth-child(8)  { width: 64px; }   /* remise% */
+.pos-cart .pos-cart-table td:nth-child(8)  { width: 74px; }   /* remise% */
 .pos-cart .pos-cart-table th:nth-child(9),
-.pos-cart .pos-cart-table td:nth-child(9)  { width: 60px; }   /* offert? */
+.pos-cart .pos-cart-table td:nth-child(9)  { width: 70px; }   /* offert? */
 .pos-cart .pos-cart-table th:nth-child(10),
 .pos-cart .pos-cart-table td:nth-child(10) { width: 80px; }   /* total TTC */
 
@@ -572,8 +590,8 @@
 
 /* Kit item rows */
 .pos-cart #sales_register tbody tr.pos-kit-row {
-    font-weight: 600;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .pos-cart #sales_register tbody tr.pos-kit-row.pos-kit-pink {
@@ -582,6 +600,31 @@
 
 .pos-cart #sales_register tbody tr.pos-kit-row.pos-kit-blue {
     background: var(--pos-kit-blue) !important;
+}
+
+/* Kit row cells */
+.pos-kit-indent {
+    text-align: center;
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+.pos-kit-ref {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+.pos-kit-name {
+    font-weight: 500;
+}
+.pos-kit-option-badge {
+    display: inline-block;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--primary);
+    background: rgba(37, 99, 235, 0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
 }
 
 /* Delete button in cart */
@@ -1100,27 +1143,35 @@
 }
 
 .pos-slider-card #slider {
+    position: relative;
     width: 100% !important;
     max-width: 100%;
-    height: auto !important;
     overflow: hidden;
 }
 
 .pos-slider-card #slider figure {
     position: relative;
-    width: 900%;
+    width: 100%;
     margin: 0;
     padding: 0;
-    font-size: 0;
-    left: 0;
-    text-align: left;
-    animation: 45s slidy infinite;
 }
 
 .pos-slider-card #slider figure img {
-    width: 11.111%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: auto;
-    float: left;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out;
+}
+
+.pos-slider-card #slider figure img:first-child {
+    position: relative;
+}
+
+.pos-slider-card #slider figure img.pos-slide-active {
+    opacity: 1;
 }
 
 /* ============================================
@@ -1195,14 +1246,17 @@
     margin-top: 2px;
 }
 
+.pos-top-item-inactive {
+    opacity: 0.45;
+    text-decoration: line-through;
+    pointer-events: none;
+}
+
 /* ============================================
-   Customer History
+   Customer History (sale-card pattern)
    ============================================ */
 .pos-history {
     margin-top: 8px;
-}
-
-.pos-history #table_holder {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -1210,82 +1264,214 @@
     box-shadow: var(--shadow-sm);
 }
 
-.pos-history #sortable_table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
+/* Header */
+.pos-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--table-header-bg);
 }
-
-.pos-history #sortable_table thead tr th {
-    padding: 8px 8px;
-    font-size: 10px;
+.pos-history-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.4px;
-    color: var(--text-secondary) !important;
-    text-align: center !important;
-    border-bottom: 2px solid var(--border-color);
-    background: var(--table-header-bg) !important;
-    border-radius: 0 !important;
+    color: var(--text-secondary);
 }
-
-.pos-history #sortable_table tbody tr {
-    background: var(--bg-card) !important;
-    border-radius: 0 !important;
-    transition: background var(--transition-fast);
-}
-
-.pos-history #sortable_table tbody tr:hover {
-    background: var(--table-row-hover) !important;
-}
-
-.pos-history #sortable_table tbody td {
-    padding: 5px 8px;
-    border-bottom: 1px solid var(--table-border);
-    color: var(--text-primary);
-    background: transparent !important;
-}
-
-/* Expand/collapse button */
-.pos-history #sortable_table a.expand {
+.pos-history-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
-    border-radius: var(--radius-xs);
-    background: var(--bg-hover);
-    color: var(--text-secondary);
-    font-weight: 700;
-    font-size: 14px;
-    text-decoration: none;
-    transition: all var(--transition-fast);
-}
-
-.pos-history #sortable_table a.expand:hover {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
     background: var(--primary);
-    color: white;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
 }
 
-/* Inner table (details) */
-.pos-history .innertable {
-    width: 95% !important;
-    margin: 8px auto;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
+/* Empty state */
+.pos-history-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 16px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    opacity: 0.6;
+}
+
+/* Scrollable body */
+.pos-history-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Sale card (shared with customers panel) */
+.pos-history .sale-card {
+    border-bottom: 1px solid var(--border-color);
+}
+.pos-history .sale-card:last-child { border-bottom: none; }
+
+.pos-history .sale-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    gap: 8px;
+}
+.pos-history .sale-card-header:hover {
+    background: var(--table-row-hover, #f1f5f9);
+}
+.pos-history .sale-card-date {
+    font-weight: 600;
+    font-size: 0.82em;
+    color: var(--text-primary);
+    min-width: 110px;
+}
+.pos-history .sale-card-type {
+    font-size: 0.68em;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.pos-history .sale-card-type-sale {
+    color: var(--primary);
+    background: rgba(37, 99, 235, 0.08);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+}
+.pos-history .sale-card-type-return {
+    color: var(--danger, #ef4444);
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.pos-history .sale-card-id {
+    font-size: 0.72em;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.pos-history .sale-card-employee {
+    font-size: 0.78em;
+    color: var(--text-secondary);
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pos-history .sale-card-payment {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+.sale-card-pay-badge {
+    font-size: 0.72em;
+    color: var(--text-secondary);
+    background: var(--bg-hover, #f8fafc);
+    padding: 1px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid var(--border-color, #c5cbd3);
+}
+.pos-history .sale-card-total {
+    font-weight: 700;
+    font-size: 0.92em;
+    color: var(--primary);
+    min-width: 68px;
+    text-align: right;
+}
+.pos-history .sale-card-total.negative {
+    color: var(--danger, #ef4444);
+}
+.pos-history .sale-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 40px;
+}
+.pos-history .sale-card-actions a {
+    display: inline-flex;
+    align-items: center;
+    opacity: 0.4;
+    transition: opacity 0.12s;
+}
+.pos-history .sale-card-actions a:hover { opacity: 1; }
+.pos-history .sale-card-actions img {
+    width: 16px !important;
+    height: 16px !important;
+}
+.pos-history .sale-card-arrow {
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+.pos-history .sale-card-arrow.expanded {
+    transform: rotate(90deg);
+    opacity: 1;
 }
 
-.pos-history .innertable thead tr th {
-    font-size: 10px;
-    background: var(--bg-hover) !important;
-    color: var(--text-secondary) !important;
-    padding: 6px 8px;
+/* Detail items (hidden by default) */
+.pos-history .sale-card-items {
+    display: none;
+    padding: 0 16px 10px 16px;
+    background: var(--bg-hover, #f1f5f9);
 }
+.pos-history .sale-card-items.visible { display: block; }
 
-.pos-history .innertable tbody td {
+.pos-history .sale-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78em;
+}
+.pos-history .sale-items-table th {
+    text-align: left;
     padding: 4px 8px;
-    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9em;
+}
+.pos-history .sale-items-table td {
+    padding: 3px 8px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+}
+.pos-history .sale-items-table tr:last-child td { border-bottom: none; }
+.pos-history .sale-items-table .col-ref { width: 80px; font-size: 0.85em; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+.pos-history .sale-items-table .col-qty { text-align: center; width: 36px; }
+.pos-history .sale-items-table .col-price { text-align: right; width: 65px; }
+.pos-history .sale-items-table .col-discount { text-align: center; width: 42px; }
+.pos-history .sale-items-table .item-discount {
+    color: var(--danger, #ef4444);
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+/* Comment line */
+.pos-history .sale-card-comment {
+    margin-top: 4px;
+    padding: 4px 8px;
+    font-size: 0.78em;
+    color: var(--text-secondary);
+    font-style: italic;
+    border-left: 2px solid var(--primary);
+    background: var(--bg-card);
+    border-radius: 0 3px 3px 0;
 }
 
 /* ============================================

@@ -595,6 +595,11 @@ function initFuzzyMergeExecute() {
                 $btn.css('opacity', '1');
 
                 if (resp.success) {
+                    // Allow caller to handle merge completion (e.g. inventory count page)
+                    if (typeof window.onMergeComplete === 'function' && resp.merged) {
+                        window.onMergeComplete(resp);
+                        return;
+                    }
                     var html = '<div style="padding:40px;text-align:center;">'
                         + '<div style="font-size:48px;margin-bottom:16px;">\u2705</div>'
                         + '<h3 style="margin:0 0 8px 0;font-size:16px;">Fusion r\u00e9ussie</h3>'

@@ -82,7 +82,31 @@ css can be found in pos-register.css and modern-theme.css
             echo "<div class='success_message'>".$success."</div>";
         }
 
-        if (!isset($_SESSION['show_dialog']))
+        // Capture messages for inline display next to search field
+        $pos_stock_warning = false;
+        $pos_inline_message = false;
+        $pos_inline_message_text = '';
+        $pos_inline_message_type = '';
+        if (isset($_SESSION['error_code']))
+        {
+            $inline_codes = array(
+                '06010' => array('text' => 'Stock insuffisant', 'type' => 'warning'),
+                '07300' => array('text' => 'Mail envoyé avec succès', 'type' => 'success'),
+                '07301' => array('text' => 'Erreur lors de l\'envoi du mail', 'type' => 'error'),
+                '07290' => array('text' => 'Email client inconnu', 'type' => 'error'),
+                '05840' => array('text' => 'Vente complétée avec succès', 'type' => 'success'),
+            );
+            if (isset($inline_codes[$_SESSION['error_code']]))
+            {
+                $pos_inline_message = true;
+                $pos_inline_message_text = $inline_codes[$_SESSION['error_code']]['text'];
+                $pos_inline_message_type = $inline_codes[$_SESSION['error_code']]['type'];
+                if ($_SESSION['error_code'] === '06010') $pos_stock_warning = true;
+                unset($_SESSION['error_code']);
+            }
+        }
+
+        if (empty($_SESSION['show_dialog']))
         {
             include('../wrightetmathon/application/views/partial/show_messages.php');
         }
@@ -341,6 +365,10 @@ css can be found in pos-register.css and modern-theme.css
                 'placeholder' => $this->lang->line('sales_start_typing_item_name')
             ));
             echo form_close();
+
+            if ($pos_inline_message) {
+                echo '<span class="pos-inline-msg pos-inline-msg--' . $pos_inline_message_type . '">' . $pos_inline_message_text . '</span>';
+            }
             ?>
         </div>
 
@@ -354,7 +382,7 @@ css can be found in pos-register.css and modern-theme.css
                             <th><?php echo $this->lang->line('items_item_number'); ?></th>
                             <th><?php echo $this->lang->line('sales_item_name'); ?></th>
                             <th><?php echo $this->lang->line('items_DynamicKit'); ?></th>
-                            <th><?php echo $this->lang->line('sales_in_stock')?></th>
+                            <th>Stock</th>
                             <th><?php echo $this->lang->line('sales_price').$this->lang->line('sales_TTC'); ?></th>
                             <th><?php echo $this->lang->line('sales_quantity'); ?></th>
                             <th><?php echo $this->lang->line('sales_discount').$this->lang->line('common_percent'); ?></th>
@@ -534,26 +562,18 @@ css can be found in pos-register.css and modern-theme.css
                                         <?php
                                     }
                                     ?>
+                                        <td class="pos-kit-indent">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+                                        </td>
+                                        <td class="pos-kit-ref"><?php echo $cart_line->item_number; ?></td>
+                                        <td class="pos-kit-name" style="text-align:left;">
+                                            <?php echo $cart_line->name; ?>
+                                            <span class="pos-kit-option-badge"><?php echo $cart_line->kit_option; ?></span>
+                                        </td>
                                         <td></td>
-                                        <td></td>
-                                        <td><?php echo $cart_line->kit_option; ?></td>
-                                        <td><?php echo $cart_line->item_number; ?></td>
-                                        <td><?php echo $cart_line->name;?></td>
                                         <td><?php echo $cart_line->quantity; ?></td>
-                                        <?php
-                                        if ($cart_line->kit_option_type == 'F')
-                                        {
-                                            ?>
-                                            <td style="text-align:right"><?php echo number_format($cart_line->line_quantity);?></td>
-                                            <?php
-                                        }
-                                        else
-                                        {
-                                            ?>
-                                            <td class="zone_champ_saisie" style="text-align:right"><?php echo round(number_format($cart_line->line_quantity, 2),0); ?></td>
-                                            <?php
-                                        }
-                                        ?>
+                                        <td></td>
+                                        <td style="text-align:right"><?php echo round(number_format($cart_line->line_quantity, 2), 0); ?></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -572,6 +592,136 @@ css can be found in pos-register.css and modern-theme.css
         </div>
 
         </div><!-- end #sales_register_wrapper -->
+
+        <!-- ======================================== -->
+        <!-- CUSTOMER HISTORY (under cart)            -->
+        <!-- ======================================== -->
+        <?php
+        $hist_pieces = explode("/", $this->config->item('numberformat'));
+        $hist_dec = $hist_pieces[0];
+        $hist_pt  = $hist_pieces[1];
+        $hist_sep = $hist_pieces[2];
+        $hist_sales = $_SESSION['CSI']['HS'] ?? array();
+        $hist_details = $_SESSION['CSI']['HD'] ?? array();
+        $hist_count = count($hist_sales);
+        ?>
+        <div class="pos-history">
+            <div class="pos-history-header">
+                <div class="pos-history-title">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Historique ventes
+                    <?php if ($hist_count > 0): ?>
+                    <span class="pos-history-badge"><?php echo $hist_count; ?></span>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php if ($hist_count > 0): ?>
+            <div class="pos-history-body">
+                <?php foreach ($hist_sales as $hk => $hrow):
+                    $h_id       = $hrow[0] ?? '';
+                    $h_print    = $hrow[1] ?? '';
+                    $h_mode     = $hrow[2] ?? '';
+                    $h_date     = $hrow[3] ?? '';
+                    $h_employee = $hrow[5] ?? '';
+                    $h_ttc      = $hrow[6] ?? '0';
+                    $h_tax      = $hrow[7] ?? '0';
+                    $h_ht       = $hrow[8] ?? '0';
+                    $h_payment  = $hrow[9] ?? '';
+                    $h_copy     = $hrow[10] ?? '';
+                    $h_comment  = $hrow[11] ?? '';
+                    $h_ttc_num  = (float)str_replace(array($hist_sep, $hist_pt), array('', '.'), $h_ttc);
+                    $h_neg_class = ($h_ttc_num < 0) ? ' negative' : '';
+                    $h_items    = $hist_details[$hk] ?? array();
+
+                    // Extract numeric ID and type label from "SALE-57230"
+                    $h_num = preg_replace('/^[A-Z]+-/', '', $h_id);
+                    $h_type_map = array('sales' => 'Facture', 'returns' => 'Avoir');
+                    $h_type_label = $h_type_map[$h_mode] ?? $h_mode;
+                    $h_type_class = ($h_mode === 'returns') ? 'sale-card-type-return' : 'sale-card-type-sale';
+                ?>
+                <div class="sale-card">
+                    <div class="sale-card-header" data-idx="<?php echo $hk; ?>">
+                        <span class="sale-card-type <?php echo $h_type_class; ?>"><?php echo $h_type_label; ?></span>
+                        <span class="sale-card-date"><?php echo $h_date; ?></span>
+                        <span class="sale-card-id">#<?php echo $h_num; ?></span>
+                        <span class="sale-card-employee"><?php echo htmlspecialchars($h_employee); ?></span>
+                        <span class="sale-card-payment"><?php
+                            // Parse payment_type string: "Espèces: 20.00€<br />CB: 5.00€<br />"
+                            $pay_parts = array_filter(explode('<br />', $h_payment));
+                            $pay_grouped = array();
+                            foreach ($pay_parts as $pp) {
+                                $pp = trim(strip_tags($pp));
+                                if ($pp === '') continue;
+                                if (preg_match('/^(.+?):\s*([\-\d,\.]+)\s*€?$/', $pp, $m)) {
+                                    $pm_name = trim($m[1]);
+                                    $pm_amount = (float)str_replace(',', '.', $m[2]);
+                                    if (!isset($pay_grouped[$pm_name])) $pay_grouped[$pm_name] = 0;
+                                    $pay_grouped[$pm_name] += $pm_amount;
+                                }
+                            }
+                            foreach ($pay_grouped as $pm_name => $pm_total) {
+                                echo '<span class="sale-card-pay-badge" title="'.htmlspecialchars($pm_name).'">';
+                                echo htmlspecialchars($pm_name).': '.number_format($pm_total, $hist_dec, $hist_pt, $hist_sep).'€';
+                                echo '</span>';
+                            }
+                        ?></span>
+                        <span class="sale-card-total<?php echo $h_neg_class; ?>"><?php echo $h_ttc; ?></span>
+                        <span class="sale-card-actions">
+                            <?php echo $h_print; ?>
+                            <?php echo $h_copy; ?>
+                        </span>
+                        <svg class="sale-card-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                    <?php if (!empty($h_items)): ?>
+                    <div class="sale-card-items" data-items-idx="<?php echo $hk; ?>">
+                        <table class="sale-items-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-ref">Réf</th>
+                                    <th>Article</th>
+                                    <th class="col-qty">Qté</th>
+                                    <th class="col-price">PU TTC</th>
+                                    <th class="col-discount">Rem.</th>
+                                    <th class="col-price">Total TTC</th>
+                                    <th class="col-price">Total HT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($h_items as $hitem):
+                                    $di_ref   = $hitem[2] ?? '';
+                                    $di_name  = $hitem[3] ?? '';
+                                    $di_qty   = $hitem[5] ?? 0;
+                                    $di_price = $hitem[6] ?? 0;
+                                    $di_disc  = $hitem[7] ?? 0;
+                                    $di_ttc   = $hitem[8] ?? 0;
+                                    $di_ht    = $hitem[9] ?? 0;
+                                ?>
+                                <tr>
+                                    <td class="col-ref" title="<?php echo htmlspecialchars($di_ref); ?>"><?php echo htmlspecialchars($di_ref); ?></td>
+                                    <td title="<?php echo htmlspecialchars($di_name); ?>"><?php echo htmlspecialchars($di_name); ?></td>
+                                    <td class="col-qty"><?php echo $di_qty; ?></td>
+                                    <td class="col-price"><?php echo is_numeric($di_price) ? number_format($di_price, $hist_dec, $hist_pt, $hist_sep) : $di_price; ?></td>
+                                    <td class="col-discount"><?php echo ($di_disc > 0) ? '<span class="item-discount">-'.$di_disc.'%</span>' : ''; ?></td>
+                                    <td class="col-price"><?php echo is_numeric($di_ttc) ? number_format($di_ttc, $hist_dec, $hist_pt, $hist_sep) : $di_ttc; ?></td>
+                                    <td class="col-price"><?php echo is_numeric($di_ht) ? number_format($di_ht, $hist_dec, $hist_pt, $hist_sep) : $di_ht; ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
+            <div class="pos-history-empty">
+                <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Aucun historique de ventes
+            </div>
+            <?php endif; ?>
+        </div>
 
     </div><!-- end .pos-main -->
 
@@ -777,9 +927,10 @@ css can be found in pos-register.css and modern-theme.css
                         echo '</div>';
                     }
 
-                    // Hidden form for "Ajouter Paiement" (full dialog) — submitted by 4th button
+                    // Hidden form for "Ajouter Paiement" — submitted by all payment buttons
                     echo form_open($_SESSION['controller_name'].'/payments', array('id'=>'finish_sale_form', 'style'=>'display:none'));
-                    echo form_submit(array('name'=>'submit','id'=>'submit_payments','value'=>$this->lang->line('sales_add_payment')));
+                    echo form_hidden('selected_pm', '');
+                    echo form_submit(array('name'=>'submit_payments','id'=>'submit_payments','value'=>$this->lang->line('sales_add_payment')));
                     echo form_close();
 
                     // Hidden form for quick pay — submitted by top 3 buttons
@@ -820,7 +971,6 @@ css can be found in pos-register.css and modern-theme.css
                     ?>
                         <button type="button" class="pos-fidelity-btn" id="btn_fidelity_pay"
                                 data-pm-id="<?php echo $fide_pm_id; ?>"
-                                data-amount="<?php echo round($_SESSION['CSI']['SHV']->fidelity_value, 2); ?>"
                                 title="<?php echo $_SESSION['CSI']['CI']->fidelity_points.' pts = '.$_SESSION['CSI']['SHV']->fidelity_value.$_SESSION['CSI']['CuI']->currency_sign; ?>">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                             <span><?php echo $_SESSION['CSI']['SHV']->fidelity_value.$_SESSION['CSI']['CuI']->currency_sign; ?></span>
@@ -845,8 +995,10 @@ css can be found in pos-register.css and modern-theme.css
                 Produits habituels
             </div>
             <div class="pos-top-items-grid">
-                <?php foreach ($_SESSION['CSI']['TOP'] as $top_item): ?>
-                <a href="#" class="pos-top-item" data-item-id="<?php echo $top_item->item_id; ?>">
+                <?php foreach ($_SESSION['CSI']['TOP'] as $top_item):
+                    $is_deleted = !empty($top_item->item_deleted);
+                ?>
+                <a href="#" class="pos-top-item<?php echo $is_deleted ? ' pos-top-item-inactive' : ''; ?>" data-item-id="<?php echo $top_item->item_id; ?>"<?php echo $is_deleted ? ' title="Produit inactif"' : ''; ?>>
                     <span class="pos-top-item-name"><?php echo htmlspecialchars($top_item->name); ?></span>
                     <span class="pos-top-item-ref"><?php echo htmlspecialchars($top_item->item_number); ?></span>
                 </a>
@@ -875,103 +1027,14 @@ css can be found in pos-register.css and modern-theme.css
 
     </div><!-- end .pos-sidebar -->
 
-    <!-- ======================================== -->
-    <!-- CUSTOMER HISTORY (Full Width)            -->
-    <!-- ======================================== -->
-    <div class="pos-history">
-        <div id="table_holder">
-            <table class="tablesorter report table table-striped table-bordered" id="sortable_table">
-                <thead>
-                    <tr>
-                        <th>+</th>
-                        <?php foreach ($_SESSION['CSI']['HH']['summary'] as $header) { ?>
-                        <th><?php echo $header; ?></th>
-                        <?php } ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $pieces = array();
-                    $pieces = explode("/", $this->config->item('numberformat'));
-                    ?>
-
-                    <?php foreach ($_SESSION['CSI']['HS'] as $key=>$row) { ?>
-                    <tr>
-                        <td><a href="#" class="expand">+</a></td>
-                        <?php foreach ($row as $cell)
-                        {
-                            if (is_numeric($cell))
-                            {
-                                $cell = number_format($cell, $pieces[0], $pieces[1], $pieces[2]);
-                                ?>
-                                <td style="text-align:right">
-                                <?php
-                            }
-                            else
-                            {
-                                ?>
-                                <td style="text-align:left">
-                                <?php
-                            }
-                            echo $cell;
-                            ?>
-                            </td>
-                        <?php } ?>
-                    </tr>
-                    <tr>
-                        <td colspan="15">
-                        <table class="innertable tablesorter report table table-striped table-bordered" style="width: 90%;">
-                            <thead>
-                                <tr>
-                                    <?php foreach ($_SESSION['CSI']['HH']['details'] as $header) { ?>
-                                    <th><?php echo $header; ?></th>
-                                    <?php } ?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($_SESSION['CSI']['HD'][$key] as $row2) { ?>
-                                <tr>
-                                    <?php foreach ($row2 as $cell)
-                                    {
-                                        if (is_numeric($cell))
-                                        {
-                                            $cell = number_format($cell, $pieces[0], $pieces[1], $pieces[2]);
-                                            ?>
-                                            <td style="text-align:right">
-                                            <?php
-                                        }
-                                        else
-                                        {
-                                            ?>
-                                            <td style="text-align:left">
-                                            <?php
-                                        }
-                                        echo $cell;
-                                        ?>
-                                        </td>
-                                    <?php } ?>
-                                </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
 </div><!-- end .pos-layout -->
 
 
 <!-- show the footer -->
 <?php $this->load->view("partial/pre_footer"); ?>
-<?php $this->load->view("partial/footer"); ?>
-
 
 <?php
-// Show modals
+// Show modals (position: fixed overlays — must be within <body> for proper JS execution)
 switch ($_SESSION['show_dialog'])
 {
     case 1:
@@ -999,7 +1062,6 @@ switch ($_SESSION['show_dialog'])
         break;
 }
 ?>
-
 
 <!-- div for spinner -->
 <div id="spinner" class="spinner" style="display:none;">
@@ -1110,22 +1172,14 @@ $(document).ready	(
                                                                     }
                                                                 );
 
-                            $(".tablesorter a.expand").click	(
-                                                                    function(event)
-                                                                    {
-                                                                        $(event.target).parent().parent().next().find('.innertable').toggle();
-
-                                                                        if ($(event.target).text() == '+')
-                                                                            {
-                                                                                $(event.target).text('-');
-                                                                            }
-                                                                        else
-                                                                            {
-                                                                                $(event.target).text('+');
-                                                                            }
-                                                                        return false;
-                                                                    }
-                                                                );
+                            // Customer history expand/collapse
+                            $(".pos-history .sale-card-header").click(function() {
+                                var idx = $(this).attr('data-idx');
+                                var items = $(".pos-history").find('[data-items-idx="' + idx + '"]');
+                                var arrow = $(this).find('.sale-card-arrow');
+                                items.toggleClass('visible');
+                                arrow.toggleClass('expanded');
+                            });
                         }
                     );
 
@@ -1177,32 +1231,27 @@ $(document).on('click', '.pos-top-item', function(e) {
     $('#add_item_form').submit();
 });
 
-// Quick pay: top 3 payment method buttons — pay full amount due
+// Payment buttons: open payment dialog with method pre-selected
 $(document).on('click', '.pos-quick-pay-btn:not(.pos-quick-pay-more)', function(e) {
     e.preventDefault();
     var pmId = $(this).data('pm-id');
-    var amount = '<?php echo isset($_SESSION['CSI']['SHV']->header_amount_due_TTC) ? round($_SESSION['CSI']['SHV']->header_amount_due_TTC, 2) : 0; ?>';
-    if (parseFloat(amount) == 0) return;
-    $('#quick_pay_form input[name="payment_method_id"]').val(pmId);
-    $('#quick_pay_form input[name="amount_tendered"]').val(amount);
-    $('#quick_pay_form').submit();
-});
-
-// 4th button: open full payment dialog
-$(document).on('click', '#btn_add_payment', function(e) {
-    e.preventDefault();
+    $('#finish_sale_form input[name="selected_pm"]').val(pmId);
     $('#finish_sale_form').submit();
 });
 
-// Fidelity button: pay with fidelity points
+// 4th button: open full payment dialog (no pre-selection)
+$(document).on('click', '#btn_add_payment', function(e) {
+    e.preventDefault();
+    $('#finish_sale_form input[name="selected_pm"]').val('');
+    $('#finish_sale_form').submit();
+});
+
+// Fidelity button: open "Ajouter Paiement" with FIDE pre-selected
 $(document).on('click', '#btn_fidelity_pay', function(e) {
     e.preventDefault();
     var pmId = $(this).data('pm-id');
-    var amount = $(this).data('amount');
-    if (parseFloat(amount) <= 0) return;
-    $('#quick_pay_form input[name="payment_method_id"]').val(pmId);
-    $('#quick_pay_form input[name="amount_tendered"]').val(amount);
-    $('#quick_pay_form').submit();
+    $('#finish_sale_form input[name="selected_pm"]').val(pmId);
+    $('#finish_sale_form').submit();
 });
 
 // Auto-submit cart line: click the row's edit_item button to submit
@@ -1235,47 +1284,20 @@ $(document).on('keydown', 'input.pos-auto-edit', function(e) {
 </script>
 
 
-<style>
-    div#slider{
-        width:80%;
-        max-width:1000px;
-        overflow:hidden;
-    }
-    div#slider figure{
-        position:relative;
-        width:900%;
-        margin:0;
-        padding:0;
-        font-size:0;
-        left:0;
-        text-align:left;
-        animation: 45s slidy infinite;
-    }
-    div#slider figure img {
-        width:11.111%;
-        height:auto;
-        float:left;
-    }
+<script>
+(function() {
+    var slider = document.querySelector('#slider figure');
+    if (!slider) return;
+    var imgs = slider.querySelectorAll('img');
+    if (imgs.length === 0) return;
+    var current = 0;
+    imgs[0].classList.add('pos-slide-active');
+    setInterval(function() {
+        imgs[current].classList.remove('pos-slide-active');
+        current = (current + 1) % imgs.length;
+        imgs[current].classList.add('pos-slide-active');
+    }, 5000);
+})();
+</script>
 
-    @keyframes slidy{
-        0% {left:0%;}
-        10% {left:0%;}
-        11.11% {left:-100%;}
-        21% {left:-100%;}
-        22.22% {left:-200%;}
-        32% {left:-200%;}
-        33.33% {left:-300%;}
-        43% {left:-300%;}
-        44.44% {left:-400%;}
-        54% {left:-400%;}
-        55.55% {left:-500%;}
-        65% {left:-500%;}
-        66.66% {left:-600%;}
-        76% {left:-600%;}
-        77.77% {left:-700%;}
-        87% {left:-700%;}
-        88.88% {left:-800%;}
-        99% {left:-800%;}
-        100% {left:0%;}
-    }
-</style>
+<?php $this->load->view("partial/footer"); ?>

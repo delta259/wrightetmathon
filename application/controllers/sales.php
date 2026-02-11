@@ -158,7 +158,7 @@ class Sales extends CI_Controller
 			// coming from customer select
 			case 'SC':
 				$customer_id											=	$this->input->post("customer");
-				if(($customer_id[0]=='X') && (is_numeric($customer_id[1]) ))
+				if(!empty($customer_id) && ($customer_id[0]=='X') && isset($customer_id[1]) && is_numeric($customer_id[1]))
 				{
 					//Si la saisie commence par un X alors c'est surement une carte de fidélité
 					//Récupération du customer_id à partir de la carte de fidélité dans les tables ospos_people et ospos_customers
@@ -301,19 +301,22 @@ class Sales extends CI_Controller
 		$_SESSION['CSI']['SHV']->tax_name								=	$this->config->item('default_tax_1_name');
 		$_SESSION['CSI']['SHV']->tax_percent							=	$this->config->item('default_tax_1_rate');
 		$_SESSION['CSI']['SHV']->fidelity_value							=	round($_SESSION['CSI']['CI']->fidelity_points * $this->config->item('fidelity_value'), 2);
-		$_SESSION['CSI']['SHV']->client_average_basket					=	round($_SESSION['CSI']['CI']->sales_ht / $_SESSION['CSI']['CI']->sales_number_of, 2);
+		$_SESSION['CSI']['SHV']->client_average_basket					=	($_SESSION['CSI']['CI']->sales_number_of > 0) ? round($_SESSION['CSI']['CI']->sales_ht / $_SESSION['CSI']['CI']->sales_number_of, 2) : 0;
 		$_SESSION['CSI']['HH']											=	$this->reports->get_headers($transaction_type);
 		$_SESSION['CSI']['HS']											=	$summary_data;
 		$_SESSION['CSI']['HD']											=	$details_data;
-		$_SESSION['CSI']['HO']											=	$overall_summary_data;
+		$_SESSION['CSI']['HO']											=	array();
 
 		// get top purchased items for this customer
-		$_SESSION['CSI']['TOP']											=	$this->Sale->get_customer_top_items($customer_id, 3, 12);
+		$_SESSION['CSI']['TOP']											=	$this->Sale->get_customer_top_items($customer_id, 5, 4);
 
 		//set day of b
 		$_SESSION['CSI']['SHV']->dob_year = $customer_info->dob_year;
 		$_SESSION['CSI']['SHV']->dob_month = $customer_info->dob_month;
 		$_SESSION['CSI']['SHV']->dob_day = $customer_info->dob_day;
+
+		// update session customer_id with current (not previous) customer
+		$_SESSION['customer_id'] = $customer_id;
 
 		// now reset each cart line
 		foreach ($_SESSION['CSI']['CT'] as $line => $cart_line)
@@ -498,30 +501,32 @@ class Sales extends CI_Controller
 			{
 				//ne pas fusionner les montant si le paiment s'effectue en espéce
 				$pmi_remise=10;
+				if (!isset($_SESSION['CSI']['PD'][$pmi_remise])) {
+					$_SESSION['CSI']['PD'][$pmi_remise] = new stdClass();
+					$_SESSION['CSI']['PD'][$pmi_remise]->payment_amount_TTC = 0;
+				}
 				$_SESSION['CSI']['PD'][$pmi_remise]->payment_amount_TTC			+=	$amt;
 				$_SESSION['CSI']['PD'][$pmi_remise]->payment_method_description ="Espèces";
 				$pmi=2;
 			}
 			else
 			{
-				if($pmi != 5)
+				if (isset($_SESSION['CSI']['PD'][$pmi]->payment_method_fidelity_flag) && $_SESSION['CSI']['PD'][$pmi]->payment_method_fidelity_flag == 'Y' && isset($_SESSION['CSI']['SHV']->customer_id))
 				{
-                $_SESSION['CSI']['PD'][$pmi]->payment_amount_TTC			+=	$amt;
+					// Fidélité : vérifier que le total cumulé ne dépasse pas la valeur disponible
+					$new_total = $_SESSION['CSI']['PD'][$pmi]->payment_amount_TTC + $amt;
+					if (round($_SESSION['CSI']['SHV']->fidelity_value, 2) < round($new_total, 2))
+					{
+						$_SESSION['error_code']								=	'05910';
+						$_SESSION['substitution_parms']						=	array($_SESSION['CSI']['SHV']->fidelity_value, $_SESSION['CSI']['CuI']->currency_sign, $new_total);
+						$this												->	_reload();
+						return;
+					}
+					$_SESSION['CSI']['PD'][$pmi]->payment_amount_TTC = $new_total;
 				}
 				else
 				{
-					if ($_SESSION['CSI']['PD'][$pmi]->payment_method_fidelity_flag == 'Y' AND isset($_SESSION['CSI']['SHV']->customer_id))
-        			{
-        				// test there is enough fidelity value on this client for this fidelity payment
-        				if (round($_SESSION['CSI']['SHV']->fidelity_value, 2) < round($amt, 2))
-        				{
-        					unset($_SESSION['CSI']['PD'][$pmi]);
-        					$_SESSION['error_code']								=	'05910';
-        					$_SESSION['substitution_parms']						=	array($_SESSION['CSI']['SHV']->fidelity_value, $_SESSION['CSI']['CuI']->currency_sign, $amt);
-        					$this												->	_reload();
-        					return;
-        				}
-        			}
+					$_SESSION['CSI']['PD'][$pmi]->payment_amount_TTC += $amt;
 				}
 			}
 		}
@@ -556,6 +561,9 @@ class Sales extends CI_Controller
 			// set payment amount
 		}
 
+		// keep payment modal open
+		$_SESSION['show_dialog']										=	3;
+
 		// reload
 		$this															->	_reload();
 	}
@@ -563,6 +571,7 @@ class Sales extends CI_Controller
 	function delete_payment($pmi)
 	{
 		unset($_SESSION['CSI']['PD'][$pmi]);
+		$_SESSION['show_dialog']										=	3;
 		$this															->	_reload();
 	}
 
@@ -757,8 +766,8 @@ class Sales extends CI_Controller
 			// verifications passed
 			// set new quantity
 			$_SESSION['CSI']['CT'][$line]->line_quantity 				=	$this->input->post("line_quantity");
-			// set out of stock indicator
-			if ($_SESSION['CSI']['CT'][$line]->quantity < $_SESSION['CSI']['CT'][$line]->line_quantity)
+			// set out of stock indicator (skip for credit notes / negative quantities)
+			if ($_SESSION['CSI']['CT'][$line]->line_quantity > 0 && $_SESSION['CSI']['CT'][$line]->quantity < $_SESSION['CSI']['CT'][$line]->line_quantity)
 			{
 				$_SESSION['CSI']['CT'][$line]->colour					=	'orange';
 				$_SESSION['error_code']									=	'06010';
@@ -1634,6 +1643,11 @@ class Sales extends CI_Controller
 
 		if(!isset($_SESSION['variable_tampon_booleen']) || ($_SESSION['blocage_de_l_impression_du_ticket_de_caisse']=='4'))
 		{
+			if(isset($_SESSION['sales_without_ticket']))
+			{
+				unset($_SESSION['sales_without_ticket']);
+				redirect("sales");
+			}
 			redirect("sales");
 		}
 
@@ -2763,16 +2777,113 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 	//////////////////////////////////////////////////////////////
 
 	function reprint_select($sale_id)
-	{		
+	{
 		$_SESSION['reprint'] = 1;
-		$data['sale_id'] = $sale_id;
-		$this->load->view("sales/receipt", $data);
+
+		// Load sale info for the reprint modal
+		$sale_info = $this->Sale->get_info($sale_id)->row();
+		$_SESSION['reprint_sale_info'] = $sale_info;
+		$_SESSION['reprint_sale_items'] = $this->Sale->get_sale_items($sale_id)->result_array();
+		$_SESSION['reprint_sale_payments'] = $this->Sale->get_sale_payments($sale_id)->result_array();
+		// Get customer name
+		$_SESSION['reprint_customer_name'] = '';
+		if ($sale_info && !empty($sale_info->customer_id))
+		{
+			$this->db->select('first_name, last_name');
+			$this->db->from('people');
+			$this->db->where('person_id', $sale_info->customer_id);
+			$cust = $this->db->get()->row();
+			if ($cust) $_SESSION['reprint_customer_name'] = $cust->first_name . ' ' . $cust->last_name;
+		}
+		// Get employee name
+		$_SESSION['reprint_employee_name'] = '';
+		if ($sale_info && !empty($sale_info->employee_id))
+		{
+			$this->db->select('first_name, last_name');
+			$this->db->from('people');
+			$this->db->where('person_id', $sale_info->employee_id);
+			$emp = $this->db->get()->row();
+			if ($emp) $_SESSION['reprint_employee_name'] = $emp->first_name . ' ' . $emp->last_name;
+		}
+
+		$tcode = $this->Transaction->get_transaction_code($sale_info->mode);
+		$data['sale_id'] = $tcode . $sale_id;
+		$data['sale_id_raw'] = $sale_id;
+
+		// Lightweight page: just header + modal (no full receipt rendering)
+		$this->load->view("sales/reprint_page", $data);
 	}
 	function copy_sale($sale_id)
-	{		
-		$_SESSION['var_sale_copy']=1;
-		$_SESSION['CSI']['SHV']->CN_original_invoice = $sale_id;
-		$this->CN_add_line();
+	{
+		// Get all items from the original sale in one query
+		$invoice_items = $this->Sale->get_sale_items($sale_id)->result_array();
+
+		if (empty($invoice_items)) {
+			$this->_reload();
+			return;
+		}
+
+		// Unset last line
+		$this->unset_last_line();
+
+		foreach ($invoice_items as $invoice_item) {
+			$selected_item_id = $invoice_item['item_id'];
+
+			// Get next line number
+			$line = $this->next_line_number();
+
+			// Get item info (base data: tax, offer_indicator, etc.)
+			$_SESSION['CSI']['CT'][$line] = $this->Item->get_info($selected_item_id);
+
+			// Not a credit note
+			$_SESSION['CSI']['CT'][$line]->CN_line = 'N';
+
+			// Quantity (positive for copy)
+			$_SESSION['CSI']['CT'][$line]->line_quantity = $invoice_item['quantity_purchased'];
+
+			// Prices from original invoice (before discount)
+			$unit_price_HT  = (float)$invoice_item['item_unit_price'];
+			$tax_pct        = (float)$invoice_item['line_tax_percentage'];
+			$unit_price_TTC = round($unit_price_HT * (1 + $tax_pct / 100), 2);
+
+			$_SESSION['CSI']['CT'][$line]->line_priceTTC = $unit_price_TTC;
+			$_SESSION['CSI']['CT'][$line]->line_priceHT  = $unit_price_HT;
+
+			// Original discount from the invoice
+			$_SESSION['CSI']['CT'][$line]->line_discount = (float)$invoice_item['discount_percent'];
+
+			// Kit defaults
+			$_SESSION['CSI']['CT'][$line]->kit_item        = 'N';
+			$_SESSION['CSI']['CT'][$line]->kit_option      = null;
+			$_SESSION['CSI']['CT'][$line]->kit_option_type = null;
+			$_SESSION['CSI']['CT'][$line]->kit_cart_line   = null;
+
+			// Line offered
+			$_SESSION['CSI']['CT'][$line]->line_offered = isset($_SESSION['CSI']['CT'][$line]->offer_indicator) ? $_SESSION['CSI']['CT'][$line]->offer_indicator : 'N';
+
+			// Item info from invoice
+			$_SESSION['CSI']['CT'][$line]->name        = $invoice_item['line_name'];
+			$_SESSION['CSI']['CT'][$line]->item_number = $invoice_item['line_item_number'];
+			$_SESSION['CSI']['CT'][$line]->description = $invoice_item['description'];
+			$_SESSION['CSI']['CT'][$line]->category_id = $invoice_item['line_category_id'];
+			$_SESSION['CSI']['CT'][$line]->category    = $invoice_item['line_category'];
+			$_SESSION['CSI']['CT'][$line]->serialnumber = '';
+
+			// Supplier cost price from item info
+			$_SESSION['CSI']['CT'][$line]->supplier_cost_price = isset($_SESSION['CSI']['CT'][$line]->cost_price) ? (float)$_SESSION['CSI']['CT'][$line]->cost_price : 0;
+
+			// Calculate line values
+			$this->line_values($line);
+		}
+
+		// Mark last cart line
+		if (isset($line)) {
+			$_SESSION['CSI']['CT'][$line]->last_line = TRUE;
+			$_SESSION['CSI']['CT'][$line]->colour    = 'yellow';
+		}
+
+		// Reload sales page
+		$this->_reload();
 	}
 
 	function reprint($sale_id)
@@ -2780,28 +2891,25 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 		$reprint_ticket = $this->input->post('reprint_ticket');
 		$reprint_mail = $this->input->post('reprint_mail');
 
+		// Sauvegarder l'état session actuel (vente en cours)
+		$backup_CSI = isset($_SESSION['CSI']) ? $_SESSION['CSI'] : null;
+		$backup_TVA = isset($_SESSION['TVA']) ? $_SESSION['TVA'] : null;
+
 		//récupération des paramètres pour la reimpression du ticket de caisse
 		$transaction_info      = array();
 		$transaction_info      = $this->Sale->get_info($sale_id)->row_array();
 
 
 		$payments_data = $this->Sale->get_sale_payments($sale_id)->result_array();
-		
-		//foreach($payments_data as $pay => $line)
-		//{
-		//	$data_method = $this->Paymethod->get_info_with_input(array('payment_method_code' => $line['payment_method_code']));
-		//	$pmi = $data_method[0]['payment_method_id'];
-		//	$_SESSION['CSI']['PD'][$pmi] = $this->Sale->get_sale_payments_with_payment_method_code($sale_id, $line['payment_method_code'])->row();
-		//}
 
         //get payments for sale_id
         $sale_payment = $this->Sale->get_sale_payments($sale_id);
         $result_sale_payment = $sale_payment->result_array();
-        
+
         //get all payments methods
         $payment_methods												=	array();
         $payment_methods												=	$this->Sale->get_payment_methods();
-        
+
         //rapprochement pour obtenir le moyen de payment de la facture sale_id
         // et mise à jour de payment_amount
         foreach($result_sale_payment as $index_1=>$value_1)
@@ -2844,16 +2952,19 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 		$_SESSION['CSI']['SHV']->last_name = $customer_data->last_name;
 		$_SESSION['CSI']['SHV']->first_name = $customer_data->first_name;
 
-		$_SESSION['CSI']['SHV']->customer_formatted = $this->Common_routines->format_full_name($_SESSION['CSI']['CI']->last_name, $_SESSION['CSI']['CI']->first_name);
-		$_SESSION['CSI']['SHV']->default_profile_flag = ($_SESSION['CSI']['SHV']->profile_id == $this->config->item('profile_id')) ? 1:0;
+		$_SESSION['CSI']['SHV']->customer_formatted = $this->Common_routines->format_full_name($_SESSION['CSI']['SHV']->last_name, $_SESSION['CSI']['SHV']->first_name);
+		$_SESSION['CSI']['SHV']->default_profile_flag = (isset($_SESSION['CSI']['SHV']->profile_id) && $_SESSION['CSI']['SHV']->profile_id == $this->config->item('profile_id')) ? 1:0;
 
 
 		$_SESSION['CSI']['SHV']->sale_id = $sale_id;
 		$_SESSION['CSI']['SHV']->transaction_time = date('d/m/Y H:i:s', strtotime($transaction_info['sale_time']));
-		
-		$employee = $this->Employee->get_info($transaction_info['employee_id']);
-		$_SESSION['CSI']['SHV']->employee_id = $employee->person_id;
-		$_SESSION['CSI']['SHV']->employee_formatted = $this->Common_routines->format_full_name($employee->last_name, $employee->first_name);
+
+		$this->db->select('first_name, last_name, person_id');
+		$this->db->from('people');
+		$this->db->where('person_id', $transaction_info['employee_id']);
+		$employee = $this->db->get()->row();
+		$_SESSION['CSI']['SHV']->employee_id = $employee ? $employee->person_id : $transaction_info['employee_id'];
+		$_SESSION['CSI']['SHV']->employee_formatted = $employee ? $this->Common_routines->format_full_name($employee->last_name, $employee->first_name) : '';
 
 
 		$_SESSION['CSI']['SHV']->header_valueAD_TTC = $transaction_info['overall_total'];
@@ -2940,22 +3051,21 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 			}
 			$input['person_id'] = $_SESSION['CSI']['SHV']->customer_id;
 			$data_people_with_email = $this->Person->get_info_people($input);
-			$request = $data_people_with_email[0];
-			if(!isset($request['email']))
+			if(empty($data_people_with_email) || !isset($data_people_with_email[0]['email']) || empty($data_people_with_email[0]['email']))
             {
 				//email de la personne non renseigné
-				unset($_SESSION['CSI']);
 				$_SESSION['error_code'] = '07290';
 				redirect("sales");
             }
+			$request = $data_people_with_email[0];
 
-			//construction du mail 
+			//construction du mail
 			/*Classe de traitement des exceptions et des erreurs*/
-			require 'application/third_party/PHPMailer/src/Exception.php';
+			require_once 'application/third_party/PHPMailer/src/Exception.php';
 			/*Classe-PHPMailer*/
-			require 'application/third_party/PHPMailer/src/PHPMailer.php';
+			require_once 'application/third_party/PHPMailer/src/PHPMailer.php';
 			/*Classe SMTP nécessaire pour établir la connexion avec un serveur SMTP*/
-			require 'application/third_party/PHPMailer/src/SMTP.php';
+			require_once 'application/third_party/PHPMailer/src/SMTP.php';
 			/*Lors de la création d’un objet PHPMailer, passez le paramètre "true" pour activer les exceptions (messages en cas d’erreur)*/
 			$mail = new PHPMailer(true);
 			try {
@@ -3011,14 +3121,88 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 			}
 		}
 
+		// Restaurer l'état session (vente en cours)
+		if ($backup_CSI !== null) { $_SESSION['CSI'] = $backup_CSI; } else { unset($_SESSION['CSI']); }
+		if ($backup_TVA !== null) { $_SESSION['TVA'] = $backup_TVA; } else { unset($_SESSION['TVA']); }
 		unset($_SESSION['reprint']);
-		$this->receipt($sale_id);
+		unset($_SESSION['reprint_sale_info']);
+		unset($_SESSION['reprint_sale_items']);
+		unset($_SESSION['reprint_sale_payments']);
+		unset($_SESSION['reprint_customer_name']);
+		unset($_SESSION['reprint_employee_name']);
+		redirect("common_controller/common_exit");
+	}
+
+	function invoice($sale_id)
+	{
+		// Sale data
+		$transaction_info = $this->Sale->get_info($sale_id)->row_array();
+		if (empty($transaction_info))
+		{
+			redirect("sales");
+			return;
+		}
+
+		$cart = $this->Sale->get_sale_items($sale_id)->result_array();
+
+		// Payments with description
+		$payments_raw = $this->Sale->get_sale_payments($sale_id)->result_array();
+		$payment_methods = $this->Sale->get_payment_methods();
+		$pm_lookup = array();
+		foreach ($payment_methods as $pm)
+		{
+			$pm_lookup[$pm['payment_method_code']] = $pm['payment_method_description'];
+		}
+		foreach ($payments_raw as &$p)
+		{
+			if (!isset($p['payment_method_description']) || empty($p['payment_method_description']))
+			{
+				$p['payment_method_description'] = isset($pm_lookup[$p['payment_method_code']]) ? $pm_lookup[$p['payment_method_code']] : $p['payment_method_code'];
+			}
+		}
+		unset($p);
+
+		// Transaction code
+		$tcode = $this->Transaction->get_transaction_code($transaction_info['mode']);
+
+		// Company data
+		$data['company']   = $this->config->item('company') ?: '';
+		$data['address']   = $this->config->item('address') ?: '';
+		$data['phone']     = $this->config->item('phone') ?: '';
+		$data['siret']     = $this->config->item('siret') ?: '';
+		$data['tva_intra'] = $this->config->item('tva') ?: '';
+		$data['rcs']       = $this->config->item('rcs') ?: '';
+
+		// Customer data
+		$customer_id = $transaction_info['customer_id'];
+		$data['customer'] = null;
+		if (!empty($customer_id) && $customer_id != -1)
+		{
+			$this->db->select('first_name, last_name, email, address_1, address_2, city, zip, state');
+			$this->db->from('people');
+			$this->db->where('person_id', $customer_id);
+			$data['customer'] = $this->db->get()->row();
+		}
+
+		// Sale identifiers
+		$data['sale_id']          = $tcode . $sale_id;
+		$data['sale_id_raw']      = $sale_id;
+		$data['cart']             = $cart;
+		$data['transaction_info'] = $transaction_info;
+		$data['payments']         = $payments_raw;
+		$data['transaction_time'] = date('d/m/Y', strtotime($transaction_info['sale_time']));
+
+		$this->load->view("sales/invoice", $data);
 	}
 
 	function reprint_session($sale_id)
 	{
 		$reprint_ticket = $this->input->post('reprint_ticket');
 		$reprint_mail = $this->input->post('reprint_mail');
+
+		// Sauvegarder l'état session actuel (vente en cours)
+		$backup_CSI = isset($_SESSION['CSI']) ? $_SESSION['CSI'] : null;
+		$backup_TVA = isset($_SESSION['TVA']) ? $_SESSION['TVA'] : null;
 
 		//récupération des paramètres pour la reimpression du ticket de caisse
 		$transaction_info      = array();
@@ -3077,16 +3261,19 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 		$_SESSION['CSI']['SHV']->last_name = $customer_data->last_name;
 		$_SESSION['CSI']['SHV']->first_name = $customer_data->first_name;
 
-		$_SESSION['CSI']['SHV']->customer_formatted = $this->Common_routines->format_full_name($_SESSION['CSI']['CI']->last_name, $_SESSION['CSI']['CI']->first_name);
-		$_SESSION['CSI']['SHV']->default_profile_flag = ($_SESSION['CSI']['SHV']->profile_id == $this->config->item('profile_id')) ? 1:0;
+		$_SESSION['CSI']['SHV']->customer_formatted = $this->Common_routines->format_full_name($_SESSION['CSI']['SHV']->last_name, $_SESSION['CSI']['SHV']->first_name);
+		$_SESSION['CSI']['SHV']->default_profile_flag = (isset($_SESSION['CSI']['SHV']->profile_id) && $_SESSION['CSI']['SHV']->profile_id == $this->config->item('profile_id')) ? 1:0;
 
 
 		$_SESSION['CSI']['SHV']->sale_id = $sale_id;
 		$_SESSION['CSI']['SHV']->transaction_time = date('d/m/Y H:i:s', strtotime($transaction_info['sale_time']));
-		
-		$employee = $this->Employee->get_info($transaction_info['employee_id']);
-		$_SESSION['CSI']['SHV']->employee_id = $employee->person_id;
-		$_SESSION['CSI']['SHV']->employee_formatted = $this->Common_routines->format_full_name($employee->last_name, $employee->first_name);
+
+		$this->db->select('first_name, last_name, person_id');
+		$this->db->from('people');
+		$this->db->where('person_id', $transaction_info['employee_id']);
+		$employee = $this->db->get()->row();
+		$_SESSION['CSI']['SHV']->employee_id = $employee ? $employee->person_id : $transaction_info['employee_id'];
+		$_SESSION['CSI']['SHV']->employee_formatted = $employee ? $this->Common_routines->format_full_name($employee->last_name, $employee->first_name) : '';
 
 
 		$_SESSION['CSI']['SHV']->header_valueAD_TTC = $transaction_info['overall_total'];
@@ -3172,16 +3359,15 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 			}
 			$input['person_id'] = $_SESSION['CSI']['SHV']->customer_id;
 			$data_people_with_email = $this->Person->get_info_people($input);
-			$request = $data_people_with_email[0];
-			if(!isset($request['email']))
+			if(empty($data_people_with_email) || !isset($data_people_with_email[0]['email']) || empty($data_people_with_email[0]['email']))
             {
 				//email de la personne non renseigné
-				unset($_SESSION['CSI']);
 				$_SESSION['error_code'] = '07290';
 				redirect("sales");
             }
+			$request = $data_people_with_email[0];
 
-			//construction du mail 
+			//construction du mail
 			//send mail
 			$mail_config = array(
 				'protocol'							=>	'smtp',
@@ -3217,8 +3403,16 @@ $reponse_return_message = $this->vapeself->post_MajProduit($token, $data_MajCate
 				$this->email												->	send();
 		}
 
+		// Restaurer l'état session (vente en cours)
+		if ($backup_CSI !== null) { $_SESSION['CSI'] = $backup_CSI; } else { unset($_SESSION['CSI']); }
+		if ($backup_TVA !== null) { $_SESSION['TVA'] = $backup_TVA; } else { unset($_SESSION['TVA']); }
 		unset($_SESSION['reprint']);
-		$this->receipt($sale_id);
+		unset($_SESSION['reprint_sale_info']);
+		unset($_SESSION['reprint_sale_items']);
+		unset($_SESSION['reprint_sale_payments']);
+		unset($_SESSION['reprint_customer_name']);
+		unset($_SESSION['reprint_employee_name']);
+		redirect("common_controller/common_exit");
 	}
 
 
@@ -3664,6 +3858,11 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		unset($_SESSION['show_dialog']);
 		unset($_SESSION['confirm_what']);
 		unset($_SESSION['CSI']);
+
+		// PHP 8 compatibility: re-initialise CSI after unset
+		$_SESSION['CSI'] = [];
+		$_SESSION['CSI']['SHV'] = new stdClass();
+		$_SESSION['CSI']['CT'] = [];
 
 		// set origin
 		$origin															=	'sales_unsuspend';
@@ -4120,8 +4319,8 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		$_SESSION['CSI']['CT'][$line]->last_line						=	TRUE;
 		$_SESSION['CSI']['CT'][$line]->colour							=	'yellow';
 
-		// set out of stock indicator
-		if ($_SESSION['CSI']['CT'][$line]->quantity < $_SESSION['CSI']['CT'][$line]->line_quantity)
+		// set out of stock indicator (skip for credit notes / negative quantities)
+		if ($_SESSION['CSI']['CT'][$line]->line_quantity > 0 && $_SESSION['CSI']['CT'][$line]->quantity < $_SESSION['CSI']['CT'][$line]->line_quantity)
 		{
 			$_SESSION['CSI']['CT'][$line]->colour						=	'orange';
 			$_SESSION['error_code']										=	'06010';
@@ -4134,7 +4333,7 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 	function payments()
 	{
 
-		if($_SESSION['var_annulation_facture']==1)
+		if(($_SESSION['var_annulation_facture'] ?? 0)==1)
 		{
 			$this->annulation_cancellation_facture();
 			return;
@@ -4178,6 +4377,7 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 			
 		}
 
+		$_SESSION['CSI']['PM_fidelity'] = array();
 		foreach ($payment_methods as $payment_method)
 		{
 			// check if fidelity card payment method, load only if fidelity applies to this client,
@@ -4190,7 +4390,7 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 					$offer_flag											=	FALSE;
 					foreach($_SESSION['CSI']['CT'] as $line => $cart_line)
 					{
-						if ($_SESSION['CSI']['CT']->line_offered == 'Y')
+						if (isset($cart_line->line_offered) && $cart_line->line_offered == 'Y')
 						{
 							$offer_flag									=	TRUE;
 
@@ -4210,6 +4410,7 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 					if ($_SESSION['CSI']['SHV']->fidelity_value > $this->config->item('fidelity_minimum') AND $offer_flag == FALSE)
 					{
 						$_SESSION['CSI']['PM'][$payment_method['payment_method_id']]	=	$payment_method['payment_method_description'];
+						$_SESSION['CSI']['PM_fidelity'][] = (int)$payment_method['payment_method_id'];
 					}
 				}
 			}
@@ -4239,8 +4440,12 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 			return;
 		}//*/
 
-		// set default payment option = select message
-		$_SESSION['CSI']['SHV']->default_payment_option					=	0;
+		// set default payment option: pre-selected if clicked from quick-pay button, else "select" message
+		$selected_pm = $this->input->post('selected_pm');
+		$_SESSION['CSI']['SHV']->default_payment_option					=	(!empty($selected_pm) && isset($_SESSION['CSI']['PM'][$selected_pm])) ? $selected_pm : 0;
+
+		// Force payment form display even when amount_due == 0 (user clicked a payment button)
+		$_SESSION['force_payment_form'] = !empty($selected_pm) ? true : false;
 
 		// reload
     	$this->_reload();
@@ -4337,6 +4542,58 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		}
 	}
 
+	function ajax_sale_detail($sale_id)
+	{
+		// Clean any BOM or whitespace from output buffer
+		if (ob_get_level()) ob_end_clean();
+		header("Content-Type: application/json; charset=utf-8");
+
+		if (empty($sale_id) || !is_numeric($sale_id))
+		{
+			echo json_encode(array('success' => false, 'message' => 'ID invalide'));
+			return;
+		}
+
+		// Verify sale belongs to current customer
+		$sale_info = $this->Sale->get_info($sale_id)->row();
+		if (!$sale_info || $sale_info->customer_id != (isset($_SESSION['CSI']['SHV']->customer_id) ? $_SESSION['CSI']['SHV']->customer_id : 0))
+		{
+			echo json_encode(array('success' => false, 'message' => 'Facture introuvable'));
+			return;
+		}
+
+		// Get sale items
+		$items = $this->Sale->get_sale_items($sale_id)->result_array();
+
+		// Get sale payments
+		$payments = $this->Sale->get_sale_payments($sale_id)->result_array();
+
+		// Get employee name
+		$employee_name = '';
+		$this->db->select('first_name, last_name');
+		$this->db->from('people');
+		$this->db->where('person_id', $sale_info->employee_id);
+		$emp_row = $this->db->get()->row();
+		if ($emp_row)
+		{
+			$employee_name = $emp_row->first_name . ' ' . $emp_row->last_name;
+		}
+
+		echo json_encode(array(
+			'success'       => true,
+			'sale_id'       => $sale_info->sale_id,
+			'sale_time'     => $sale_info->sale_time,
+			'overall_total' => (float)$sale_info->overall_total,
+			'overall_tax'   => (float)$sale_info->overall_tax,
+			'subtotal'      => (float)$sale_info->subtotal_after_discount,
+			'payment_type'  => $sale_info->payment_type,
+			'comment'       => $sale_info->comment,
+			'employee_name' => $employee_name,
+			'items'         => $items,
+			'payments'      => $payments
+		));
+	}
+
 	function CN_select_invoice()
 	{
 		$_SESSION['click_avoir'] = 1;
@@ -4354,6 +4611,9 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		// initialise
 		$_SESSION['show_dialog']										=	4;
 		unset($_SESSION['CSI']['SHV']->CN_original_invoice);
+
+		// load recent invoices for this customer
+		$_SESSION['CSI']['SHV']->CN_customer_invoices = $this->Sale->get_recent_sales_by_customer($_SESSION['CSI']['SHV']->customer_id, 50)->result();
 
 		// reload
     	$this->_reload();
@@ -4552,14 +4812,16 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 		//récupération des items de la transaction effectuée
 		foreach ($_SESSION['CSI']['SHV']->CN_selected_invoice_items_sav as $selected_item_id_sav)
 		{
+			// Get the quantity from the original invoice (= the avoir quantity)
 			$invoice_item_sav_details = $this->Sale->get_sale_item($_SESSION['CSI']['SHV']->CN_original_invoice, $selected_item_id_sav)->row();
 			if (!$invoice_item_sav_details) { $invoice_item_sav_details = new stdClass(); $invoice_item_sav_details->quantity_purchased = 0; }
+			$sav_quantity = abs(intval($invoice_item_sav_details->quantity_purchased));
 
 			$data_items = $this->Item->get_info($selected_item_id_sav);
 			if($data_items->DynamicKit != 'Y')
 			{
                 //update for simple items
-                $inputs = array('item_id' =>$selected_item_id_sav, 'quantity_purchased' => $invoice_item_sav_details->quantity_purchased, 'receiving_id' => $receiving_id );
+                $inputs = array('item_id' => $selected_item_id_sav, 'quantity_purchased' => $sav_quantity, 'receiving_id' => $receiving_id);
                 $this->save_sav_items($inputs);
 			}
 			if($data_items->DynamicKit == 'Y')
@@ -4568,9 +4830,9 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 				$data_kit = $this->Item_kit->get_item_kit_items($selected_item_id_sav);
 				foreach($data_kit as $kit => $item)
 				{
-					$inputs = array('item_id' =>$item['item_id'],
-					    'quantity_purchased' => intval($invoice_item_sav_details->quantity_purchased) * intval($item['quantity']),
-					    'receiving_id' => $receiving_id );
+					$inputs = array('item_id' => $item['item_id'],
+					    'quantity_purchased' => $sav_quantity * intval($item['quantity']),
+					    'receiving_id' => $receiving_id);
 					$this->save_sav_items($inputs);
 				}
 			}
@@ -4878,127 +5140,103 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 	}
 }
 	//Fonction qui envoie le ticket de caisse par mail appelé dans le fichier /var/www/html/wrightetmathon/application/views/sales/payments.php
-	function Mail_Ticket() 
+	function Mail_Ticket()
 	{
-        /*Classe de traitement des exceptions et des erreurs*/
-		require 'application/third_party/PHPMailer/src/Exception.php';
-		/*Classe-PHPMailer*/
-		require 'application/third_party/PHPMailer/src/PHPMailer.php';
-		/*Classe SMTP nécessaire pour établir la connexion avec un serveur SMTP*/
-		require 'application/third_party/PHPMailer/src/SMTP.php';
-		/*Lors de la création d’un objet PHPMailer, passez le paramètre "true" pour activer les exceptions (messages en cas d’erreur)*/
-		
-		$mail = new PHPMailer(true);
+		// Guard: if sale data no longer in session, redirect to register
+		if (!isset($_SESSION['CSI']['SHV']->customer_id))
+		{
+			$_SESSION['error_code'] = '07290';
+			redirect("sales");
+			return;
+		}
 
-		//Pour vider les variables utilisées pour créer le mail dynamiquement
-		unset($_SESSION['numero_ticket']);
-		unset($_SESSION['message_mail']);
-		unset($_SESSION['id_client']);
-		unset($_SESSION['variable_tampon_booleen']);
+		require_once 'application/third_party/PHPMailer/src/Exception.php';
+		require_once 'application/third_party/PHPMailer/src/PHPMailer.php';
+		require_once 'application/third_party/PHPMailer/src/SMTP.php';
 
-	
-		//Création du message pour le compléter après avec /var/www/html/wrightetmathon/application/views/sales/ticket.php
-		$message='';
-		$_SESSION['message_mail']=$message;
-
-		//Récupération de l'id_client de la variable superglobale
-		$_SESSION['id_client']=$_SESSION['CSI']['SHV']->customer_id;
-
+		// Get customer email before completing the sale
 		$input['person_id'] = $_SESSION['CSI']['SHV']->customer_id;
-        $data_people_with_email = $this->Person->get_info_people($input);
-		$request = $data_people_with_email[0];
+		$customer_id = $_SESSION['CSI']['SHV']->customer_id;
+		$data_people_with_email = $this->Person->get_info_people($input);
+		$request = !empty($data_people_with_email) ? $data_people_with_email[0] : null;
 
-		//Si le client a son mail enregistré, alors le mail est envoyé et un message s'affiche: Le mail a bien été envoyé, 
-
-		//Pour vérifier le mail
-		if(isset($request['email']))
+		// Check customer has email
+		if (!isset($request['email']) || empty($request['email']))
 		{
-			//Variable pour savoir si le mail peut être envoyé
-			$_SESSION['variable_tampon_booleen']='1';
-			
-			//Appele de la fonction qui fait la vente (que si la personne a une adresse mail)
-		    $this->complete();
-
-			try {
-				// Paramètres du serveur SMTP
-				$mail->isSMTP();   // Utiliser SMTP
-				if (strpos($this->config->item('POemail'), 'sonrisa') >0)
-				{                                  
-					$mail->Host = 'ssl://mail.sonrisa-smile.com';        
-				}
-				elseif (strpos($this->config->item('POemail'), 'yesstore') >0)	
-				{                                   
-					$mail->Host = 'ssl://mail.yesstore.fr';         
-				}
-				elseif (strpos($this->config->item('POemail'), 'gmail') >0)	
-				{                                   
-					$mail->Host = 'smtp.gmail.com';  // Serveur SMTP (par exemple Gmail)       
-				}
-				
-				$mail->SMTPAuth = true;                               // Authentification SMTP activée
-				$mail->Username = $this->config->item('POemail');             // Votre email
-				$mail->Password = $this->config->item('POemailpwd');                // Votre mot de passe
-				$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;    // Chiffrement STARTTLS
-				$mail->Charset = 'utf-8' ;
-				$mail->Port = 465;                                    // Port SMTP
-		
-				// Expéditeur et destinataire
-				$mail->setFrom($this->config->item('email'), $this->config->item('company'));
-				$mail->addAddress($request['email'],$request['email']); // Ajouter un destinataire
-				//$mail->addReplyTo('info@example.com', 'Information'); // Réponse à un autre email
-				// Copie
-				//$mail->addCC('info@exemple.fr');
-				// Copie cachée
-				//$mail->addBCC('info@exemple.fr', 'nom');
-
-				// Contenu de l'email
-				$mail->isHTML(true);                                  // Format HTML
-				$mail->Subject = 'Ticket de caisse numéro: ' . $_SESSION['numero_ticket'];
-
-			$_SESSION['message_mail']=$_SESSION['message_mail'] . '<strong><br><center>Merci de votre confiance</center></strong><br>';
-	        $_SESSION['message_mail']=$_SESSION['message_mail'] . '</p>';
-            $_SESSION['message_mail']=$_SESSION['message_mail'] . '</center>';
-            $_SESSION['message_mail']=$_SESSION['message_mail'] . '</table>';
-            $_SESSION['message_mail']=$_SESSION['message_mail'] . '</html>';
-
-				$mail->Body    = $_SESSION['message_mail'];
-								// Envoi de l'email
-				$mail->send();
-				//Affichage d'un message de succés de l'envoie
-				$_SESSION['error_code']										=	'07300';
-			} catch (Exception $e) {
-				//Affichage d'un message de succés de l'envoie
-				$_SESSION['error_code']										=	'07301';
-			}
-	        //Redirection vers la page des ventes après avoir envoyé le ticket de caisse par mail
-            redirect("sales");
-		}
-		//Sinon, un message s'affiche: Attention le mail de cette personne est inconnu
-		else
-		{
-            //Variable pour savoir si le mail peut être envoyé
 			$_SESSION['variable_tampon_booleen']='0';
-			 
 			$_SESSION['blocage_de_l_impression_du_ticket_de_caisse']='2';
-
-			//Le mail de cette personne est inconnu
-
-			//Affichage d'un message d'erreur pour prévenir que la personne ne posséde pas de mail
-            $_SESSION['error_code']										=	'07290';
-			
+			$_SESSION['error_code'] = '07290';
 			$_SESSION['origin']='CN';
-
-			//redirection vers la page ajout client dans le cas où l'email doit être envoyé par mail et le mail n'est pas renseigné dans la base de donnée
-			redirect("customers/view/" . $_SESSION['CSI']['SHV']->customer_id );
+			redirect("customers/view/" . $customer_id);
+			return;
 		}
 
-		//Pour vider les variables utilisées pour créer le mail dynamiquement
+		$customer_email = $request['email'];
+
+		// Prepare session for ticket generation
+		unset($_SESSION['numero_ticket']);
+		unset($_SESSION['message_mail']);
+		unset($_SESSION['id_client']);
+		$_SESSION['message_mail'] = '';
+		$_SESSION['id_client'] = $customer_id;
+		$_SESSION['variable_tampon_booleen'] = '1';
+
+		// Complete the sale (generates ticket, populates message_mail and numero_ticket, clears CSI)
+		$this->complete();
+
+		// Send email
+		try {
+			$mail = new PHPMailer(true);
+			$mail->isSMTP();
+			$mail->Timeout = 10;
+			$mail->SMTPDebug = 0;
+
+			if (strpos($this->config->item('POemail'), 'sonrisa') > 0)
+			{
+				$mail->Host = 'mail.sonrisa-smile.com';
+			}
+			elseif (strpos($this->config->item('POemail'), 'yesstore') > 0)
+			{
+				$mail->Host = 'mail.yesstore.fr';
+			}
+			elseif (strpos($this->config->item('POemail'), 'gmail') > 0)
+			{
+				$mail->Host = 'smtp.gmail.com';
+			}
+
+			$mail->SMTPAuth = true;
+			$mail->Username = $this->config->item('POemail');
+			$mail->Password = $this->config->item('POemailpwd');
+			$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+			$mail->Charset = 'utf-8';
+			$mail->Port = 465;
+
+			$mail->setFrom($this->config->item('email'), $this->config->item('company'));
+			$mail->addAddress($customer_email, $customer_email);
+
+			$mail->isHTML(true);
+			$mail->Subject = 'Ticket de caisse numéro: ' . ($_SESSION['numero_ticket'] ?? '');
+
+			// Fermeture propre du HTML email
+			$_SESSION['message_mail'] = ($_SESSION['message_mail'] ?? '');
+			$_SESSION['message_mail'] .= '<tr><td style="padding:20px 30px;text-align:center;background-color:#f8f9fa;border-top:1px solid #eeeeee;">';
+			$_SESSION['message_mail'] .= '<strong style="font-size:15px;color:#333333;">Merci de votre confiance</strong>';
+			$_SESSION['message_mail'] .= '</td></tr>';
+			$_SESSION['message_mail'] .= '</table></td></tr></table></body></html>';
+
+			$mail->Body = $_SESSION['message_mail'];
+			$mail->send();
+			$_SESSION['error_code'] = '07300';
+		} catch (\Exception $e) {
+			$_SESSION['error_code'] = '07301';
+		}
+
+		// Cleanup and redirect
 		unset($_SESSION['numero_ticket']);
 		unset($_SESSION['message_mail']);
 		unset($_SESSION['id_client']);
 		unset($_SESSION['variable_tampon_booleen']);
-		unset($request['email']);
-		
+		redirect("sales");
 	}
 	
     //création des variables pour l'utilisateur du POS en mode multi vendeur 
