@@ -335,24 +335,38 @@ css can be found in pos-register.css and modern-theme.css
 
             if ($this->config->item('custom2_name') != 'Y')
             {
-                echo form_input(array(
-                    'name'        => 'input_qty',
-                    'id'          => 'input_qty',
-                    'size'        => '5',
-                    'class'       => 'pos-qty-input',
-                    'placeholder' => $this->lang->line('sales_quantity'),
-                    'value'       => 1
-                ));
+                ?>
+                <div class="pos-qty-group">
+                    <button type="button" class="pos-qty-btn pos-qty-minus" onclick="var q=document.getElementById('input_qty');q.value=Math.max(1,parseInt(q.value||1)-1);">−</button>
+                    <?php echo form_input(array(
+                        'name'        => 'input_qty',
+                        'id'          => 'input_qty',
+                        'size'        => '5',
+                        'class'       => 'pos-qty-input',
+                        'data-vk'     => 'numeric',
+                        'placeholder' => $this->lang->line('sales_quantity'),
+                        'value'       => 1
+                    )); ?>
+                    <button type="button" class="pos-qty-btn pos-qty-plus" onclick="var q=document.getElementById('input_qty');q.value=parseInt(q.value||1)+1;">+</button>
+                </div>
+                <?php
             }
             else
             {
-                echo form_input(array(
-                    'name'        => 'input_qty',
-                    'id'          => 'input_qty',
-                    'size'        => '5',
-                    'class'       => 'pos-qty-input',
-                    'placeholder' => $this->lang->line('sales_quantity')
-                ));
+                ?>
+                <div class="pos-qty-group">
+                    <button type="button" class="pos-qty-btn pos-qty-minus" onclick="var q=document.getElementById('input_qty');q.value=Math.max(1,parseInt(q.value||1)-1);">−</button>
+                    <?php echo form_input(array(
+                        'name'        => 'input_qty',
+                        'id'          => 'input_qty',
+                        'size'        => '5',
+                        'class'       => 'pos-qty-input',
+                        'data-vk'     => 'numeric',
+                        'placeholder' => $this->lang->line('sales_quantity')
+                    )); ?>
+                    <button type="button" class="pos-qty-btn pos-qty-plus" onclick="var q=document.getElementById('input_qty');q.value=parseInt(q.value||1)+1;">+</button>
+                </div>
+                <?php
             }
 
             echo form_input(array(
@@ -502,6 +516,7 @@ css can be found in pos-register.css and modern-theme.css
                                                     'value'=>$cart_line->line_discount,
                                                     'data-orig'=>$cart_line->line_discount,
                                                     'class'=>'pos-auto-edit',
+                                                    'data-vk'=>'numeric',
                                                     'style'=>'text-align:right',
                                                     'size'=>'6'
                                                 ));
@@ -856,6 +871,7 @@ css can be found in pos-register.css and modern-theme.css
                                         'name'  => 'overall_discount_percentage',
                                         'id'    => 'overall_discount_percentage',
                                         'value' => $_SESSION['CSI']['SHV']->overall_discount,
+                                        'data-vk' => 'numeric',
                                         'style' => 'text-align:right',
                                         'size'  => '5',
                                         'class' => 'champ_saisie'

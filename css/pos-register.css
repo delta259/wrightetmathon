@@ -390,17 +390,57 @@
     gap: 10px;
 }
 
+.pos-qty-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.pos-qty-btn {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--input-border);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.pos-qty-minus {
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+    border-right: none;
+}
+
+.pos-qty-plus {
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-left: none;
+}
+
+.pos-qty-btn:active {
+    background: var(--accent-blue, #0A6184);
+    color: #fff;
+}
+
 .pos-item-entry .pos-qty-input {
-    width: 90px;
-    padding: 10px 8px;
+    width: 60px;
+    padding: 10px 4px;
     font-size: 18px;
     font-weight: 600;
     text-align: center;
     background: var(--bg-input);
     border: 1px solid var(--input-border);
-    border-radius: var(--radius-md);
+    border-radius: 0;
     color: var(--text-primary);
     transition: all var(--transition-fast);
+    height: 44px;
+    box-sizing: border-box;
 }
 
 .pos-item-entry .pos-item-input {

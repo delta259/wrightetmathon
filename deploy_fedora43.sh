@@ -103,7 +103,7 @@ fi
 # ============================================================================
 # ETAPE 1 : MISE A JOUR SYSTEME
 # ============================================================================
-log_section "ETAPE 1/13 — Mise a jour systeme"
+log_section "ETAPE 1/14 — Mise a jour systeme"
 
 dnf upgrade -y --refresh 2>&1 | tail -5
 log_ok "Systeme mis a jour"
@@ -111,7 +111,7 @@ log_ok "Systeme mis a jour"
 # ============================================================================
 # ETAPE 2 : INSTALLATION DES PAQUETS
 # ============================================================================
-log_section "ETAPE 2/13 — Installation des paquets"
+log_section "ETAPE 2/14 — Installation des paquets"
 
 # Paquets essentiels
 PACKAGES=(
@@ -152,6 +152,7 @@ PACKAGES=(
     curl
     wget
     unzip
+    openssl
     nano
     htop
     fontconfig
@@ -175,7 +176,7 @@ log_ok "PHP $PHP_VERSION OK"
 # ============================================================================
 # ETAPE 3 : CREATION UTILISATEUR SYSTEME
 # ============================================================================
-log_section "ETAPE 3/13 — Utilisateur systeme"
+log_section "ETAPE 3/14 — Utilisateur systeme"
 
 if id "$SYS_USER" &>/dev/null; then
     log_warn "L'utilisateur $SYS_USER existe deja"
@@ -195,7 +196,7 @@ log_ok "Groupes configures"
 # ============================================================================
 # ETAPE 4 : CONFIGURATION MARIADB
 # ============================================================================
-log_section "ETAPE 4/13 — Configuration MariaDB"
+log_section "ETAPE 4/14 — Configuration MariaDB"
 
 systemctl enable mariadb --now
 log_info "MariaDB demarre"
@@ -227,7 +228,7 @@ log_ok "MariaDB configure — base '$DB_NAME' prete"
 # ============================================================================
 # ETAPE 5 : DEPLOIEMENT DES FICHIERS APPLICATION
 # ============================================================================
-log_section "ETAPE 5/13 — Deploiement application"
+log_section "ETAPE 5/14 — Deploiement application"
 
 if [[ -d "$APP_DIR/.git" ]]; then
     log_info "Repertoire git existant detecte dans $APP_DIR"
@@ -246,7 +247,7 @@ fi
 # ============================================================================
 # ETAPE 6 : STRUCTURE DES REPERTOIRES
 # ============================================================================
-log_section "ETAPE 6/13 — Structure des repertoires"
+log_section "ETAPE 6/14 — Structure des repertoires"
 
 # Session directory
 mkdir -p "$SESSION_DIR"
@@ -282,7 +283,7 @@ log_ok "Permissions appliquees"
 # ============================================================================
 # ETAPE 7 : FICHIER INI DE CONFIGURATION
 # ============================================================================
-log_section "ETAPE 7/13 — Fichier wrightetmathon.ini"
+log_section "ETAPE 7/14 — Fichier wrightetmathon.ini"
 
 if [[ -f "$INI_FILE" ]]; then
     log_warn "$INI_FILE existe deja — sauvegarde en .bak"
@@ -308,7 +309,7 @@ log_ok "Fichier INI cree : $INI_FILE"
 # ============================================================================
 # ETAPE 8 : CONFIGURATION PHP
 # ============================================================================
-log_section "ETAPE 8/13 — Configuration PHP"
+log_section "ETAPE 8/14 — Configuration PHP"
 
 PHP_INI="/etc/php.ini"
 
@@ -345,10 +346,29 @@ log_ok "php.ini configure"
 # ============================================================================
 # ETAPE 9 : CONFIGURATION APACHE
 # ============================================================================
-log_section "ETAPE 9/13 — Configuration Apache"
+log_section "ETAPE 9/14 — Configuration Apache"
 
 # Configuration specifique wrightetmathon
 APACHE_CONF="/etc/httpd/conf.d/wrightetmathon.conf"
+
+# Verifier que mod_rewrite est charge (requis pour .htaccess)
+REWRITE_MODULE="/etc/httpd/conf.modules.d/00-base.conf"
+if [[ -f "$REWRITE_MODULE" ]]; then
+    # S'assurer que la ligne LoadModule rewrite_module n'est pas commentee
+    if grep -q '#.*LoadModule rewrite_module' "$REWRITE_MODULE"; then
+        sed -i 's|#\s*LoadModule rewrite_module|LoadModule rewrite_module|' "$REWRITE_MODULE"
+        log_info "mod_rewrite decommente dans 00-base.conf"
+    fi
+    if grep -q 'LoadModule rewrite_module' "$REWRITE_MODULE"; then
+        log_ok "mod_rewrite : charge"
+    else
+        # Ajouter la ligne si absente
+        echo "LoadModule rewrite_module modules/mod_rewrite.so" >> "$REWRITE_MODULE"
+        log_info "mod_rewrite : ajoute a 00-base.conf"
+    fi
+else
+    log_warn "Fichier $REWRITE_MODULE non trouve — verifier mod_rewrite manuellement"
+fi
 
 cat > "$APACHE_CONF" <<'EOAPACHE'
 #
@@ -413,7 +433,7 @@ fi
 # ============================================================================
 # ETAPE 10 : POLICES DE CARACTERES
 # ============================================================================
-log_section "ETAPE 10/13 — Polices de caracteres"
+log_section "ETAPE 10/14 — Polices de caracteres"
 
 FONT_SRC="$APP_DIR/application/fonts/Century-Gothic.ttf"
 
@@ -431,28 +451,90 @@ fi
 # ============================================================================
 # ETAPE 11 : CERTIFICAT SSL AUTO-SIGNE
 # ============================================================================
-log_section "ETAPE 11/13 — Certificat SSL"
+log_section "ETAPE 11/14 — Certificat SSL"
 
-SSL_CERT="/etc/pki/tls/certs/localhost.crt"
-SSL_KEY="/etc/pki/tls/private/localhost.key"
+SSL_CERT="/etc/pki/tls/certs/wrightetmathon.crt"
+SSL_KEY="/etc/pki/tls/private/wrightetmathon.key"
+
+# Detecter l'IP locale pour le CN du certificat
+LOCAL_IP=$(hostname -I | awk '{print $1}')
+LOCAL_IP="${LOCAL_IP:-localhost}"
 
 if [[ -f "$SSL_CERT" && -s "$SSL_CERT" ]]; then
     log_ok "Certificat SSL existant : $SSL_CERT"
 else
-    log_info "Generation du certificat SSL auto-signe (10 ans)..."
+    log_info "Generation du certificat SSL auto-signe (10 ans, CN=$LOCAL_IP)..."
     openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
         -keyout "$SSL_KEY" \
         -out "$SSL_CERT" \
-        -subj "/CN=localhost" 2>/dev/null
+        -subj "/C=FR/ST=Herault/L=Agde/O=WrightEtMathon/CN=$LOCAL_IP" 2>/dev/null
     chmod 600 "$SSL_KEY"
     chmod 644 "$SSL_CERT"
-    log_ok "Certificat SSL genere : $SSL_CERT"
+    log_ok "Certificat SSL genere : $SSL_CERT (CN=$LOCAL_IP)"
+fi
+
+# Mettre a jour ssl.conf pour utiliser nos certificats
+SSL_CONF="/etc/httpd/conf.d/ssl.conf"
+if [[ -f "$SSL_CONF" ]]; then
+    sed -i "s|^SSLCertificateFile .*|SSLCertificateFile $SSL_CERT|" "$SSL_CONF"
+    sed -i "s|^SSLCertificateKeyFile .*|SSLCertificateKeyFile $SSL_KEY|" "$SSL_CONF"
+    log_ok "ssl.conf mis a jour avec les certificats wrightetmathon"
 fi
 
 # ============================================================================
-# ETAPE 12 : SERVICES SYSTEMD
+# ETAPE 12 : CLOUDFLARE TUNNEL (acces WAN)
 # ============================================================================
-log_section "ETAPE 12/13 — Services systemd"
+log_section "ETAPE 12/14 — Cloudflare Tunnel"
+
+CLOUDFLARED_BIN="/usr/local/bin/cloudflared"
+
+if [[ -f "$CLOUDFLARED_BIN" ]]; then
+    log_ok "cloudflared deja installe : $CLOUDFLARED_BIN"
+else
+    log_info "Telechargement de cloudflared..."
+    ARCH=$(uname -m)
+    case "$ARCH" in
+        x86_64)  CF_ARCH="amd64" ;;
+        aarch64) CF_ARCH="arm64" ;;
+        armv7l)  CF_ARCH="arm"   ;;
+        *)       CF_ARCH="amd64" ;;
+    esac
+    CF_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${CF_ARCH}"
+    if curl -fsSL -o /tmp/cloudflared "$CF_URL"; then
+        mv /tmp/cloudflared "$CLOUDFLARED_BIN"
+        chmod +x "$CLOUDFLARED_BIN"
+        log_ok "cloudflared installe : $CLOUDFLARED_BIN"
+    else
+        log_warn "Echec du telechargement de cloudflared (pas de connexion internet ?)"
+        log_warn "Installer manuellement plus tard : curl -fsSL -o $CLOUDFLARED_BIN $CF_URL && chmod +x $CLOUDFLARED_BIN"
+    fi
+fi
+
+# Service systemd pour Cloudflare Tunnel
+CF_SERVICE="/etc/systemd/system/cloudflared-tunnel.service"
+cat > "$CF_SERVICE" <<'EOCF'
+[Unit]
+Description=Cloudflare Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://localhost:80
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOCF
+
+log_ok "Service cloudflared-tunnel cree"
+log_info "Le tunnel genere une URL publique aleatoire (*.trycloudflare.com)"
+log_info "Pour voir l'URL : sudo journalctl -u cloudflared-tunnel | grep trycloudflare"
+
+# ============================================================================
+# ETAPE 13 : SERVICES SYSTEMD
+# ============================================================================
+log_section "ETAPE 13/14 — Services systemd"
 
 # Service de lancement wrightetmathon (initialisation au boot)
 LAUNCH_SCRIPT="$APP_DIR/application/controllers/launch.sh"
@@ -494,16 +576,27 @@ systemctl daemon-reload
 systemctl enable httpd mariadb php-fpm wrightetmathon
 log_ok "Services actives : httpd, mariadb, php-fpm, wrightetmathon"
 
+# Activer cloudflared-tunnel si le binaire est installe
+if [[ -x "$CLOUDFLARED_BIN" ]]; then
+    systemctl enable cloudflared-tunnel
+    log_ok "Service cloudflared-tunnel active"
+fi
+
 # Demarrer les services
 systemctl start mariadb
 systemctl start php-fpm
 systemctl start httpd
 log_ok "Services demarres"
 
+# Demarrer le tunnel Cloudflare
+if [[ -x "$CLOUDFLARED_BIN" ]]; then
+    systemctl start cloudflared-tunnel || log_warn "cloudflared-tunnel non demarre (pas de connexion internet ?)"
+fi
+
 # ============================================================================
-# ETAPE 13 : SELINUX & FIREWALL
+# ETAPE 14 : SELINUX & FIREWALL
 # ============================================================================
-log_section "ETAPE 13/13 — SELinux et Firewall"
+log_section "ETAPE 14/14 — SELinux et Firewall"
 
 # SELinux : desactiver (coherent avec l'installation actuelle)
 SELINUX_CONF="/etc/selinux/config"
@@ -511,10 +604,34 @@ if [[ -f "$SELINUX_CONF" ]]; then
     CURRENT_SELINUX=$(getenforce 2>/dev/null || echo "Unknown")
     if [[ "$CURRENT_SELINUX" == "Enforcing" || "$CURRENT_SELINUX" == "Permissive" ]]; then
         log_info "SELinux actuellement : $CURRENT_SELINUX"
+
+        # Appliquer les contextes httpd AVANT de desactiver (pour effet immediat)
+        if command -v setsebool &>/dev/null; then
+            setsebool -P httpd_read_user_content 1 2>/dev/null || true
+            setsebool -P httpd_enable_homedirs 1 2>/dev/null || true
+            setsebool -P httpd_can_network_connect_db 1 2>/dev/null || true
+            setsebool -P httpd_unified 1 2>/dev/null || true
+            log_info "SELinux booleans httpd appliques"
+        fi
+        if command -v restorecon &>/dev/null; then
+            restorecon -Rv /var/www/html/wrightetmathon/ 2>/dev/null || true
+            log_info "SELinux contextes restaures pour /var/www/html/wrightetmathon/"
+        fi
+        if command -v chcon &>/dev/null; then
+            chcon -R -t httpd_sys_content_t /var/www/html/wrightetmathon/ 2>/dev/null || true
+            chcon -R -t httpd_sys_rw_content_t /var/www/html/wrightetmathon/session/ 2>/dev/null || true
+            chcon -R -t httpd_sys_rw_content_t /var/www/html/wrightetmathon/application/logs/ 2>/dev/null || true
+            chcon -R -t httpd_sys_rw_content_t /var/www/html/wrightetmathon/application/cache/ 2>/dev/null || true
+            chcon -R -t httpd_sys_rw_content_t /var/www/html/wrightetmathon/images/ 2>/dev/null || true
+            log_info "SELinux contextes httpd appliques aux repertoires"
+        fi
+
+        # Desactiver SELinux pour le prochain reboot
         sed -i 's/^SELINUX=enforcing/SELINUX=disabled/' "$SELINUX_CONF"
         sed -i 's/^SELINUX=permissive/SELINUX=disabled/' "$SELINUX_CONF"
+        # Passage immediat en permissive (pas de blocage, mais logs)
         setenforce 0 2>/dev/null || true
-        log_warn "SELinux desactive (necessite un reboot pour etre permanent)"
+        log_warn "SELinux passe en permissive (sera desactive apres reboot)"
     else
         log_ok "SELinux deja desactive"
     fi
@@ -673,6 +790,28 @@ else
     log_warn "HTTP      : reponse $HTTP_CODE"
 fi
 
+# Test HTTPS
+HTTPS_CODE=$(curl -sk -o /dev/null -w "%{http_code}" https://localhost/wrightetmathon/ 2>/dev/null || echo "000")
+if [[ "$HTTPS_CODE" == "200" || "$HTTPS_CODE" == "302" ]]; then
+    log_ok "HTTPS     : reponse $HTTPS_CODE"
+elif [[ "$HTTPS_CODE" == "000" ]]; then
+    log_warn "HTTPS     : pas de reponse (verifier mod_ssl)"
+else
+    log_warn "HTTPS     : reponse $HTTPS_CODE"
+fi
+
+# Test Cloudflare Tunnel
+if systemctl is-active cloudflared-tunnel &>/dev/null; then
+    CF_URL=$(journalctl -u cloudflared-tunnel --no-pager -n 50 2>/dev/null | grep -oP 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
+    if [[ -n "$CF_URL" ]]; then
+        log_ok "Tunnel CF : actif — $CF_URL"
+    else
+        log_ok "Tunnel CF : actif (URL en cours de generation...)"
+    fi
+else
+    log_warn "Tunnel CF : inactif"
+fi
+
 # Resume
 echo ""
 echo -e "${CYAN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
@@ -683,12 +822,20 @@ else
 fi
 echo -e "${CYAN}${BOLD}════════════════════════════════════════════════════════════════${NC}"
 echo ""
-echo "  URL d'acces      : http://localhost/wrightetmathon"
+echo "  URL HTTP locale   : http://localhost/wrightetmathon"
+echo "  URL HTTPS locale  : https://${LOCAL_IP}/wrightetmathon"
 echo "  phpMyAdmin        : http://localhost/phpMyAdmin"
 echo "  Base de donnees   : $DB_NAME"
 echo "  Utilisateur MySQL : admin / ${DB_PASSWORD}"
 echo "  Utilisateur Linux : $SYS_USER / ${SYS_PASSWORD}"
 echo "  Fichier INI       : $INI_FILE"
+echo ""
+echo -e "${CYAN}  ACCES WAN (Cloudflare Tunnel) :${NC}"
+echo "  Le tunnel genere une URL publique aleatoire a chaque demarrage."
+echo "  Pour voir l'URL actuelle :"
+echo "     sudo journalctl -u cloudflared-tunnel | grep trycloudflare"
+echo "  Pour redemarrer le tunnel :"
+echo "     sudo systemctl restart cloudflared-tunnel"
 echo ""
 echo -e "${YELLOW}  ACTIONS MANUELLES RESTANTES :${NC}"
 echo "  1. Si les fichiers applicatifs ne sont pas encore deployes :"

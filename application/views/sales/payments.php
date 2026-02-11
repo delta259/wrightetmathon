@@ -212,6 +212,7 @@ foreach ($payments as $p) {
                             'id'        => 'amount_tendered',
                             'value'     => to_currency_no_money($amount_due),
                             'class'     => 'md-form-input pay-input-amount',
+                            'data-vk'   => 'numeric',
                             'autofocus' => 'autofocus',
                         )); ?>
                         <div id="fidelity-info" style="display:none;font-size:11px;color:var(--primary,#2563eb);font-weight:600;margin-top:3px;">
