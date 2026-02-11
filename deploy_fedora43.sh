@@ -343,6 +343,15 @@ php_ini_set "log_errors"            "On"
 
 log_ok "php.ini configure"
 
+# Corriger le session.save_path dans PHP-FPM (surcharge celui de php.ini)
+PHP_FPM_WWW="/etc/php-fpm.d/www.conf"
+if [[ -f "$PHP_FPM_WWW" ]]; then
+    if grep -q 'php_value\[session.save_path\]' "$PHP_FPM_WWW"; then
+        sed -i "s|^php_value\[session.save_path\].*|php_value[session.save_path] = $SESSION_DIR|" "$PHP_FPM_WWW"
+        log_ok "PHP-FPM session.save_path corrige → $SESSION_DIR"
+    fi
+fi
+
 # ============================================================================
 # ETAPE 9 : CONFIGURATION APACHE
 # ============================================================================
