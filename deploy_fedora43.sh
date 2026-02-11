@@ -103,7 +103,7 @@ fi
 # ============================================================================
 # ETAPE 1 : MISE A JOUR SYSTEME
 # ============================================================================
-log_section "ETAPE 1/12 — Mise a jour systeme"
+log_section "ETAPE 1/13 — Mise a jour systeme"
 
 dnf upgrade -y --refresh 2>&1 | tail -5
 log_ok "Systeme mis a jour"
@@ -111,7 +111,7 @@ log_ok "Systeme mis a jour"
 # ============================================================================
 # ETAPE 2 : INSTALLATION DES PAQUETS
 # ============================================================================
-log_section "ETAPE 2/12 — Installation des paquets"
+log_section "ETAPE 2/13 — Installation des paquets"
 
 # Paquets essentiels
 PACKAGES=(
@@ -175,7 +175,7 @@ log_ok "PHP $PHP_VERSION OK"
 # ============================================================================
 # ETAPE 3 : CREATION UTILISATEUR SYSTEME
 # ============================================================================
-log_section "ETAPE 3/12 — Utilisateur systeme"
+log_section "ETAPE 3/13 — Utilisateur systeme"
 
 if id "$SYS_USER" &>/dev/null; then
     log_warn "L'utilisateur $SYS_USER existe deja"
@@ -195,7 +195,7 @@ log_ok "Groupes configures"
 # ============================================================================
 # ETAPE 4 : CONFIGURATION MARIADB
 # ============================================================================
-log_section "ETAPE 4/12 — Configuration MariaDB"
+log_section "ETAPE 4/13 — Configuration MariaDB"
 
 systemctl enable mariadb --now
 log_info "MariaDB demarre"
@@ -227,7 +227,7 @@ log_ok "MariaDB configure — base '$DB_NAME' prete"
 # ============================================================================
 # ETAPE 5 : DEPLOIEMENT DES FICHIERS APPLICATION
 # ============================================================================
-log_section "ETAPE 5/12 — Deploiement application"
+log_section "ETAPE 5/13 — Deploiement application"
 
 if [[ -d "$APP_DIR/.git" ]]; then
     log_info "Repertoire git existant detecte dans $APP_DIR"
@@ -246,7 +246,7 @@ fi
 # ============================================================================
 # ETAPE 6 : STRUCTURE DES REPERTOIRES
 # ============================================================================
-log_section "ETAPE 6/12 — Structure des repertoires"
+log_section "ETAPE 6/13 — Structure des repertoires"
 
 # Session directory
 mkdir -p "$SESSION_DIR"
@@ -282,7 +282,7 @@ log_ok "Permissions appliquees"
 # ============================================================================
 # ETAPE 7 : FICHIER INI DE CONFIGURATION
 # ============================================================================
-log_section "ETAPE 7/12 — Fichier wrightetmathon.ini"
+log_section "ETAPE 7/13 — Fichier wrightetmathon.ini"
 
 if [[ -f "$INI_FILE" ]]; then
     log_warn "$INI_FILE existe deja — sauvegarde en .bak"
@@ -308,7 +308,7 @@ log_ok "Fichier INI cree : $INI_FILE"
 # ============================================================================
 # ETAPE 8 : CONFIGURATION PHP
 # ============================================================================
-log_section "ETAPE 8/12 — Configuration PHP"
+log_section "ETAPE 8/13 — Configuration PHP"
 
 PHP_INI="/etc/php.ini"
 
@@ -345,7 +345,7 @@ log_ok "php.ini configure"
 # ============================================================================
 # ETAPE 9 : CONFIGURATION APACHE
 # ============================================================================
-log_section "ETAPE 9/12 — Configuration Apache"
+log_section "ETAPE 9/13 — Configuration Apache"
 
 # Configuration specifique wrightetmathon
 APACHE_CONF="/etc/httpd/conf.d/wrightetmathon.conf"
@@ -413,7 +413,7 @@ fi
 # ============================================================================
 # ETAPE 10 : POLICES DE CARACTERES
 # ============================================================================
-log_section "ETAPE 10/12 — Polices de caracteres"
+log_section "ETAPE 10/13 — Polices de caracteres"
 
 FONT_SRC="$APP_DIR/application/fonts/Century-Gothic.ttf"
 
@@ -429,9 +429,30 @@ else
 fi
 
 # ============================================================================
-# ETAPE 11 : SERVICES SYSTEMD
+# ETAPE 11 : CERTIFICAT SSL AUTO-SIGNE
 # ============================================================================
-log_section "ETAPE 11/12 — Services systemd"
+log_section "ETAPE 11/13 — Certificat SSL"
+
+SSL_CERT="/etc/pki/tls/certs/localhost.crt"
+SSL_KEY="/etc/pki/tls/private/localhost.key"
+
+if [[ -f "$SSL_CERT" && -s "$SSL_CERT" ]]; then
+    log_ok "Certificat SSL existant : $SSL_CERT"
+else
+    log_info "Generation du certificat SSL auto-signe (10 ans)..."
+    openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+        -keyout "$SSL_KEY" \
+        -out "$SSL_CERT" \
+        -subj "/CN=localhost" 2>/dev/null
+    chmod 600 "$SSL_KEY"
+    chmod 644 "$SSL_CERT"
+    log_ok "Certificat SSL genere : $SSL_CERT"
+fi
+
+# ============================================================================
+# ETAPE 12 : SERVICES SYSTEMD
+# ============================================================================
+log_section "ETAPE 12/13 — Services systemd"
 
 # Service de lancement wrightetmathon (initialisation au boot)
 LAUNCH_SCRIPT="$APP_DIR/application/controllers/launch.sh"
@@ -480,9 +501,9 @@ systemctl start httpd
 log_ok "Services demarres"
 
 # ============================================================================
-# ETAPE 12 : SELINUX & FIREWALL
+# ETAPE 13 : SELINUX & FIREWALL
 # ============================================================================
-log_section "ETAPE 12/12 — SELinux et Firewall"
+log_section "ETAPE 13/13 — SELinux et Firewall"
 
 # SELinux : desactiver (coherent avec l'installation actuelle)
 SELINUX_CONF="/etc/selinux/config"
