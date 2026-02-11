@@ -76,7 +76,7 @@ ask_value "Nom utilisateur systeme"              "wrightetmathon"       SYS_USER
 ask_value "Mot de passe utilisateur systeme"     "sonrisa@INFO"         SYS_PASSWORD
 
 # Depot git
-GIT_REPO="https://github.com/wrightetmathon/wrightetmathon.git"
+GIT_REPO="https://github.com/delta259/wrightetmathon.git"
 
 # Chemins fixes
 APP_DIR="/var/www/html/wrightetmathon"
