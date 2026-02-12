@@ -15,198 +15,6 @@
     $has_articles  = (isset($_SESSION['tabular_articles_yes']) && $_SESSION['tabular_articles_yes'] == '1');
 ?>
 
-<!-- Messages -->
-<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
-
-<!-- Report card -->
-<div class="rpt-card">
-
-    <!-- Header -->
-    <div class="rpt-header">
-        <div class="rpt-header-left">
-            <div class="rpt-icon">
-                <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-            </div>
-            <div>
-                <div class="rpt-title"><?php echo $title; ?></div>
-                <div class="rpt-subtitle"><?php
-                    if ($has_articles) {
-                        echo $subtitle . " ( " . $_SESSION['compteur'] . " " . $this->lang->line('items_items') . ")";
-                    } else {
-                        echo $subtitle;
-                    }
-                ?></div>
-            </div>
-        </div>
-        <div class="rpt-header-right">
-            <?php if (isset($start_date) && isset($end_date) && !empty($start_date) && !empty($end_date)): ?>
-            <div class="rpt-period-filter" id="rpt-period-filter">
-                <svg class="rpt-period-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <input type="date" class="rpt-date-input" id="rpt-date-start" value="<?php echo $start_date; ?>">
-                <span class="rpt-date-arrow">&rarr;</span>
-                <input type="date" class="rpt-date-input" id="rpt-date-end" value="<?php echo $end_date; ?>">
-                <button type="button" class="rpt-btn-filter" id="rpt-btn-apply" title="Appliquer">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </button>
-            </div>
-            <?php endif; ?>
-
-            <?php if ($is_inline_inv): ?>
-            <button type="button" class="rpt-btn-action" onclick="PrinterIR.print();" title="Imprimer fiche inventaire">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                Imprimer
-            </button>
-            <?php else: ?>
-            <button type="button" class="rpt-btn-action" onclick="Printer.print(document.getElementById('sortable_table').innerHTML);" title="Imprimer">
-                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                Imprimer
-            </button>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['G']->modules[$_SESSION['module_id']]['show_exit_button']) && $_SESSION['G']->modules[$_SESSION['module_id']]['show_exit_button'] == 1): ?>
-            <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="rpt-btn-return">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                <?php echo $this->lang->line('common_return'); ?>
-            </a>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Summary totals -->
-    <?php if (!empty($summary_data)): ?>
-    <div class="rpt-summary-bar">
-        <?php foreach ($summary_data as $name => $value): ?>
-        <div class="rpt-summary-chip">
-            <div class="rpt-chip-label"><?php echo $this->lang->line('reports_' . $name); ?></div>
-            <div class="rpt-chip-value"><?php echo number_format($value, $pieces[0], $pieces[1], $pieces[2]); ?></div>
-        </div>
-        <?php endforeach; ?>
-    </div>
-    <?php endif; ?>
-
-    <!-- Toolbar -->
-    <div class="rpt-toolbar">
-        <div class="rpt-row-count">
-            <span id="rpt-count"><?php echo is_array($data) ? count($data) : 0; ?></span> <?php echo $this->lang->line('reports_results') ?: 'lignes'; ?>
-        </div>
-        <div class="rpt-toolbar-actions">
-            <?php if ($is_inline_inv): ?>
-            <label id="toggle-done-label" class="rpt-toggle-label">
-                <span id="toggle-done-switch" class="rpt-toggle-switch">
-                    <span id="toggle-done-knob" class="rpt-toggle-knob"></span>
-                </span>
-                Afficher trait&eacute;s
-            </label>
-            <?php endif; ?>
-
-            <?php if ($has_articles): ?>
-            <span class="rpt-badge" id="ir-badge" data-displayed="<?php echo $_SESSION['compteur']; ?>" data-total="<?php echo isset($_SESSION['total_articles_ir']) ? $_SESSION['total_articles_ir'] : ''; ?>" data-treated="<?php echo isset($_SESSION['ir_treated_lines']) ? count($_SESSION['ir_treated_lines']) : 0; ?>">
-                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
-                <span id="ir-badge-text"><?php
-                    if (isset($_SESSION['total_articles_ir'])) {
-                        echo $_SESSION['compteur'] . '/' . $_SESSION['total_articles_ir'];
-                    } else {
-                        echo $_SESSION['compteur'];
-                    }
-                ?> <?php echo $this->lang->line('items_items'); ?></span>
-            </span>
-            <?php endif; ?>
-        </div>
-    </div>
-
-    <!-- Main table -->
-    <div class="rpt-table-wrap">
-        <table class="rpt-table" id="sortable_table">
-            <thead>
-                <tr>
-                    <?php if ($has_oeil): ?>
-                    <th class="rpt-th-action" style="width:40px;text-align:center;">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </th>
-                    <?php endif; ?>
-                    <?php $col_idx = 0; foreach ($headers as $header): ?>
-                    <th class="rpt-sortable" data-col="<?php echo $col_idx; ?>">
-                        <div class="rpt-th-inner">
-                            <span><?php echo $header; ?></span>
-                            <svg class="rpt-sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path class="rpt-sort-asc" d="M18 11l-6-6-6 6"/><path class="rpt-sort-desc" d="M6 13l6 6 6-6"/></svg>
-                        </div>
-                    </th>
-                    <?php $col_idx++; endforeach; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($data as $line => $row):
-                    $is_focused = (isset($_SESSION['line']) && $_SESSION['line'] == $line);
-                    $row_class = $is_focused ? 'rpt-row-focused' : '';
-                    $is_ir_treated = (isset($_SESSION['ir_treated_lines']) && in_array($line, $_SESSION['ir_treated_lines']));
-                    if ($is_ir_treated) { $row_class .= ' ir-done'; }
-
-                    $request_for_deleted = array('deleted' => '0');
-                    $request_for_quantity = array('quantity' => 1);
-                    $tout = '';
-                    if ($has_oeil) {
-                        $cur_item_info = new stdClass();
-                        $tableau_recuperation_item_id = explode("/", $row[1]);
-                        $cur_item_info->item_id = isset($tableau_recuperation_item_id[7]) ? $tableau_recuperation_item_id[7] : 0;
-                        $data_item = $this->Item->get_info($cur_item_info->item_id);
-                        $request_for_deleted = array('deleted' => $data_item->deleted);
-                        $request_for_quantity = array('quantity' => $data_item->quantity);
-                        $tout = (string)$cur_item_info->item_id . ':' . (string)$line . ':' . 'reports';
-                    }
-                ?>
-                <tr class="<?php echo $row_class; ?>" <?php if ($is_focused) echo 'id="line_couleur"'; ?>>
-                    <?php if ($has_oeil): ?>
-                    <td class="rpt-td-action" style="text-align:center;">
-                        <?php if ($request_for_quantity['quantity'] <= 0): ?>
-                            <?php if ($request_for_deleted['deleted'] == '1'): ?>
-                            <a href="<?php echo site_url("receivings/desactive/$tout"); ?>" class="rpt-eye-btn rpt-eye-activate" title="Activer">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </a>
-                            <?php else: ?>
-                            <a href="<?php echo site_url("receivings/desactive/$tout"); ?>" class="rpt-eye-btn rpt-eye-deactivate" title="D&eacute;sactiver">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                            </a>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </td>
-                    <?php endif; ?>
-
-                    <?php foreach ($row as $cell):
-                        if (is_numeric($cell)) {
-                            if (is_int($cell)) { $cell = intval($cell); }
-                            if (is_float($cell)) { $cell = floatval($cell); }
-                            $cell = number_format($cell, $pieces[0], $pieces[1], $pieces[2]);
-                            $align_class = 'rpt-td-num';
-                        } else {
-                            $align_class = '';
-                        }
-                    ?>
-                    <td class="<?php echo $align_class; ?>">
-                        <?php
-                        if (isset($_SESSION['autofocus_avec_item_id_tabular']) && $_SESSION['autofocus_avec_item_id_tabular'] == $cell) {
-                            echo $cell;
-                            echo form_button(array('autofocus' => 'autofocus', 'type' => 'hidden'));
-                        } else {
-                            echo $cell;
-                        }
-                        ?>
-                    </td>
-                    <?php endforeach; ?>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-</div><!-- end .rpt-card -->
-
-<!-- Hidden summary for print -->
-<div id="report_summary" style="display:none;">
-    <?php foreach ($summary_data as $name => $value): ?>
-        <div><?php echo $this->lang->line('reports_' . $name) . ': ' . number_format($value, $pieces[0], $pieces[1], $pieces[2]); ?></div>
-    <?php endforeach; ?>
-</div>
-
 <style>
 /* ===== Report card ===== */
 .rpt-card {
@@ -625,6 +433,198 @@
     #sortable_table.hide-done tr.ir-done { display: none; }
 </style>
 <?php endif; ?>
+
+<!-- Messages -->
+<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
+
+<!-- Report card -->
+<div class="rpt-card">
+
+    <!-- Header -->
+    <div class="rpt-header">
+        <div class="rpt-header-left">
+            <div class="rpt-icon">
+                <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            </div>
+            <div>
+                <div class="rpt-title"><?php echo $title; ?></div>
+                <div class="rpt-subtitle"><?php
+                    if ($has_articles) {
+                        echo $subtitle . " ( " . $_SESSION['compteur'] . " " . $this->lang->line('items_items') . ")";
+                    } else {
+                        echo $subtitle;
+                    }
+                ?></div>
+            </div>
+        </div>
+        <div class="rpt-header-right">
+            <?php if (isset($start_date) && isset($end_date) && !empty($start_date) && !empty($end_date)): ?>
+            <div class="rpt-period-filter" id="rpt-period-filter">
+                <svg class="rpt-period-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" class="rpt-date-input" id="rpt-date-start" value="<?php echo $start_date; ?>">
+                <span class="rpt-date-arrow">&rarr;</span>
+                <input type="date" class="rpt-date-input" id="rpt-date-end" value="<?php echo $end_date; ?>">
+                <button type="button" class="rpt-btn-filter" id="rpt-btn-apply" title="Appliquer">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($is_inline_inv): ?>
+            <button type="button" class="rpt-btn-action" onclick="PrinterIR.print();" title="Imprimer fiche inventaire">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimer
+            </button>
+            <?php else: ?>
+            <button type="button" class="rpt-btn-action" onclick="Printer.print(document.getElementById('sortable_table').innerHTML);" title="Imprimer">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Imprimer
+            </button>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['G']->modules[$_SESSION['module_id']]['show_exit_button']) && $_SESSION['G']->modules[$_SESSION['module_id']]['show_exit_button'] == 1): ?>
+            <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="rpt-btn-return">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                <?php echo $this->lang->line('common_return'); ?>
+            </a>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Summary totals -->
+    <?php if (!empty($summary_data)): ?>
+    <div class="rpt-summary-bar">
+        <?php foreach ($summary_data as $name => $value): ?>
+        <div class="rpt-summary-chip">
+            <div class="rpt-chip-label"><?php echo $this->lang->line('reports_' . $name); ?></div>
+            <div class="rpt-chip-value"><?php echo number_format($value, $pieces[0], $pieces[1], $pieces[2]); ?></div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <!-- Toolbar -->
+    <div class="rpt-toolbar">
+        <div class="rpt-row-count">
+            <span id="rpt-count"><?php echo is_array($data) ? count($data) : 0; ?></span> <?php echo $this->lang->line('reports_results') ?: 'lignes'; ?>
+        </div>
+        <div class="rpt-toolbar-actions">
+            <?php if ($is_inline_inv): ?>
+            <label id="toggle-done-label" class="rpt-toggle-label">
+                <span id="toggle-done-switch" class="rpt-toggle-switch">
+                    <span id="toggle-done-knob" class="rpt-toggle-knob"></span>
+                </span>
+                Afficher trait&eacute;s
+            </label>
+            <?php endif; ?>
+
+            <?php if ($has_articles): ?>
+            <span class="rpt-badge" id="ir-badge" data-displayed="<?php echo $_SESSION['compteur']; ?>" data-total="<?php echo isset($_SESSION['total_articles_ir']) ? $_SESSION['total_articles_ir'] : ''; ?>" data-treated="<?php echo isset($_SESSION['ir_treated_lines']) ? count($_SESSION['ir_treated_lines']) : 0; ?>">
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+                <span id="ir-badge-text"><?php
+                    if (isset($_SESSION['total_articles_ir'])) {
+                        echo $_SESSION['compteur'] . '/' . $_SESSION['total_articles_ir'];
+                    } else {
+                        echo $_SESSION['compteur'];
+                    }
+                ?> <?php echo $this->lang->line('items_items'); ?></span>
+            </span>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Main table -->
+    <div class="rpt-table-wrap">
+        <table class="rpt-table" id="sortable_table">
+            <thead>
+                <tr>
+                    <?php if ($has_oeil): ?>
+                    <th class="rpt-th-action" style="width:40px;text-align:center;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </th>
+                    <?php endif; ?>
+                    <?php $col_idx = 0; foreach ($headers as $header): ?>
+                    <th class="rpt-sortable" data-col="<?php echo $col_idx; ?>">
+                        <div class="rpt-th-inner">
+                            <span><?php echo $header; ?></span>
+                            <svg class="rpt-sort-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path class="rpt-sort-asc" d="M18 11l-6-6-6 6"/><path class="rpt-sort-desc" d="M6 13l6 6 6-6"/></svg>
+                        </div>
+                    </th>
+                    <?php $col_idx++; endforeach; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($data as $line => $row):
+                    $is_focused = (isset($_SESSION['line']) && $_SESSION['line'] == $line);
+                    $row_class = $is_focused ? 'rpt-row-focused' : '';
+                    $is_ir_treated = (isset($_SESSION['ir_treated_lines']) && in_array($line, $_SESSION['ir_treated_lines']));
+                    if ($is_ir_treated) { $row_class .= ' ir-done'; }
+
+                    $request_for_deleted = array('deleted' => '0');
+                    $request_for_quantity = array('quantity' => 1);
+                    $tout = '';
+                    if ($has_oeil) {
+                        $cur_item_info = new stdClass();
+                        $tableau_recuperation_item_id = explode("/", $row[1]);
+                        $cur_item_info->item_id = isset($tableau_recuperation_item_id[7]) ? $tableau_recuperation_item_id[7] : 0;
+                        $data_item = $this->Item->get_info($cur_item_info->item_id);
+                        $request_for_deleted = array('deleted' => $data_item->deleted);
+                        $request_for_quantity = array('quantity' => $data_item->quantity);
+                        $tout = (string)$cur_item_info->item_id . ':' . (string)$line . ':' . 'reports';
+                    }
+                ?>
+                <tr class="<?php echo $row_class; ?>" <?php if ($is_focused) echo 'id="line_couleur"'; ?>>
+                    <?php if ($has_oeil): ?>
+                    <td class="rpt-td-action" style="text-align:center;">
+                        <?php if ($request_for_quantity['quantity'] <= 0): ?>
+                            <?php if ($request_for_deleted['deleted'] == '1'): ?>
+                            <a href="<?php echo site_url("receivings/desactive/$tout"); ?>" class="rpt-eye-btn rpt-eye-activate" title="Activer">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </a>
+                            <?php else: ?>
+                            <a href="<?php echo site_url("receivings/desactive/$tout"); ?>" class="rpt-eye-btn rpt-eye-deactivate" title="D&eacute;sactiver">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </a>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                    <?php endif; ?>
+
+                    <?php foreach ($row as $cell):
+                        if (is_numeric($cell)) {
+                            if (is_int($cell)) { $cell = intval($cell); }
+                            if (is_float($cell)) { $cell = floatval($cell); }
+                            $cell = number_format($cell, $pieces[0], $pieces[1], $pieces[2]);
+                            $align_class = 'rpt-td-num';
+                        } else {
+                            $align_class = '';
+                        }
+                    ?>
+                    <td class="<?php echo $align_class; ?>">
+                        <?php
+                        if (isset($_SESSION['autofocus_avec_item_id_tabular']) && $_SESSION['autofocus_avec_item_id_tabular'] == $cell) {
+                            echo $cell;
+                            echo form_button(array('autofocus' => 'autofocus', 'type' => 'hidden'));
+                        } else {
+                            echo $cell;
+                        }
+                        ?>
+                    </td>
+                    <?php endforeach; ?>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+
+</div><!-- end .rpt-card -->
+
+<!-- Hidden summary for print -->
+<div id="report_summary" style="display:none;">
+    <?php foreach ($summary_data as $name => $value): ?>
+        <div><?php echo $this->lang->line('reports_' . $name) . ': ' . number_format($value, $pieces[0], $pieces[1], $pieces[2]); ?></div>
+    <?php endforeach; ?>
+</div>
 
 <script type="text/javascript">
 var Printer = {
