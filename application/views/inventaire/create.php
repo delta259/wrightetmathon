@@ -71,7 +71,9 @@ $this->load->view("partial/header_popup");
                 <select name="category_id" id="category_id" style="width:100%;padding:8px 12px;border:1px solid var(--modal-input-border, #cbd5e1);border-radius:6px;font-size:0.9rem;background:var(--modal-input-bg, #fff);color:var(--modal-text, #1e293b);">
                     <option value="">-- <?php echo $this->lang->line('inventaire_select_category'); ?> --</option>
                     <?php foreach ($categories->result() as $cat): ?>
+                    <?php if (trim($cat->category_name) !== ''): ?>
                     <option value="<?php echo $cat->category_id; ?>"><?php echo htmlspecialchars($cat->category_name); ?></option>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -81,10 +83,12 @@ $this->load->view("partial/header_popup");
                 <strong>Par fournisseur</strong>
             </label>
             <div id="partial_supplier_group" style="margin-left:24px;margin-bottom:16px;display:none;">
-                <input type="text" id="supplier_search" autocomplete="off" placeholder="Rechercher un fournisseur..." style="width:100%;padding:8px 12px;border:1px solid var(--modal-input-border, #cbd5e1);border-radius:6px;font-size:0.9rem;background:var(--modal-input-bg, #fff);color:var(--modal-text, #1e293b);margin-bottom:6px;">
-                <select name="supplier_id" id="supplier_id" size="6" style="width:100%;padding:4px;border:1px solid var(--modal-input-border, #cbd5e1);border-radius:6px;font-size:0.9rem;background:var(--modal-input-bg, #fff);color:var(--modal-text, #1e293b);">
+                <select name="supplier_id" id="supplier_id" style="width:100%;padding:8px 12px;border:1px solid var(--modal-input-border, #cbd5e1);border-radius:6px;font-size:0.9rem;">
+                    <option value="">-- Sélectionner un fournisseur --</option>
                     <?php foreach ($suppliers->result() as $sup): ?>
+                    <?php if (trim($sup->company_name) !== ''): ?>
                     <option value="<?php echo $sup->person_id; ?>"><?php echo htmlspecialchars(strtoupper($sup->company_name)); ?></option>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -171,7 +175,7 @@ $(document).ready(function() {
         $('#partial_date_group').toggle(mode === 'date');
         // Reset non-active fields
         if (mode !== 'category') $('#category_id').val('');
-        if (mode !== 'supplier') { $('#supplier_id').val(''); $('#supplier_search').val(''); }
+        if (mode !== 'supplier') { $('#supplier_id').val(''); }
         if (mode !== 'search') $('#search_term').val('');
         if (mode !== 'date') $('#cutoff_date').val('');
         updatePreview();
@@ -187,15 +191,6 @@ $(document).ready(function() {
     $('#search_term').on('input', function() {
         if (searchTimer) clearTimeout(searchTimer);
         searchTimer = setTimeout(updatePreview, 500);
-    });
-
-    // Supplier search filter
-    $('#supplier_search').on('input', function() {
-        var q = $(this).val().toLowerCase();
-        $('#supplier_id option').each(function() {
-            var text = $(this).text().toLowerCase();
-            $(this).toggle(text.indexOf(q) !== -1);
-        });
     });
 
     // Preview item count

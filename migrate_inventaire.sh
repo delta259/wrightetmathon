@@ -19,6 +19,7 @@
 #   6. Modification des fichiers existants (menu, navigation, langues)
 #   7. API Mobile : contrôleur, JWT, session bypass, .htaccess, Apache
 #      7j. session.auto_start = 1 dans php.ini (requis pour $_SESSION)
+#      7k. davfs2 + HiDrive (montage WebDAV pour sync notifications)
 #   8. Vérifications finales
 #
 # Traçabilité audit trail :
@@ -1351,6 +1352,75 @@ if [ -f "$PHP_INI" ]; then
     fi
 else
     log_warn "php.ini introuvable - vérifiez manuellement que session.auto_start = 1"
+fi
+
+# ─── 7k. Installation davfs2 + configuration HiDrive ─────────────────────
+# davfs2 est requis pour le montage WebDAV HiDrive (sync notifications/slides).
+# Sans davfs2, les scripts hidrive_mount.php bloquent la page sales pendant ~20s.
+log_info "7k. Installation davfs2 et configuration HiDrive..."
+
+HIDRIVE_MOUNT="/home/wrightetmathon/.hidrive.sonrisa"
+HIDRIVE_URL="https://webdav.hidrive.strato.com/users/drive-6774"
+
+if command -v mount.davfs &>/dev/null; then
+    log_ok "davfs2 déjà installé"
+else
+    # Détection du gestionnaire de paquets
+    if command -v dnf &>/dev/null; then
+        dnf install -y davfs2 2>/dev/null
+    elif command -v apt-get &>/dev/null; then
+        apt-get install -y davfs2 2>/dev/null
+    elif command -v yum &>/dev/null; then
+        yum install -y davfs2 2>/dev/null
+    else
+        log_error "Gestionnaire de paquets non détecté — installez davfs2 manuellement"
+    fi
+
+    if command -v mount.davfs &>/dev/null; then
+        log_ok "davfs2 installé"
+    else
+        log_error "Échec installation davfs2"
+    fi
+fi
+
+# Créer le point de montage
+if [ ! -d "$HIDRIVE_MOUNT" ]; then
+    mkdir -p "$HIDRIVE_MOUNT"
+    chown wrightetmathon:wrightetmathon "$HIDRIVE_MOUNT"
+    log_ok "Point de montage créé : $HIDRIVE_MOUNT"
+fi
+
+# Configurer les credentials davfs2 (si pas déjà fait)
+DAVFS_SECRETS="/etc/davfs2/secrets"
+if [ -f "$DAVFS_SECRETS" ]; then
+    if grep -q "hidrive.strato.com" "$DAVFS_SECRETS" 2>/dev/null; then
+        log_ok "Credentials HiDrive déjà configurés dans $DAVFS_SECRETS"
+    else
+        log_warn "Credentials HiDrive absents de $DAVFS_SECRETS"
+        log_warn "Ajoutez manuellement : $HIDRIVE_URL <username> <password>"
+    fi
+else
+    log_warn "$DAVFS_SECRETS introuvable — configurez davfs2 manuellement"
+fi
+
+# Ajouter l'entrée fstab si absente (montage automatique au boot)
+if ! grep -q "hidrive.sonrisa" /etc/fstab 2>/dev/null; then
+    echo "$HIDRIVE_URL $HIDRIVE_MOUNT davfs _netdev,auto,rw,dir_mode=0777,file_mode=0666 0 0" >> /etc/fstab
+    log_ok "Entrée fstab ajoutée pour HiDrive"
+else
+    log_ok "Entrée fstab HiDrive déjà présente"
+fi
+
+# Tester le montage
+if mountpoint -q "$HIDRIVE_MOUNT" 2>/dev/null; then
+    log_ok "HiDrive déjà monté sur $HIDRIVE_MOUNT"
+else
+    mount "$HIDRIVE_MOUNT" 2>/dev/null
+    if mountpoint -q "$HIDRIVE_MOUNT" 2>/dev/null; then
+        log_ok "HiDrive monté avec succès"
+    else
+        log_warn "Montage HiDrive échoué — vérifiez les credentials dans $DAVFS_SECRETS"
+    fi
 fi
 
 # ─── 7i. Redémarrer Apache si nécessaire ─────────────────────────────────

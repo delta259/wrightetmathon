@@ -92,8 +92,11 @@ class Sales extends CI_Controller
 				}
 			}
 
-		require_once "/var/www/html/wrightetmathon/application/controllers/hidrive_mount.php";
-		require_once "/var/www/html/wrightetmathon/application/controllers/hidrive_by_shop_notification_compare.php";
+		// HiDrive sync : skip if davfs2 not installed (avoids 20s blocking on mount/rsync)
+		if (is_dir('/home/wrightetmathon/.hidrive.sonrisa') && @exec('which mount.davfs 2>/dev/null')) {
+			require_once "/var/www/html/wrightetmathon/application/controllers/hidrive_mount.php";
+			require_once "/var/www/html/wrightetmathon/application/controllers/hidrive_by_shop_notification_compare.php";
+		}
 		
 		// load the data
 		$this->_reload();

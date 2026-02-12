@@ -5130,9 +5130,15 @@ select.md-form-select,
     }
 }
 
-/* ─── Fix legacy select height clipping (forms.css sets height:30px,
-       modern-theme adds padding:8px 12px → text gets cut off) ─────── */
-.zone_champ_saisie select,
+/* ─── Fix legacy select height clipping (forms.css line 75 has
+       ".zone_champ_saisie input,select{" which targets ALL selects
+       globally with height:30px, background:#fff, color:#555) ─────── */
+select {
+    height: auto !important;
+    min-height: 34px;
+    background: var(--bg-container, #fff) !important;
+    color: var(--text-primary, #555) !important;
+}
 .zone_champ_saisie input {
     height: auto !important;
     min-height: 34px;
