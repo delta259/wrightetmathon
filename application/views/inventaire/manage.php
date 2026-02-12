@@ -193,7 +193,7 @@
 
 <!-- QR Code Download APK -->
 <?php
-    $apk_url = base_url('wm_inventaire.apk');
+    $apk_url = 'https://files.catbox.moe/2wf4qm.apk';
     $qr_api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg&data=' . urlencode($apk_url);
 ?>
 <div style="margin-top:24px;padding:20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;text-align:center;">
