@@ -214,7 +214,8 @@
     border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
     overflow: hidden;
-    margin: 10px 0 20px;
+    max-width: 1100px;
+    margin: 10px auto 20px;
 }
 
 /* Header */
