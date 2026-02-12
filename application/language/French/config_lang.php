@@ -138,5 +138,6 @@ $lang['config_tab_ticket'] = 'Ticket de caisse';
 $lang['config_tab_caisse'] = 'Caisse & Fidelite';
 $lang['config_tab_parametres'] = 'Parametres';
 $lang['config_tab_technique'] = 'Technique';
+$lang['config_item_reference_prefix'] = 'Initiales Reference';
 
 ?>

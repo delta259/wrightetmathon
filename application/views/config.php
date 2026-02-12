@@ -21,19 +21,6 @@
                             <h2><?php echo $this->lang->line('config_info'); ?></h2>
                             <div class="body_cadre_gris">
 
-<!-- output messages -->
-<?php
-    if($error != '')
-    {
-        echo "<div class='error_message'>".$error."</div>";
-    }
-
-    if($success != '')
-    {
-        echo "<div class='success_message'>".$success."</div>";
-    }
-?>
-
 <!-- set up the input form -->
 <?php echo form_open('config/save/', array('id'=>'config_form')); ?>
 
@@ -44,9 +31,10 @@
             <fieldset>
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<!-- TAB BAR                                                            -->
+<!-- TAB BAR + inline toast message                                     -->
 <!-- ═══════════════════════════════════════════════════════════════════ -->
-<div class="md-tab-bar" id="config-tab-bar">
+<div style="display:flex;align-items:center;gap:0;">
+<div class="md-tab-bar" id="config-tab-bar" style="flex:1;">
     <a class="md-tab md-tab-active" data-tab="tab-magasin">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         <?php echo $this->lang->line('config_tab_magasin'); ?>
@@ -72,6 +60,19 @@
         <?php echo $this->lang->line('config_tab_technique'); ?>
     </a>
 </div>
+<?php if (!empty($success)): ?>
+<div id="config-toast" style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;margin-left:8px;background:var(--success-bg,#dcfce7);color:var(--success-text,#166534);border:1px solid var(--success,#22c55e);border-radius:6px;font-size:0.8rem;font-weight:500;white-space:nowrap;opacity:1;transition:opacity 0.5s;">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <?php echo $success; ?>
+</div>
+<?php endif; ?>
+<?php if (!empty($error)): ?>
+<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 14px;margin-left:8px;background:var(--danger-bg,#fef2f2);color:var(--danger-text,#991b1b);border:1px solid var(--danger,#ef4444);border-radius:6px;font-size:0.8rem;font-weight:500;white-space:nowrap;">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    <?php echo $error; ?>
+</div>
+<?php endif; ?>
+</div><!-- /flex wrapper tab-bar + toast -->
 
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <!-- TAB 1 — MAGASIN                                                    -->
@@ -87,14 +88,28 @@
             Identite du magasin
         </div>
 
-        <div class="md-form-group">
-            <label class="md-form-label">Enseigne Y/S</label>
-            <?php echo form_input(array(
-                'name'=>'custom1_name',
-                'id'=>'custom1_name',
-                'class'=>'md-form-input',
-                'placeholder'=>'Y = YesStore, S = Sonrisa',
-                'value'=>$this->config->item('custom1_name'))); ?>
+        <div class="md-form-row">
+            <div class="md-form-group">
+                <label class="md-form-label">Enseigne Y/S</label>
+                <?php echo form_input(array(
+                    'name'=>'custom1_name',
+                    'id'=>'custom1_name',
+                    'class'=>'md-form-input',
+                    'placeholder'=>'Y = YesStore, S = Sonrisa',
+                    'value'=>$this->config->item('custom1_name'))); ?>
+            </div>
+            <div class="md-form-group">
+                <label class="md-form-label"><?php echo $this->lang->line('config_item_reference_prefix'); ?></label>
+                <?php echo form_input(array(
+                    'name'=>'item_reference_prefix',
+                    'id'=>'item_reference_prefix',
+                    'class'=>'md-form-input',
+                    'maxlength'=>'2',
+                    'size'=>'4',
+                    'style'=>'width:80px;text-transform:uppercase;letter-spacing:2px;font-weight:600;',
+                    'placeholder'=>'YS',
+                    'value'=>$this->config->item('item_reference_prefix'))); ?>
+            </div>
         </div>
 
         <div class="md-form-group">
@@ -1026,6 +1041,15 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <script>
 $(document).ready(function() {
+
+    // ─── Auto-hide success toast after 4s ────────────────────────────
+    var $toast = $('#config-toast');
+    if ($toast.length) {
+        setTimeout(function() {
+            $toast.css('opacity', '0');
+            setTimeout(function() { $toast.remove(); }, 500);
+        }, 4000);
+    }
 
     // ─── Tab navigation ──────────────────────────────────────────────
     $('#config-tab-bar .md-tab').on('click', function(e) {

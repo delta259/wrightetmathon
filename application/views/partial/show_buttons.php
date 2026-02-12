@@ -38,15 +38,14 @@
             );
         }
 
-        // CLONE button (Cloner)
+        // CLONE button (Cloner) — if single item selected, pass it as source
         if (($_SESSION['G']->modules[$_SESSION['module_id']]['show_clone_button'] ?? 0) == 1)
         {
-            echo anchor(
-                $_SESSION['G']->modules[$_SESSION['module_id']]['module_name'].'/clone_form/',
-                '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'
-                .$this->lang->line($_SESSION['G']->modules[$_SESSION['module_id']]['module_name'].'_clone'),
-                'class="btn-modern-primary"'
-            );
+            $clone_base = site_url($_SESSION['G']->modules[$_SESSION['module_id']]['module_name'].'/clone_form');
+            echo '<a href="'.$clone_base.'" class="btn-modern-primary" onclick="var sel=get_selected_values();if(sel.length===1){this.href=\''.$clone_base.'/\'+encodeURIComponent(sel[0]);}return true;">'
+                .'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>'
+                .$this->lang->line($_SESSION['G']->modules[$_SESSION['module_id']]['module_name'].'_clone')
+                .'</a>';
         }
 
         // BULK EDIT dropdown (Modification multiple) - items only

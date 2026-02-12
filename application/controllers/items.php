@@ -4715,7 +4715,7 @@ $_SESSION['transaction_info']-> = $data_vs_item['GAMME'];    //:"25";//*/
 		return 600; //Wright modified 18/01/2014
 	}
 
-	function clone_form()
+	function clone_form($source_item_number = '')
 	{
 		// set session data
 		unset($_SESSION['clone_from_id']);
@@ -4723,6 +4723,16 @@ $_SESSION['transaction_info']-> = $data_vs_item['GAMME'];    //:"25";//*/
 		$_SESSION['new'] 					=	1;
 		$_SESSION['clone'] 					=	1;
 		$_SESSION['$title']					=	$this->lang->line($_SESSION['G']->modules[$_SESSION['module_id']]['module_name'].'_clone');
+
+		// Pre-fill source if a single item was selected
+		if ($source_item_number !== '')
+		{
+			if (!isset($_SESSION['transaction_info']) || !is_object($_SESSION['transaction_info']))
+			{
+				$_SESSION['transaction_info'] = new stdClass();
+			}
+			$_SESSION['transaction_info']->clone_from_id = urldecode($source_item_number);
+		}
 
 		// set dialog switch
 		$_SESSION['show_dialog']			=	2;

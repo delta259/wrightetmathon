@@ -1364,20 +1364,13 @@
 .pos-history .sale-card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 8px 16px;
     cursor: pointer;
     transition: background 0.15s;
-    gap: 8px;
+    gap: 6px;
 }
 .pos-history .sale-card-header:hover {
     background: var(--table-row-hover, #f1f5f9);
-}
-.pos-history .sale-card-date {
-    font-weight: 600;
-    font-size: 0.82em;
-    color: var(--text-primary);
-    min-width: 110px;
 }
 .pos-history .sale-card-type {
     font-size: 0.68em;
@@ -1387,6 +1380,9 @@
     white-space: nowrap;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    width: 58px;
+    text-align: center;
+    flex-shrink: 0;
 }
 .pos-history .sale-card-type-sale {
     color: var(--primary);
@@ -1398,16 +1394,27 @@
     background: rgba(239, 68, 68, 0.08);
     border: 1px solid rgba(239, 68, 68, 0.2);
 }
+.pos-history .sale-card-date {
+    font-weight: 600;
+    font-size: 0.82em;
+    color: var(--text-primary);
+    width: 110px;
+    flex-shrink: 0;
+}
 .pos-history .sale-card-id {
     font-size: 0.72em;
     color: var(--text-secondary);
     white-space: nowrap;
+    width: 52px;
+    flex-shrink: 0;
+    text-align: right;
 }
 .pos-history .sale-card-employee {
     font-size: 0.78em;
     color: var(--text-secondary);
-    flex: 1;
-    text-align: center;
+    width: 90px;
+    flex-shrink: 0;
+    text-align: left;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1415,8 +1422,11 @@
 .pos-history .sale-card-payment {
     display: inline-flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 4px;
+    flex: 1;
     flex-wrap: wrap;
+    min-width: 0;
 }
 .sale-card-pay-badge {
     font-size: 0.72em;
@@ -1431,7 +1441,8 @@
     font-weight: 700;
     font-size: 0.92em;
     color: var(--primary);
-    min-width: 68px;
+    width: 68px;
+    flex-shrink: 0;
     text-align: right;
 }
 .pos-history .sale-card-total.negative {
@@ -1441,7 +1452,8 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    min-width: 40px;
+    width: 40px;
+    flex-shrink: 0;
 }
 .pos-history .sale-card-actions a {
     display: inline-flex;

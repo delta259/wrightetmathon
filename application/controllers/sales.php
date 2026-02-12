@@ -4623,10 +4623,12 @@ SELECT SUM(`line_tax`), `line_tax_percentage`  FROM `ospos_sales_items` WHERE `s
 	function icone_tiroir()
 	{
 		$printer														=	$this->config->item('ticket_printer');
-		$ph 															=	fopen($printer, "w");
-        //fwrite ($ph, "texte à l'imprimante");
-		fwrite ($ph, chr (27) .chr (112) .chr (48) .chr (55) .chr (121)); //La commande de l'imprimante Epson TM-T88V
-		if($_SESSION['hidden'] == 1)
+		$ph 															=	@fopen($printer, "w");
+		if ($ph) {
+			fwrite ($ph, chr (27) .chr (112) .chr (48) .chr (55) .chr (121)); //La commande de l'imprimante Epson TM-T88V
+			fclose($ph);
+		}
+		if(isset($_SESSION['hidden']) && $_SESSION['hidden'] == 1)
 		{
 			$_SESSION['hidden'] = 0;
 		}

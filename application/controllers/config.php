@@ -190,6 +190,7 @@ class Config extends CI_Controller
 								'distributeur_vapeself' => $this->input->post('distributeur_vapeself'),   //Configuration distributeur VapeSlef
 								'distributeur_vapeself_code' => $this->input->post('distributeur_vapeself_code'),   //Configuration code distributeur VapeSlef par default
 								'custom1_name'			=>	$this->input->post('custom1_name'),
+								'item_reference_prefix'	=>	strtoupper(substr(trim($this->input->post('item_reference_prefix') ?? ''), 0, 2)),
 								'custom2_name'			=>	$this->input->post('custom2_name'),
 								'custom3_name'			=>	$this->input->post('custom3_name'),
 								'custom4_name'			=>	$this->input->post('custom4_name'),

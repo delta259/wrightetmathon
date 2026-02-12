@@ -39,6 +39,14 @@
 <?php endif; ?>
 
 
+<!-- Filtre : masquer les sessions terminées/annulées -->
+<div id="toggle_archives" style="display:inline-flex;align-items:center;gap:8px;margin-bottom:14px;cursor:pointer;font-size:0.85rem;color:var(--text-primary,#1e293b);user-select:none;">
+    <span id="hide_done_track" style="position:relative;display:inline-block;width:36px;height:20px;background:#cbd5e1;border-radius:10px;transition:background 0.2s;">
+        <span id="hide_done_thumb" style="position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"></span>
+    </span>
+    Archives
+</div>
+
 <!-- Sessions Table -->
 <div class="table-container">
     <div class="table-wrapper">
@@ -102,7 +110,7 @@
                     // Progress percentage
                     $progress_pct = ($s->total_items > 0) ? round(($s->items_counted / $s->total_items) * 100) : 0;
                 ?>
-                <tr<?php if ($s->status === 'in_progress'): ?> class="session-row-active" data-href="<?php echo site_url('inventaire/count/' . $s->id); ?>" style="cursor:pointer;"<?php endif; ?>>
+                <tr data-status="<?php echo $s->status; ?>"<?php if ($s->status === 'in_progress'): ?> class="session-row-active" data-href="<?php echo site_url('inventaire/count/' . $s->id); ?>" style="cursor:pointer;"<?php endif; ?>>
                     <td><?php echo $s->id; ?></td>
                     <td><?php echo date('d/m/Y H:i', strtotime($s->started_at)); ?></td>
                     <td><?php echo $type_label; ?></td>
@@ -230,6 +238,30 @@
 $(document).ready(function() {
     $('#sessions_table').on('click', 'tr.session-row-active td:not(:last-child)', function() {
         window.location = $(this).closest('tr').data('href');
+    });
+
+    // Toggle archives (terminées/annulées)
+    var archivesOn = false,
+        $track = $('#hide_done_track'),
+        $thumb = $('#hide_done_thumb');
+
+    function setArchives(on) {
+        archivesOn = on;
+        $track.css('background', on ? 'var(--primary, #2563eb)' : 'var(--text-muted, #cbd5e1)');
+        $thumb.css('left', on ? '18px' : '2px');
+        $('#sessions_table tbody tr').each(function() {
+            var st = $(this).data('status');
+            $(this).toggle(on || (st !== 'completed' && st !== 'cancelled'));
+        });
+        localStorage.setItem('wm-inv-show-archives', on ? '1' : '0');
+    }
+
+    // Restaurer (défaut: OFF = archives masquées)
+    setArchives(localStorage.getItem('wm-inv-show-archives') === '1');
+
+    // Clic sur tout le bloc toggle
+    $('#toggle_archives').on('click', function() {
+        setArchives(!archivesOn);
     });
 });
 </script>

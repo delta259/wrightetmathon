@@ -45,5 +45,6 @@ $lang['config_tab_ticket'] = 'Receipt';
 $lang['config_tab_caisse'] = 'Cash & Loyalty';
 $lang['config_tab_parametres'] = 'Parameters';
 $lang['config_tab_technique'] = 'Technical';
+$lang['config_item_reference_prefix'] = 'Reference Initials';
 
 ?>

@@ -336,36 +336,28 @@ css can be found in pos-register.css and modern-theme.css
             if ($this->config->item('custom2_name') != 'Y')
             {
                 ?>
-                <div class="pos-qty-group">
-                    <button type="button" class="pos-qty-btn pos-qty-minus" onclick="var q=document.getElementById('input_qty');q.value=Math.max(1,parseInt(q.value||1)-1);">−</button>
-                    <?php echo form_input(array(
-                        'name'        => 'input_qty',
-                        'id'          => 'input_qty',
-                        'size'        => '5',
-                        'class'       => 'pos-qty-input',
-                        'data-vk'     => 'numeric',
-                        'placeholder' => $this->lang->line('sales_quantity'),
-                        'value'       => 1
-                    )); ?>
-                    <button type="button" class="pos-qty-btn pos-qty-plus" onclick="var q=document.getElementById('input_qty');q.value=parseInt(q.value||1)+1;">+</button>
-                </div>
+                <?php echo form_input(array(
+                    'name'        => 'input_qty',
+                    'id'          => 'input_qty',
+                    'size'        => '5',
+                    'class'       => 'pos-qty-input',
+                    'data-vk'     => 'numeric',
+                    'placeholder' => $this->lang->line('sales_quantity'),
+                    'value'       => 1
+                )); ?>
                 <?php
             }
             else
             {
                 ?>
-                <div class="pos-qty-group">
-                    <button type="button" class="pos-qty-btn pos-qty-minus" onclick="var q=document.getElementById('input_qty');q.value=Math.max(1,parseInt(q.value||1)-1);">−</button>
-                    <?php echo form_input(array(
-                        'name'        => 'input_qty',
-                        'id'          => 'input_qty',
-                        'size'        => '5',
-                        'class'       => 'pos-qty-input',
-                        'data-vk'     => 'numeric',
-                        'placeholder' => $this->lang->line('sales_quantity')
-                    )); ?>
-                    <button type="button" class="pos-qty-btn pos-qty-plus" onclick="var q=document.getElementById('input_qty');q.value=parseInt(q.value||1)+1;">+</button>
-                </div>
+                <?php echo form_input(array(
+                    'name'        => 'input_qty',
+                    'id'          => 'input_qty',
+                    'size'        => '5',
+                    'class'       => 'pos-qty-input',
+                    'data-vk'     => 'numeric',
+                    'placeholder' => $this->lang->line('sales_quantity')
+                )); ?>
                 <?php
             }
 
