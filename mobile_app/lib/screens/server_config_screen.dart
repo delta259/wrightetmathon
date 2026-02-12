@@ -17,7 +17,7 @@ class ServerConfigScreen extends StatefulWidget {
 }
 
 class _ServerConfigScreenState extends State<ServerConfigScreen> {
-  final _urlController = TextEditingController();
+  final _ipController = TextEditingController();
   bool _isTesting = false;
   bool? _testSuccess;
   String? _testMessage;
@@ -25,24 +25,32 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
   @override
   void initState() {
     super.initState();
-    final saved = ServerConfigService.getServerUrl();
-    if (saved != null) {
-      _urlController.text = saved;
+    final savedIp = ServerConfigService.getServerIp();
+    if (savedIp != null) {
+      _ipController.text = savedIp;
     }
   }
 
   @override
   void dispose() {
-    _urlController.dispose();
+    _ipController.dispose();
     super.dispose();
   }
 
+  /// Build the full URL from the IP input
+  String _buildUrl(String ip) {
+    String normalized = ip.trim();
+    normalized = normalized.replaceFirst(RegExp(r'^https?://'), '');
+    normalized = normalized.split('/').first;
+    return 'http://$normalized/wrightetmathon/index.php';
+  }
+
   Future<void> _testConnection() async {
-    final url = _urlController.text.trim();
-    if (url.isEmpty) {
+    final ip = _ipController.text.trim();
+    if (ip.isEmpty) {
       setState(() {
         _testSuccess = false;
-        _testMessage = 'Veuillez saisir une URL';
+        _testMessage = 'Veuillez saisir une adresse IP';
       });
       return;
     }
@@ -58,12 +66,7 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
       dio.options.connectTimeout = const Duration(seconds: 10);
       dio.options.receiveTimeout = const Duration(seconds: 10);
 
-      // Normalize URL
-      String testUrl = url;
-      if (testUrl.endsWith('/')) {
-        testUrl = testUrl.substring(0, testUrl.length - 1);
-      }
-
+      final testUrl = _buildUrl(ip);
       final response = await dio.get('$testUrl${ApiConfig.ping}');
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data is Map
@@ -113,10 +116,10 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
   }
 
   Future<void> _save() async {
-    final url = _urlController.text.trim();
-    if (url.isEmpty || _testSuccess != true) return;
+    final ip = _ipController.text.trim();
+    if (ip.isEmpty || _testSuccess != true) return;
 
-    await ServerConfigService.saveServerUrl(url);
+    await ServerConfigService.saveServerIp(ip);
     ApiConfig.setBaseUrl(ServerConfigService.getServerUrl()!);
 
     if (!mounted) return;
@@ -183,19 +186,19 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Saisissez l\'adresse de votre serveur POS',
+                        'Saisissez l\'adresse IP de votre serveur POS',
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 32),
 
-                      // URL field
+                      // IP field
                       TextField(
-                        controller: _urlController,
+                        controller: _ipController,
                         decoration: const InputDecoration(
-                          labelText: 'URL du serveur',
-                          hintText: 'http://192.168.1.x/wrightetmathon/index.php',
-                          prefixIcon: Icon(Icons.link),
+                          labelText: 'Adresse IP du serveur',
+                          hintText: '192.168.1.x',
+                          prefixIcon: Icon(Icons.router_outlined),
                         ),
                         keyboardType: TextInputType.url,
                         autocorrect: false,

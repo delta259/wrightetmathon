@@ -5086,6 +5086,14 @@ select.md-form-select,
     }
 }
 
+/* ─── Fix legacy select height clipping (forms.css sets height:30px,
+       modern-theme adds padding:8px 12px → text gets cut off) ─────── */
+.zone_champ_saisie select,
+.zone_champ_saisie input {
+    height: auto !important;
+    min-height: 34px;
+}
+
 /* ─── Config page tab panels ─────────────────────────────────── */
 .config-tab-panel { padding: 20px 0; }
 .config-tab-panel .config_row { margin-bottom: 10px; }
