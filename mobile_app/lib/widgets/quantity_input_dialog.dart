@@ -199,7 +199,10 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Annuler'),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 48),
+                    ),
+                    child: const Text('Annuler', maxLines: 1),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -209,7 +212,10 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                       Navigator.pop(context);
                       widget.onConfirm(_quantity);
                     },
-                    child: const Text('Valider'),
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(0, 48),
+                    ),
+                    child: const Text('Valider', maxLines: 1),
                   ),
                 ),
               ],
