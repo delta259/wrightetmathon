@@ -227,31 +227,18 @@ class Login extends CI_Controller
 	}
 
 	/**
-	 * Clear session data and cookies to prevent stale session errors
-	 * Called when displaying the login page to ensure a fresh start
+	 * Clear session data to ensure a fresh start on login page.
+	 * Preserves CI session infrastructure, only clears application data.
 	 */
 	private function _clear_session()
 	{
-		// Destroy CI session data
-		$this->session->sess_destroy();
-
-		// Clear the session cookie by setting it to expire in the past
-		$cookie_name = $this->config->item('sess_cookie_name');
-		if ($cookie_name) {
-			setcookie($cookie_name, '', time() - 3600, '/');
-		}
-
-		// Also clear PHPSESSID if using native PHP sessions
-		if (isset($_COOKIE['PHPSESSID'])) {
-			setcookie('PHPSESSID', '', time() - 3600, '/');
-		}
-
-		// Clear all session data
-		$_SESSION = array();
-
-		// Regenerate session ID for security
-		if (session_status() === PHP_SESSION_ACTIVE) {
-			session_regenerate_id(true);
+		$preserve = array('session_id', 'ip_address', 'user_agent', 'last_activity');
+		if (function_exists('session_status') && session_status() === PHP_SESSION_ACTIVE) {
+			foreach ($_SESSION as $key => $val) {
+				if (!in_array($key, $preserve)) {
+					unset($_SESSION[$key]);
+				}
+			}
 		}
 	}
 

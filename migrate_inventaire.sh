@@ -18,6 +18,7 @@
 #      - Filtres partiels : catégorie, fournisseur, recherche libre, date
 #   6. Modification des fichiers existants (menu, navigation, langues)
 #   7. API Mobile : contrôleur, JWT, session bypass, .htaccess, Apache
+#      7j. session.auto_start = 1 dans php.ini (requis pour $_SESSION)
 #   8. Vérifications finales
 #
 # Traçabilité audit trail :
@@ -470,6 +471,12 @@ log_info "2h. Ajout paramètre touchscreen..."
 mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e \
     "INSERT INTO ospos_app_config (\`key\`, \`value\`) VALUES ('touchscreen', '0') ON DUPLICATE KEY UPDATE \`key\`='touchscreen'" 2>/dev/null
 log_ok "Paramètre touchscreen ajouté (défaut: 0 = clavier virtuel désactivé)"
+
+# ─── 2i. INSERT item_reference_prefix dans app_config ─────────────────────
+log_info "2i. Ajout paramètre item_reference_prefix..."
+mysql -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e \
+    "INSERT INTO ospos_app_config (\`key\`, \`value\`) VALUES ('item_reference_prefix', '') ON DUPLICATE KEY UPDATE \`key\`='item_reference_prefix'" 2>/dev/null
+log_ok "Paramètre item_reference_prefix ajouté (défaut: vide)"
 
 # =============================================================================
 # ÉTAPE 3 : MISE À JOUR jQuery 1.2.6 → 3.3.1
@@ -1308,6 +1315,42 @@ elif [ "$API_RESPONSE" = "000" ]; then
 else
     log_warn "API mobile : HTTP $API_RESPONSE (peut nécessiter un redémarrage Apache)"
     APACHE_RESTART_NEEDED=1
+fi
+
+# ─── 7j. Vérifier/corriger session.auto_start dans php.ini ───────────────
+# L'application utilise $_SESSION partout (login, module_id, panier, etc.)
+# et nécessite session.auto_start = 1 pour démarrer la session native PHP.
+log_info "Vérification session.auto_start dans php.ini..."
+
+PHP_INI="/etc/php.ini"
+if [ ! -f "$PHP_INI" ]; then
+    # Debian/Ubuntu
+    PHP_INI=$(php -r 'echo php_ini_loaded_file();' 2>/dev/null)
+fi
+
+if [ -f "$PHP_INI" ]; then
+    AUTOSTART=$(php -r 'echo ini_get("session.auto_start");' 2>/dev/null)
+    if [ "$AUTOSTART" != "1" ]; then
+        # Remplacer la valeur existante ou ajouter si absente
+        if grep -q '^session.auto_start' "$PHP_INI"; then
+            sed -i 's/^session.auto_start\s*=.*/session.auto_start = 1/' "$PHP_INI"
+        elif grep -q '^;\s*session.auto_start' "$PHP_INI"; then
+            sed -i 's/^;\s*session.auto_start\s*=.*/session.auto_start = 1/' "$PHP_INI"
+        else
+            echo "session.auto_start = 1" >> "$PHP_INI"
+        fi
+        log_ok "session.auto_start = 1 configuré dans $PHP_INI"
+        APACHE_RESTART_NEEDED=1
+        # Redémarrer php-fpm si présent
+        if systemctl is-active php-fpm &>/dev/null; then
+            systemctl restart php-fpm 2>/dev/null
+            log_ok "php-fpm redémarré"
+        fi
+    else
+        log_ok "session.auto_start déjà à 1"
+    fi
+else
+    log_warn "php.ini introuvable - vérifiez manuellement que session.auto_start = 1"
 fi
 
 # ─── 7i. Redémarrer Apache si nécessaire ─────────────────────────────────

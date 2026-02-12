@@ -333,6 +333,7 @@ php_ini_set() {
 }
 
 php_ini_set "session.save_path"     "$SESSION_DIR"
+php_ini_set "session.auto_start"    "1"
 php_ini_set "date.timezone"         "Europe/Paris"
 php_ini_set "memory_limit"          "1024M"
 php_ini_set "post_max_size"         "128M"
