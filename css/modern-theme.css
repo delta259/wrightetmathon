@@ -1095,6 +1095,11 @@ select {
     transition: all 0.3s ease;
 }
 
+select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
 input[type="text"]:hover,
 input[type="password"]:hover,
 input[type="email"]:hover,

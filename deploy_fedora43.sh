@@ -103,7 +103,7 @@ fi
 # ============================================================================
 # ETAPE 1 : MISE A JOUR SYSTEME
 # ============================================================================
-log_section "ETAPE 1/14 — Mise a jour systeme"
+log_section "ETAPE 1/15 — Mise a jour systeme"
 
 dnf upgrade -y --refresh 2>&1 | tail -5
 log_ok "Systeme mis a jour"
@@ -111,7 +111,7 @@ log_ok "Systeme mis a jour"
 # ============================================================================
 # ETAPE 2 : INSTALLATION DES PAQUETS
 # ============================================================================
-log_section "ETAPE 2/14 — Installation des paquets"
+log_section "ETAPE 2/15 — Installation des paquets"
 
 # Paquets essentiels
 PACKAGES=(
@@ -176,7 +176,7 @@ log_ok "PHP $PHP_VERSION OK"
 # ============================================================================
 # ETAPE 3 : CREATION UTILISATEUR SYSTEME
 # ============================================================================
-log_section "ETAPE 3/14 — Utilisateur systeme"
+log_section "ETAPE 3/15 — Utilisateur systeme"
 
 if id "$SYS_USER" &>/dev/null; then
     log_warn "L'utilisateur $SYS_USER existe deja"
@@ -196,7 +196,7 @@ log_ok "Groupes configures"
 # ============================================================================
 # ETAPE 4 : CONFIGURATION MARIADB
 # ============================================================================
-log_section "ETAPE 4/14 — Configuration MariaDB"
+log_section "ETAPE 4/15 — Configuration MariaDB"
 
 systemctl enable mariadb --now
 log_info "MariaDB demarre"
@@ -228,7 +228,7 @@ log_ok "MariaDB configure — base '$DB_NAME' prete"
 # ============================================================================
 # ETAPE 5 : DEPLOIEMENT DES FICHIERS APPLICATION
 # ============================================================================
-log_section "ETAPE 5/14 — Deploiement application"
+log_section "ETAPE 5/15 — Deploiement application"
 
 if [[ -d "$APP_DIR/.git" ]]; then
     log_info "Repertoire git existant detecte dans $APP_DIR"
@@ -247,7 +247,7 @@ fi
 # ============================================================================
 # ETAPE 6 : STRUCTURE DES REPERTOIRES
 # ============================================================================
-log_section "ETAPE 6/14 — Structure des repertoires"
+log_section "ETAPE 6/15 — Structure des repertoires"
 
 # Session directory
 mkdir -p "$SESSION_DIR"
@@ -283,7 +283,7 @@ log_ok "Permissions appliquees"
 # ============================================================================
 # ETAPE 7 : FICHIER INI DE CONFIGURATION
 # ============================================================================
-log_section "ETAPE 7/14 — Fichier wrightetmathon.ini"
+log_section "ETAPE 7/15 — Fichier wrightetmathon.ini"
 
 if [[ -f "$INI_FILE" ]]; then
     log_warn "$INI_FILE existe deja — sauvegarde en .bak"
@@ -312,7 +312,7 @@ log_ok "Fichier INI cree : $INI_FILE"
 # ============================================================================
 # ETAPE 8 : CONFIGURATION PHP
 # ============================================================================
-log_section "ETAPE 8/14 — Configuration PHP"
+log_section "ETAPE 8/15 — Configuration PHP"
 
 PHP_INI="/etc/php.ini"
 
@@ -358,7 +358,7 @@ fi
 # ============================================================================
 # ETAPE 9 : CONFIGURATION APACHE
 # ============================================================================
-log_section "ETAPE 9/14 — Configuration Apache"
+log_section "ETAPE 9/15 — Configuration Apache"
 
 # Configuration specifique wrightetmathon
 APACHE_CONF="/etc/httpd/conf.d/wrightetmathon.conf"
@@ -445,7 +445,7 @@ fi
 # ============================================================================
 # ETAPE 10 : POLICES DE CARACTERES
 # ============================================================================
-log_section "ETAPE 10/14 — Polices de caracteres"
+log_section "ETAPE 10/15 — Polices de caracteres"
 
 FONT_SRC="$APP_DIR/application/fonts/Century-Gothic.ttf"
 
@@ -463,7 +463,7 @@ fi
 # ============================================================================
 # ETAPE 11 : CERTIFICAT SSL AUTO-SIGNE
 # ============================================================================
-log_section "ETAPE 11/14 — Certificat SSL"
+log_section "ETAPE 11/15 — Certificat SSL"
 
 SSL_CERT="/etc/pki/tls/certs/wrightetmathon.crt"
 SSL_KEY="/etc/pki/tls/private/wrightetmathon.key"
@@ -496,7 +496,7 @@ fi
 # ============================================================================
 # ETAPE 12 : CLOUDFLARE TUNNEL (acces WAN)
 # ============================================================================
-log_section "ETAPE 12/14 — Cloudflare Tunnel"
+log_section "ETAPE 12/15 — Cloudflare Tunnel"
 
 CLOUDFLARED_BIN="/usr/local/bin/cloudflared"
 
@@ -546,7 +546,7 @@ log_info "Pour voir l'URL : sudo journalctl -u cloudflared-tunnel | grep tryclou
 # ============================================================================
 # ETAPE 13 : SERVICES SYSTEMD
 # ============================================================================
-log_section "ETAPE 13/14 — Services systemd"
+log_section "ETAPE 13/15 — Services systemd"
 
 # Service de lancement wrightetmathon (initialisation au boot)
 LAUNCH_SCRIPT="$APP_DIR/application/controllers/launch.sh"
@@ -608,7 +608,7 @@ fi
 # ============================================================================
 # ETAPE 14 : SELINUX & FIREWALL
 # ============================================================================
-log_section "ETAPE 14/14 — SELinux et Firewall"
+log_section "ETAPE 14/15 — SELinux et Firewall"
 
 # SELinux : desactiver (coherent avec l'installation actuelle)
 SELINUX_CONF="/etc/selinux/config"
@@ -657,6 +657,68 @@ if systemctl is-active firewalld &>/dev/null; then
     log_ok "Firewall : ports HTTP/HTTPS ouverts"
 else
     log_warn "firewalld n'est pas actif — ports non configures"
+fi
+
+# ============================================================================
+# ETAPE 15 : LOGICIELS COMPLEMENTAIRES (Chrome, TeamViewer, Thunderbird)
+# ============================================================================
+log_section "ETAPE 15/15 — Logiciels complementaires"
+
+# --- Google Chrome ---
+if command -v google-chrome &>/dev/null || command -v google-chrome-stable &>/dev/null; then
+    log_ok "Google Chrome deja installe"
+else
+    log_info "Installation de Google Chrome..."
+    # Ajouter le depot Google Chrome
+    cat > /etc/yum.repos.d/google-chrome.repo <<'EOCHROME'
+[google-chrome]
+name=Google Chrome
+baseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64
+enabled=1
+gpgcheck=1
+gpgkey=https://dl.google.com/linux/linux_signing_key.pub
+EOCHROME
+    if dnf install -y google-chrome-stable 2>&1 | tail -3; then
+        log_ok "Google Chrome installe"
+    else
+        log_warn "Echec installation Google Chrome (pas de connexion internet ?)"
+    fi
+fi
+
+# --- Thunderbird ---
+if command -v thunderbird &>/dev/null; then
+    log_ok "Thunderbird deja installe"
+else
+    log_info "Installation de Thunderbird..."
+    if dnf install -y thunderbird 2>&1 | tail -3; then
+        log_ok "Thunderbird installe"
+    else
+        log_warn "Echec installation Thunderbird"
+    fi
+fi
+
+# --- TeamViewer ---
+if command -v teamviewer &>/dev/null; then
+    log_ok "TeamViewer deja installe"
+else
+    log_info "Installation de TeamViewer..."
+    ARCH=$(uname -m)
+    if [[ "$ARCH" == "x86_64" ]]; then
+        TV_RPM="/tmp/teamviewer.rpm"
+        TV_URL="https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm"
+        if curl -fsSL -o "$TV_RPM" "$TV_URL"; then
+            if dnf install -y "$TV_RPM" 2>&1 | tail -3; then
+                log_ok "TeamViewer installe"
+            else
+                log_warn "Echec installation TeamViewer (dependances manquantes ?)"
+            fi
+            rm -f "$TV_RPM"
+        else
+            log_warn "Echec telechargement TeamViewer (pas de connexion internet ?)"
+        fi
+    else
+        log_warn "TeamViewer n'est disponible que pour x86_64 (architecture detectee : $ARCH)"
+    fi
 fi
 
 # ============================================================================
