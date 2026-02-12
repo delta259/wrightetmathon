@@ -794,6 +794,63 @@ chown -R "$SYS_USER":"$SYS_USER" "/home/$SYS_USER/.config"
 log_ok "Autostart configure : wm.sh se lancera a l'ouverture de session"
 
 # ============================================================================
+# POWER MANAGEMENT - Empecher la mise en veille (poste de caisse)
+# ============================================================================
+log_section "POWER MANAGEMENT"
+
+# --- systemd : desactiver sleep/hibernate/suspend ---
+systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target 2>/dev/null
+log_ok "systemd : sleep/suspend/hibernate masques"
+
+# --- GNOME (gsettings) : desactiver mise en veille ecran et session ---
+if command -v gsettings &>/dev/null; then
+    # Executer en tant que l'utilisateur pour que les settings s'appliquent a sa session
+    su - "$SYS_USER" -c '
+        gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type "nothing" 2>/dev/null
+        gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type "nothing" 2>/dev/null
+        gsettings set org.gnome.settings-daemon.plugins.power idle-dim false 2>/dev/null
+        gsettings set org.gnome.desktop.session idle-delay 0 2>/dev/null
+        gsettings set org.gnome.desktop.screensaver lock-enabled false 2>/dev/null
+        gsettings set org.gnome.desktop.screensaver idle-activation-enabled false 2>/dev/null
+    ' 2>/dev/null
+    log_ok "GNOME : mise en veille et ecran de verrouillage desactives"
+fi
+
+# --- XFCE (xfconf-query) : si l'environnement est XFCE ---
+if command -v xfconf-query &>/dev/null; then
+    su - "$SYS_USER" -c '
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/blank-on-ac -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/blank-on-battery -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/dpms-on-ac-off -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/dpms-on-ac-sleep -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/dpms-on-battery-off -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/dpms-on-battery-sleep -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/inactivity-on-ac -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/inactivity-on-battery -t int -s 0 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/presentation-mode -t bool -s true 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/lock-screen-suspend-hibernate -t bool -s false 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/hibernate-button-action -t int -s 3 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/power-button-action -t int -s 3 2>/dev/null
+        xfconf-query -c xfce4-power-manager --create -p /xfce4-power-manager/sleep-button-action -t int -s 3 2>/dev/null
+    ' 2>/dev/null
+    log_ok "XFCE : power manager configure (no sleep, presentation mode)"
+fi
+
+# --- logind.conf : fallback systemd-level ---
+LOGIND_CONF="/etc/systemd/logind.conf"
+if [ -f "$LOGIND_CONF" ]; then
+    # Desactiver lid switch et idle action
+    sed -i 's/^#\?HandleLidSwitch=.*/HandleLidSwitch=ignore/' "$LOGIND_CONF"
+    sed -i 's/^#\?HandleLidSwitchExternalPower=.*/HandleLidSwitchExternalPower=ignore/' "$LOGIND_CONF"
+    sed -i 's/^#\?IdleAction=.*/IdleAction=ignore/' "$LOGIND_CONF"
+    # Ajouter les directives si absentes
+    grep -q "^HandleLidSwitch=" "$LOGIND_CONF" || echo "HandleLidSwitch=ignore" >> "$LOGIND_CONF"
+    grep -q "^IdleAction=" "$LOGIND_CONF" || echo "IdleAction=ignore" >> "$LOGIND_CONF"
+    systemctl restart systemd-logind 2>/dev/null
+    log_ok "logind.conf : lid switch et idle action ignores"
+fi
+
+# ============================================================================
 # VERIFICATION FINALE
 # ============================================================================
 log_section "VERIFICATION FINALE"

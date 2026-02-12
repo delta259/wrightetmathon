@@ -1357,15 +1357,26 @@ fi
 # ─── 7k. Installation davfs2 + configuration HiDrive ─────────────────────
 # davfs2 est requis pour le montage WebDAV HiDrive (sync notifications/slides).
 # Sans davfs2, les scripts hidrive_mount.php bloquent la page sales pendant ~20s.
+# Credentials et structure alignés avec l'ancien script phase1_install.sh.
 log_info "7k. Installation davfs2 et configuration HiDrive..."
 
 HIDRIVE_MOUNT="/home/wrightetmathon/.hidrive.sonrisa"
 HIDRIVE_URL="https://webdav.hidrive.strato.com/users/drive-6774"
+HIDRIVE_ROOT="https://webdav.hidrive.strato.com"
+HIDRIVE_USER="drive-6774"
+HIDRIVE_PASS="sonrisa@POS"
+DAVFS_SECRETS="/etc/davfs2/secrets"
 
+# Lire le shopcode depuis le fichier INI
+SHOPCODE=$(grep -m1 "^shopcode=" "$INI_FILE" | cut -d= -f2 | tr -d "'" | tr -d ' ')
+if [ -z "$SHOPCODE" ]; then
+    log_warn "shopcode introuvable dans $INI_FILE — credentials per-shop non configurés"
+fi
+
+# --- Installation davfs2 ---
 if command -v mount.davfs &>/dev/null; then
     log_ok "davfs2 déjà installé"
 else
-    # Détection du gestionnaire de paquets
     if command -v dnf &>/dev/null; then
         dnf install -y davfs2 2>/dev/null
     elif command -v apt-get &>/dev/null; then
@@ -1375,7 +1386,6 @@ else
     else
         log_error "Gestionnaire de paquets non détecté — installez davfs2 manuellement"
     fi
-
     if command -v mount.davfs &>/dev/null; then
         log_ok "davfs2 installé"
     else
@@ -1383,27 +1393,69 @@ else
     fi
 fi
 
-# Créer le point de montage
+# --- Créer le point de montage ---
 if [ ! -d "$HIDRIVE_MOUNT" ]; then
     mkdir -p "$HIDRIVE_MOUNT"
     chown wrightetmathon:wrightetmathon "$HIDRIVE_MOUNT"
     log_ok "Point de montage créé : $HIDRIVE_MOUNT"
 fi
 
-# Configurer les credentials davfs2 (si pas déjà fait)
-DAVFS_SECRETS="/etc/davfs2/secrets"
+# --- Credentials davfs2 ---
+# Credential principal (accès racine HiDrive, pour hidrive_mount.php)
 if [ -f "$DAVFS_SECRETS" ]; then
-    if grep -q "hidrive.strato.com" "$DAVFS_SECRETS" 2>/dev/null; then
-        log_ok "Credentials HiDrive déjà configurés dans $DAVFS_SECRETS"
+    # Backup du fichier secrets
+    if [ ! -f "${DAVFS_SECRETS}.saved_by_wrightetmathon" ]; then
+        cp "$DAVFS_SECRETS" "${DAVFS_SECRETS}.saved_by_wrightetmathon"
+    fi
+
+    # Credential racine : https://webdav.hidrive.strato.com drive-6774 sonrisa@POS
+    if grep -q "$HIDRIVE_ROOT $HIDRIVE_USER" "$DAVFS_SECRETS" 2>/dev/null; then
+        log_ok "Credential HiDrive racine déjà présent"
     else
-        log_warn "Credentials HiDrive absents de $DAVFS_SECRETS"
-        log_warn "Ajoutez manuellement : $HIDRIVE_URL <username> <password>"
+        echo "" >> "$DAVFS_SECRETS"
+        echo "# Credentials added by migrate_inventaire.sh" >> "$DAVFS_SECRETS"
+        echo "$HIDRIVE_ROOT $HIDRIVE_USER $HIDRIVE_PASS" >> "$DAVFS_SECRETS"
+        log_ok "Credential HiDrive racine ajouté"
+    fi
+
+    # Credential sous-dossier users : .../users/drive-6774
+    if grep -q "$HIDRIVE_URL $HIDRIVE_USER" "$DAVFS_SECRETS" 2>/dev/null; then
+        log_ok "Credential HiDrive users déjà présent"
+    else
+        echo "$HIDRIVE_URL $HIDRIVE_USER $HIDRIVE_PASS" >> "$DAVFS_SECRETS"
+        log_ok "Credential HiDrive users ajouté"
+    fi
+
+    # Credential per-shop (pour autofs/notifications sync)
+    if [ -n "$SHOPCODE" ]; then
+        SHOP_URL="$HIDRIVE_URL/SHOPS/PUBLIC/$SHOPCODE"
+        if grep -q "$SHOP_URL" "$DAVFS_SECRETS" 2>/dev/null; then
+            log_ok "Credential HiDrive shop $SHOPCODE déjà présent"
+        else
+            echo "" >> "$DAVFS_SECRETS"
+            echo "# Credential for shop $SHOPCODE" >> "$DAVFS_SECRETS"
+            echo "$SHOP_URL $HIDRIVE_USER $HIDRIVE_PASS" >> "$DAVFS_SECRETS"
+            log_ok "Credential HiDrive shop $SHOPCODE ajouté"
+        fi
     fi
 else
-    log_warn "$DAVFS_SECRETS introuvable — configurez davfs2 manuellement"
+    log_warn "$DAVFS_SECRETS introuvable — davfs2 mal installé ?"
 fi
 
-# Ajouter l'entrée fstab si absente (montage automatique au boot)
+# --- visudo : permettre à apache d'exécuter mount/umount sans mot de passe ---
+# Requis par hidrive_mount.php qui appelle exec('sudo mount ...')
+if grep -q "apache ALL=NOPASSWD" /etc/sudoers 2>/dev/null; then
+    log_ok "visudo apache NOPASSWD déjà configuré"
+else
+    echo "apache ALL=NOPASSWD: ALL" | (EDITOR="tee -a" visudo) >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        log_ok "visudo : apache ALL=NOPASSWD ajouté"
+    else
+        log_warn "Impossible de modifier sudoers — ajoutez manuellement : apache ALL=NOPASSWD: ALL"
+    fi
+fi
+
+# --- Entrée fstab (montage automatique au boot) ---
 if ! grep -q "hidrive.sonrisa" /etc/fstab 2>/dev/null; then
     echo "$HIDRIVE_URL $HIDRIVE_MOUNT davfs _netdev,auto,rw,dir_mode=0777,file_mode=0666 0 0" >> /etc/fstab
     log_ok "Entrée fstab ajoutée pour HiDrive"
@@ -1411,7 +1463,7 @@ else
     log_ok "Entrée fstab HiDrive déjà présente"
 fi
 
-# Tester le montage
+# --- Tester le montage ---
 if mountpoint -q "$HIDRIVE_MOUNT" 2>/dev/null; then
     log_ok "HiDrive déjà monté sur $HIDRIVE_MOUNT"
 else
