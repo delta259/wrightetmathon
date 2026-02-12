@@ -290,6 +290,7 @@ if [[ -f "$INI_FILE" ]]; then
     cp "$INI_FILE" "${INI_FILE}.bak.$(date +%Y%m%d%H%M%S)"
 fi
 
+JWT_SECRET=$(openssl rand -hex 32 2>/dev/null || head -c 64 /dev/urandom | od -An -tx1 | tr -d ' \n' | head -c 64)
 cat > "$INI_FILE" <<EOINI
 hostname=localhost
 database='${DB_NAME}'
@@ -300,6 +301,8 @@ ip='127.0.0.1'
 branchtype='${BRANCH_TYPE}'
 description='${SHOP_DESC}'
 software_folder='VERSION_14.2'
+jwt_secret='${JWT_SECRET}'
+allowed_origins='*'
 EOINI
 
 chmod 644 "$INI_FILE"

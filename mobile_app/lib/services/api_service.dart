@@ -37,6 +37,11 @@ class ApiService {
     ));
   }
 
+  /// Update the base URL (e.g. after server config change)
+  void updateBaseUrl(String newUrl) {
+    _dio.options.baseUrl = newUrl;
+  }
+
   /// Set the authentication token
   void setToken(String? token) {
     _token = token;

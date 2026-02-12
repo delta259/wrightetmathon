@@ -2,16 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../config/app_theme.dart';
+import '../services/server_config_service.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
+import 'server_config_screen.dart';
 
-class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkServerConfig();
+  }
+
+  Future<void> _checkServerConfig() async {
+    // Small delay for splash branding
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+
+    if (!ServerConfigService.isConfigured()) {
+      // No server URL configured - go to server config screen
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => const ServerConfigScreen(isInitialSetup: true),
+        ),
+      );
+    }
+    // If configured, the BlocListener below handles auth state navigation
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+        // Only navigate if server is configured
+        if (!ServerConfigService.isConfigured()) return;
+
         if (state is AuthAuthenticated) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (_) => const HomeScreen()),

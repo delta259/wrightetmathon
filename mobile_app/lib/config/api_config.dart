@@ -3,11 +3,15 @@
 /// Configure the base URL to point to your Wright et Mathon POS server.
 /// For development, use your local IP address or ngrok URL.
 class ApiConfig {
-  // Base URL for the API - CHANGE THIS to your server address
-  // Examples:
-  // - Local development: 'http://192.168.1.100/wrightetmathon/index.php'
-  // - Production: 'https://your-domain.com/wrightetmathon/index.php'
-  static const String baseUrl = 'http://192.168.1.19/wrightetmathon/index.php';
+  // Base URL for the API - set dynamically from ServerConfigService at startup
+  static String _baseUrl = '';
+
+  static String get baseUrl => _baseUrl;
+
+  /// Update the base URL (called from ServerConfigService or main.dart)
+  static void setBaseUrl(String url) {
+    _baseUrl = url;
+  }
 
   // API endpoints
   static const String login = '/api_mobile/login';

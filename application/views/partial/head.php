@@ -86,9 +86,11 @@ else {
   <!-- Theme Toggle (Light/Dark Mode) -->
   <script src="<?php echo base_url();?>js/theme-toggle.js" type="text/javascript"></script>
 
-  <!-- Virtual Keyboard (Touch POS) -->
+  <!-- Virtual Keyboard (Touch POS) — loaded only when touchscreen mode is enabled -->
+  <?php if ($this->config->item('touchscreen') == '1') { ?>
   <link rel="stylesheet" type="text/css" href="<?php echo base_url();?>css/virtual-keyboard.css">
   <script src="<?php echo base_url();?>js/virtual-keyboard.js" type="text/javascript"></script>
+  <?php } ?>
 
     <script src="<?php echo base_url();?>js/jquery.color.js" type="text/javascript" language="javascript" charset="UTF-8"></script>
     <script src="<?php echo base_url();?>js/jquery.metadata.js" type="text/javascript" language="javascript" charset="UTF-8"></script>

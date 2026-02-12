@@ -37,4 +37,13 @@ $lang['config_multi_vendeur'] = 'Multi vendor configuration';
 
 $lang['config_distributeur_vapeself'] = 'Use VapeSelf\'s distributor';
 $lang['config_distributeur_vapeself_code'] = 'Default VapeSelf distributor code';
+
+$lang['config_touchscreen'] = 'Touchscreen mode (virtual keyboard)';
+$lang['config_tab_magasin'] = 'Store';
+$lang['config_tab_systeme'] = 'System';
+$lang['config_tab_ticket'] = 'Receipt';
+$lang['config_tab_caisse'] = 'Cash & Loyalty';
+$lang['config_tab_parametres'] = 'Parameters';
+$lang['config_tab_technique'] = 'Technical';
+
 ?>

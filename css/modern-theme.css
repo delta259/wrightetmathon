@@ -1931,6 +1931,34 @@ table.data-table.tablesorter tbody td.cell-id {
     background-color: transparent !important;
 }
 
+/* blocformfond — legacy form container (config page, etc.) */
+.blocformfond {
+    background: var(--bg-card, #EEF5F9) !important;
+}
+.blocformfond fieldset {
+    background: var(--bg-container, #fff) !important;
+    border-color: var(--border-color, lightblue) !important;
+}
+.blocformfond h2 {
+    color: var(--text-primary, #0062AD) !important;
+}
+.blocformfond fieldset legend {
+    color: var(--text-primary, #0062AD) !important;
+}
+[data-theme="dark"] .blocformfond {
+    background: var(--bg-card) !important;
+}
+[data-theme="dark"] .blocformfond fieldset {
+    background: var(--bg-container) !important;
+    border-color: var(--border-color) !important;
+}
+[data-theme="dark"] .blocformfond h2 {
+    color: var(--text-primary) !important;
+}
+[data-theme="dark"] .blocformfond fieldset legend {
+    color: var(--text-primary) !important;
+}
+
 /* Responsive Table */
 @media (max-width: 768px) {
     .table-container {
@@ -5057,3 +5085,8 @@ select.md-form-select,
         padding: 8px 0;
     }
 }
+
+/* ─── Config page tab panels ─────────────────────────────────── */
+.config-tab-panel { padding: 20px 0; }
+.config-tab-panel .config_row { margin-bottom: 10px; }
+.config-tab-panel h3 { margin: 18px 0 10px; color: var(--text-primary); font-size: 1.1em; }

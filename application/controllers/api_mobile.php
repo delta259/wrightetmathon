@@ -32,8 +32,21 @@ class Api_mobile extends CI_Controller
         // Set JSON content type for all responses
         header('Content-Type: application/json; charset=utf-8');
 
-        // Handle CORS for mobile app
-        header('Access-Control-Allow-Origin: *');
+        // Handle CORS for mobile app - read allowed origins from INI
+        $ini_path = '/var/www/html/wrightetmathon.ini';
+        $allowed_origins = array('*'); // fallback permissif
+        if (file_exists($ini_path)) {
+            $ini = file_get_contents($ini_path);
+            if (preg_match("/allowed_origins='([^']+)'/", $ini, $m)) {
+                $allowed_origins = array_map('trim', explode(',', $m[1]));
+            }
+        }
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+        if (in_array('*', $allowed_origins) || in_array($origin, $allowed_origins)) {
+            header('Access-Control-Allow-Origin: ' . ($origin ?: '*'));
+        } else {
+            header('Access-Control-Allow-Origin: ' . $allowed_origins[0]);
+        }
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Authorization, Content-Type, X-Requested-With');
 

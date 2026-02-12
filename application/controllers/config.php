@@ -198,7 +198,8 @@ class Config extends CI_Controller
 								'custom7_name'			=>	$this->input->post('custom7_name'),
 								'custom8_name'			=>	$this->input->post('custom8_name'),
 								'custom9_name'			=>	$this->input->post('custom9_name'),
-								'custom10_name'			=>	$this->input->post('custom10_name')
+								'custom10_name'			=>	$this->input->post('custom10_name'),
+								'touchscreen'			=>	$this->input->post('touchscreen')
 								);
 		
 		if ($this->Appconfig->batch_save($batch_save_data))

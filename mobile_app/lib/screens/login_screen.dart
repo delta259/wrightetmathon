@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/auth/auth_bloc.dart';
+import '../config/api_config.dart';
 import '../config/app_theme.dart';
+import '../services/api_service.dart';
+import '../services/server_config_service.dart';
 import 'home_screen.dart';
+import 'server_config_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,7 +67,33 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           child: SafeArea(
-            child: Center(
+            child: Stack(
+              children: [
+                // Settings gear icon - top right
+                Positioned(
+                  top: 12,
+                  right: 12,
+                  child: IconButton(
+                    icon: const Icon(Icons.settings, color: Colors.white70, size: 28),
+                    tooltip: 'Configuration serveur',
+                    onPressed: () async {
+                      final result = await Navigator.of(context).push<bool>(
+                        MaterialPageRoute(
+                          builder: (_) => const ServerConfigScreen(),
+                        ),
+                      );
+                      if (result == true && mounted) {
+                        // URL was changed - update ApiService
+                        final newUrl = ServerConfigService.getServerUrl();
+                        if (newUrl != null) {
+                          ApiConfig.setBaseUrl(newUrl);
+                          context.read<ApiService>().updateBaseUrl(newUrl);
+                        }
+                      }
+                    },
+                  ),
+                ),
+                Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
                 child: Card(
@@ -189,6 +219,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+            ),
+              ],
             ),
           ),
         ),

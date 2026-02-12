@@ -6,8 +6,16 @@
  * used by the mobile inventory application.
  */
 
-// Secret key for signing JWT tokens (CHANGE THIS IN PRODUCTION!)
-$config['jwt_secret_key'] = '16648ecabd2769eeb6349cd1ff79961b4a27b2e2886b7c776720fb1bec1ff675';
+// Read JWT secret from INI file (priority) or use fallback
+$jwt_secret = '16648ecabd2769eeb6349cd1ff79961b4a27b2e2886b7c776720fb1bec1ff675';
+$ini_path = '/var/www/html/wrightetmathon.ini';
+if (file_exists($ini_path)) {
+    $ini = file_get_contents($ini_path);
+    if (preg_match("/jwt_secret='([^']+)'/", $ini, $m)) {
+        $jwt_secret = $m[1];
+    }
+}
+$config['jwt_secret_key'] = $jwt_secret;
 
 // Token expiration time in seconds (24 hours = 86400)
 $config['jwt_expiration'] = 86400;
