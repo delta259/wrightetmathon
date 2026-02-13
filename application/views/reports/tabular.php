@@ -677,7 +677,6 @@ var Printer = {
 <script type="text/javascript">
 // Override printer for Ticket Z - lightweight receipt
 Printer.print = function() {
-    var win = window.open('', '_blank');
     var now = new Date();
     var printDate = now.toLocaleDateString('fr-FR') + ' \u00e0 ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
 
