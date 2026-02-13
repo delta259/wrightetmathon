@@ -699,11 +699,11 @@ css can be found in pos-register.css and modern-theme.css
                                 <?php foreach ($h_items as $hitem):
                                     $di_ref   = $hitem[2] ?? '';
                                     $di_name  = $hitem[3] ?? '';
-                                    $di_qty   = $hitem[5] ?? 0;
-                                    $di_price = $hitem[6] ?? 0;
-                                    $di_disc  = $hitem[7] ?? 0;
-                                    $di_ttc   = $hitem[8] ?? 0;
-                                    $di_ht    = $hitem[9] ?? 0;
+                                    $di_qty   = $hitem[4] ?? 0;
+                                    $di_price = $hitem[5] ?? 0;
+                                    $di_disc  = $hitem[6] ?? 0;
+                                    $di_ttc   = $hitem[7] ?? 0;
+                                    $di_ht    = $hitem[8] ?? 0;
                                 ?>
                                 <tr>
                                     <td class="col-ref" title="<?php echo htmlspecialchars($di_ref); ?>"><?php echo htmlspecialchars($di_ref); ?></td>
