@@ -215,6 +215,15 @@ class Branch extends CI_Model
 	}
 	
 	/*
+	Soft-delete a branch (set deleted=1)
+	*/
+	function delete($branch_code)
+	{
+		$this->db->where('branch_code', $branch_code);
+		return $this->db->update('branch', array('deleted' => 1));
+	}
+
+	/*
 	truncate the branch table
 	*/
 	function truncate()

@@ -32,21 +32,51 @@ class Branches extends CI_Controller
 		$this						->	pagination->initialize($config);
 		
 		// setup output data
-		$data['links']				=	$this->pagination->create_links();	
+		$data['links']				=	$this->pagination->create_links();
 		$data['controller_name']	=	strtolower(get_class($this));
 		$data['form_width']			=	$this->Common_routines->set_form_width();
-		$create_headers				=	1;
-		$data['manage_table']		=	get_branches_manage_table($this->Branch->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ) ), $this, $create_headers);
+		$data['branch_data']		=	$this->Branch->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ));
 		
 		$this->load->view('branches/manage',$data);
 	}
 
 	function search()
 	{
-		$search						=	$this->input->post('search');
-		$create_headers				=	0;
-		$data_rows					=	get_branches_manage_table($this->Branch->search($search), $this, $create_headers);
-		echo $data_rows;
+		$search		= $this->input->post('search');
+		$branches	= $this->Branch->search($search);
+		$html		= '';
+
+		foreach ($branches->result() as $branch)
+		{
+			$type_label = '';
+			if ($branch->branch_type === 'I') { $type_label = $this->lang->line('branches_branch_type_I'); }
+			elseif ($branch->branch_type === 'F') { $type_label = $this->lang->line('branches_branch_type_F'); }
+
+			$allows = ($branch->branch_allows_check === 'Y')
+				? '<span style="background:#dcfce7;color:#166534;border:1px solid #22c55e;padding:2px 8px;border-radius:12px;font-size:0.8rem;font-weight:500;">Oui</span>'
+				: '<span style="background:#fef2f2;color:#991b1b;border:1px solid #ef4444;padding:2px 8px;border-radius:12px;font-size:0.8rem;font-weight:500;">Non</span>';
+
+			$html .= '<tr class="branch-row" data-href="'.site_url('branches/view/'.$branch->branch_code).'" style="cursor:pointer;">';
+			$html .= '<td style="text-align:center;">'.anchor('branches/view/'.$branch->branch_code, htmlspecialchars($branch->branch_code)).'</td>';
+			$html .= '<td>'.htmlspecialchars($branch->branch_description).'</td>';
+			$html .= '<td style="text-align:center;">'.htmlspecialchars($branch->branch_ip).'</td>';
+			$html .= '<td style="text-align:center;">'.htmlspecialchars($branch->branch_user).'</td>';
+			$html .= '<td>'.htmlspecialchars($branch->branch_database).'</td>';
+			$html .= '<td style="text-align:center;">'.$allows.'</td>';
+			$html .= '<td style="text-align:center;"><span style="background:#eff6ff;color:#1e40af;border:1px solid #3b82f6;padding:2px 8px;border-radius:12px;font-size:0.8rem;font-weight:500;">'.$type_label.'</span></td>';
+			$html .= '<td style="text-align:center;white-space:nowrap;">';
+			$html .= '<a href="#" onclick="if(confirm(\''.addslashes($this->lang->line('branches_confirm_delete')).'\')){window.location=\''.site_url('branches/delete/'.$branch->branch_code).'\';} return false;" title="'.htmlspecialchars($this->lang->line('branches_delete')).'" style="text-decoration:none;">';
+			$html .= '<svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+			$html .= '</a></td>';
+			$html .= '</tr>';
+		}
+
+		if ($branches->num_rows() == 0)
+		{
+			$html .= '<tr><td colspan="8" style="text-align:center;padding:20px;color:#64748b;">'.$this->lang->line('common_no_persons_to_display').'</td></tr>';
+		}
+
+		echo $html;
 	}
 
 	/*
@@ -146,58 +176,32 @@ class Branches extends CI_Controller
 		switch ($_SESSION['new'] ?? 0)
 		{
 			case	1:
-					// set message
 					$_SESSION['error_code']								=	'01640';
-					$this->												view($_SESSION['transaction_info']->branch_code, $_SESSION['origin']);
 			break;
-					
+
 			default:
-					// set message
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'01650';
-					$this->												view($_SESSION['transaction_info']->branch_code, $_SESSION['origin']);
-			break;	
+			break;
 		}
+
+		// clean up and redirect to list (no modal reopen)
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("branches");
 	}
 
-	function delete()
+	function delete($branch_code)
 	{
-		if($this->Category->delete($_SESSION['transaction_info']->category_id))
+		if ($this->Branch->delete($branch_code))
 		{
-			// set success message
-			$_SESSION['error_code']										=	'00470';
-			$_SESSION['del']											=	1;
+			$_SESSION['error_code']										=	'01655';
 		}
 		else
 		{
 			$_SESSION['error_code']										=	'00350';
 		}
-		
-		redirect("categories");
-	}
-	
-	function list_deleted()
-	{
-		// set flag to select deleted categories
-		$_SESSION['undel']					=	1;
-		redirect("categories");
-	}
-	
-	function undelete()
-	{
-		if($this->Category->undelete($_SESSION['transaction_info']->category_id))
-		{
-			// set success message
-			$_SESSION['error_code']										=	'00510';
-			unset($_SESSION['undel']);
-		}
-		else
-		{
-			$_SESSION['error_code']										=	'00350';
-		}
-		
-		$_SESSION['$title']												=	$this->lang->line('common_edit').'  '.$_SESSION['transaction_info']->category_name;
-		$this->															view($_SESSION['transaction_info']->category_id);
+
+		redirect("branches");
 	}
 	
 	function verify()

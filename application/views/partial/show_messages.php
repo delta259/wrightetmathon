@@ -38,9 +38,12 @@ if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_
 	// display message if message array has required elements
 	if (isset($message[1]) && isset($message[2])) {
 	?>
-	<div class="<?php echo $message[1]; ?>">
+	<div class="<?php echo $message[1]; ?>" id="auto_message">
 		<?php echo /*$message[0].' => '.*/$message[2]; ?>
 	</div>
+	<?php if ($message[1] === 'success_message'): ?>
+	<script>setTimeout(function(){ var m=document.getElementById('auto_message'); if(m) m.style.transition='opacity 0.3s'; m.style.opacity='0'; setTimeout(function(){ m.style.display='none'; },300); },1000);</script>
+	<?php endif; ?>
 <?php
 	}
 }

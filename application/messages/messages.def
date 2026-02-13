@@ -189,6 +189,7 @@
 01630->error_message->IP déjà utilisée->0->
 01640->success_message->Succursale ajoutée avec succès->0->
 01650->success_message->Succursale MaJ avec succès->0->
+01655->success_message->Succursale désactivée avec succès->0->
 01660->error_message->Volume doit être numérique->0->
 01670->error_message->Taux nicotine doit être numérique->0->
 01680->success_message->MaJ Taux nicotine terminé->0->
