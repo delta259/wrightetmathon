@@ -3,7 +3,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
     enable_search('<?php echo site_url("$controller_name/suggest")?>','<?php echo $this->lang->line("common_confirm_search")?>');
-    enable_row_selection();
+    init_table_sorting();
 });
 </script>
 

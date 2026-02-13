@@ -252,12 +252,13 @@ class Item extends CI_Model
 		$this->db->join("inventory", "items.item_id = inventory.trans_items");
 		$this ->db->join('items_suppliers', 'items.item_id = items_suppliers.item_id');
 
-		$this->db->where("date(trans_date) > DATE_ADD(CURRENT_DATE,INTERVAL -".$inputs." DAY)" );
+		$this->db->where("trans_date >= DATE_SUB(CURRENT_DATE, INTERVAL ".(int)$inputs." DAY)");
 		$this ->db->where('items_suppliers.supplier_preferred', 'Y');
-		$this ->db->where('trans_comment LIKE "Article AJOUTE par CENTRAL"');
+		$this ->db->where('trans_comment', 'Article AJOUTE par CENTRAL');
 		$this ->db->where('items.branch_code', $this->config->item('branch_code'));
-		
-		$this->db->order_by('date(trans_date)', "DESC");
+
+		$this->db->group_by('items.item_id');
+		$this->db->order_by('trans_date', "DESC");
 		$this->db->order_by('item_number', "DESC");
 		$data = $this->db->get();
 		return $data;

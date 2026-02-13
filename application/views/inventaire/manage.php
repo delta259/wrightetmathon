@@ -199,42 +199,90 @@
 }
 </style>
 
-<!-- QR Code Download APK - Volet dépliable -->
+<!-- QR Codes Application Mobile - Volet dépliable -->
 <?php
     $apk_url = 'https://files.catbox.moe/2wf4qm.apk';
-    $qr_api_url = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg&data=' . urlencode($apk_url);
+    $qr_apk_url = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg&data=' . urlencode($apk_url);
+
+    // URL web app : tunnel HTTPS Cloudflare (requis pour caméra), fallback sur serveur local
+    $tunnel_url_file = '/var/www/html/wrightetmathon/.cloudflare_tunnel_url';
+    $tunnel_url = file_exists($tunnel_url_file) ? trim(file_get_contents($tunnel_url_file)) : '';
+    if (!empty($tunnel_url)) {
+        $web_app_url = $tunnel_url . '/wrightetmathon/mobile_web/';
+    } else {
+        $web_app_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
+            . '://' . $_SERVER['HTTP_HOST'] . '/wrightetmathon/mobile_web/';
+    }
+    $qr_web_url = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&format=svg&data=' . urlencode($web_app_url);
 ?>
-<div style="margin-top:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
-    <div id="apk_toggle" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f8fafc;cursor:pointer;user-select:none;" onclick="var p=document.getElementById('apk_panel'),a=document.getElementById('apk_arrow');if(p.style.maxHeight==='0px'){p.style.maxHeight='250px';a.style.transform='rotate(180deg)';}else{p.style.maxHeight='0px';a.style.transform='rotate(0deg)';}">
-        <div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;color:#1e293b;">
+<div style="margin-top:24px;border:1px solid var(--border-color, #e2e8f0);border-radius:8px;overflow:hidden;">
+    <div id="apk_toggle" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg-card, #f8fafc);cursor:pointer;user-select:none;" onclick="var p=document.getElementById('apk_panel'),a=document.getElementById('apk_arrow');if(p.style.maxHeight==='0px'){p.style.maxHeight='400px';a.style.transform='rotate(180deg)';}else{p.style.maxHeight='0px';a.style.transform='rotate(0deg)';}">
+        <div style="display:flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;color:var(--text-primary, #1e293b);">
             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
             Application Mobile Inventaire
         </div>
-        <svg id="apk_arrow" width="20" height="20" fill="none" stroke="#64748b" stroke-width="2" viewBox="0 0 24 24" style="transition:transform 0.3s;"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg id="apk_arrow" width="20" height="20" fill="none" stroke="var(--text-muted, #64748b)" stroke-width="2" viewBox="0 0 24 24" style="transition:transform 0.3s;"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
     <div id="apk_panel" style="max-height:0px;overflow:hidden;transition:max-height 0.3s ease;">
-        <div style="padding:20px;text-align:center;border-top:1px solid #e2e8f0;">
-            <div style="display:inline-flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center;">
-                <div style="position:relative;display:inline-block;">
-                    <img id="qr_apk" src="<?php echo $qr_api_url; ?>" alt="QR Code APK" width="150" height="150"
-                         style="border:1px solid #e2e8f0;border-radius:4px;"
-                         onerror="this.style.display='none';document.getElementById('qr_fallback').style.display='flex';">
-                    <div id="qr_fallback" style="display:none;width:150px;height:150px;border:1px solid #e2e8f0;border-radius:4px;background:#fff;align-items:center;justify-content:center;flex-direction:column;color:#94a3b8;font-size:0.8rem;">
-                        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:4px;opacity:0.5;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
-                        QR indisponible
+        <div style="padding:20px;border-top:1px solid var(--border-color, #e2e8f0);">
+            <div style="display:flex;gap:32px;flex-wrap:wrap;justify-content:center;">
+
+                <!-- QR APK Android -->
+                <div style="text-align:center;min-width:180px;">
+                    <div style="font-weight:600;font-size:0.85rem;color:var(--text-primary, #1e293b);margin-bottom:10px;">APK Android</div>
+                    <div style="position:relative;display:inline-block;">
+                        <img id="qr_apk" src="<?php echo $qr_apk_url; ?>" alt="QR Code APK" width="150" height="150"
+                             style="border:1px solid var(--border-color, #e2e8f0);border-radius:4px;"
+                             onerror="this.style.display='none';document.getElementById('qr_apk_fallback').style.display='flex';">
+                        <div id="qr_apk_fallback" style="display:none;width:150px;height:150px;border:1px solid var(--border-color, #e2e8f0);border-radius:4px;background:var(--bg-container, #fff);align-items:center;justify-content:center;flex-direction:column;color:#94a3b8;font-size:0.8rem;">
+                            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:4px;opacity:0.5;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+                            QR indisponible
+                        </div>
+                        <!-- Android logo overlay -->
+                        <div style="position:absolute;bottom:-8px;right:-8px;width:32px;height:32px;background:var(--bg-container, #fff);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3DDC84"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+                        </div>
                     </div>
-                    <!-- Android logo overlay -->
-                    <div style="position:absolute;bottom:-8px;right:-8px;width:32px;height:32px;background:#fff;border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="#3DDC84"><path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+                    <div style="margin-top:12px;">
+                        <div style="font-size:0.8rem;color:var(--text-muted, #64748b);margin-bottom:6px;">Installer sur le telephone</div>
+                        <a href="<?php echo $apk_url; ?>" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:#3DDC84;color:#000;border-radius:6px;text-decoration:none;font-size:0.8rem;font-weight:600;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            APK
+                        </a>
                     </div>
                 </div>
-                <div style="text-align:left;">
-                    <div style="font-size:0.85rem;color:#64748b;margin-bottom:8px;">Scannez le QR code pour installer l'APK</div>
-                    <a href="<?php echo $apk_url; ?>" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:#2563eb;color:#fff;border-radius:6px;text-decoration:none;font-size:0.85rem;font-weight:500;">
-                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Télécharger l'APK
-                    </a>
+
+                <!-- Separateur vertical -->
+                <div style="width:1px;background:var(--border-color, #e2e8f0);align-self:stretch;"></div>
+
+                <!-- QR Web App -->
+                <div style="text-align:center;min-width:180px;">
+                    <div style="font-weight:600;font-size:0.85rem;color:var(--text-primary, #1e293b);margin-bottom:10px;">Version Web (navigateur)</div>
+                    <div style="position:relative;display:inline-block;">
+                        <img id="qr_web" src="<?php echo $qr_web_url; ?>" alt="QR Code Web App" width="150" height="150"
+                             style="border:1px solid var(--border-color, #e2e8f0);border-radius:4px;"
+                             onerror="this.style.display='none';document.getElementById('qr_web_fallback').style.display='flex';">
+                        <div id="qr_web_fallback" style="display:none;width:150px;height:150px;border:1px solid var(--border-color, #e2e8f0);border-radius:4px;background:var(--bg-container, #fff);align-items:center;justify-content:center;flex-direction:column;color:#94a3b8;font-size:0.8rem;">
+                            <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:4px;opacity:0.5;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
+                            QR indisponible
+                        </div>
+                        <!-- Globe/Chrome overlay -->
+                        <div style="position:absolute;bottom:-8px;right:-8px;width:32px;height:32px;background:var(--bg-container, #fff);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <div style="font-size:0.8rem;color:var(--text-muted, #64748b);margin-bottom:6px;">Ouvrir dans le navigateur</div>
+                        <a href="<?php echo $web_app_url; ?>" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:6px 14px;background:#2563eb;color:#fff;border-radius:6px;text-decoration:none;font-size:0.8rem;font-weight:600;">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            Ouvrir
+                        </a>
+                    </div>
                 </div>
+
+            </div>
+            <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color, #e2e8f0);font-size:0.75rem;color:var(--text-muted, #94a3b8);text-align:center;">
+                APK = installation native (camera sans HTTPS) &middot; Web = navigateur (camera necessite HTTPS)
             </div>
         </div>
     </div>

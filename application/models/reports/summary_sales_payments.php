@@ -126,8 +126,7 @@ class Summary_sales_payments extends Report
 			SUM(si.line_tax) AS tax_amount', false);
 		$this->db->from('sales_items si');
 		$this->db->join('sales s', 'si.sale_id = s.sale_id');
-		$this->db->join('sales_payments sp', 'sp.sale_id = s.sale_id');
-		$this->db->where("sp.payment_method_code != 'FIDE'");
+		$this->db->where("s.sale_id IN (SELECT DISTINCT sale_id FROM ".$this->db->dbprefix('sales_payments')." WHERE payment_method_code != 'FIDE')");
 		$this->db->where("date(s.sale_time) BETWEEN '".$inputs['start_date']."' AND '".$inputs['end_date']."'");
 		$this->db->group_by('si.line_tax_percentage');
 		$this->db->order_by('si.line_tax_percentage', 'DESC');

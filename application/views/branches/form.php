@@ -38,7 +38,13 @@ $title = 'Succursale';
 </div>
 
 <!-- ========== MESSAGES ========== -->
-<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
+<?php
+$_branch_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_branch_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
+include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
 
 <!-- ========== BODY ========== -->
 <div class="md-modal-body">
@@ -189,7 +195,10 @@ $(document).ready(function() {
         $('#' + target).show();
     });
 
-    <?php if ($is_new): ?>
+    <?php if ($_branch_msg_class === 'success_message'): ?>
+    // Auto-close modal after 1s on success
+    setTimeout(function(){ window.location.href = '<?php echo site_url("branches"); ?>'; }, 1000);
+    <?php elseif ($is_new): ?>
     $('#branch_code').focus();
     <?php else: ?>
     $('#branch_description').focus();

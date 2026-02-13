@@ -45,7 +45,7 @@ class Currency_definitions extends CI_Controller
 	{
 		$search						=	$this->input->post('search');
 		$create_headers				=	0;
-		$data_rows					=	get_currency_definitions_manage_table($this->Currency_definitions->search($search), $this, $create_headers);
+		$data_rows					=	get_currency_definitions_manage_table($this->Currency_definition->search($search), $this, $create_headers);
 		echo $data_rows;
 	}
 
@@ -219,5 +219,17 @@ class Currency_definitions extends CI_Controller
 		}
 	}
 
+	function delete($denomination)
+	{
+		if ($this->Currency_definition->delete($denomination))
+		{
+			$_SESSION['error_code']							=	'01660';
+		}
+		else
+		{
+			$_SESSION['error_code']							=	'00350';
+		}
+		redirect("currency_definitions");
+	}
 }
 ?>

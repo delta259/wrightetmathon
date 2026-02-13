@@ -1325,12 +1325,12 @@ function get_paymethod_data_row($paymethod, $controller, $parms)
 Gets the html table to manage currencies.
 */
 function get_currency_definitions_manage_table($currency_definitions, $controller, $create_headers=0)
-{		
+{
 	// load appropriate models and controllers
 	initialise($CI, $parms, $controller);
 
 	// set up the number of columns
-	$parms['colspan']			=	5;	
+	$parms['colspan']			=	6;
 	
 	// set up the headers if required
 	if ($create_headers == 1)
@@ -1384,28 +1384,22 @@ function get_currency_definitions_manage_table_data_rows($currency_definitions, 
 
 function get_currency_definition_data_row($currency_definition, $controller, $parms)
 {
-	// set up table data
 	$table_data_row = '';
-	$table_data_row.='<tr style="background-color:'.$_SESSION['line_colour'].'">';
-	$table_data_row.='<td align="center" >'.anchor	(
-													$parms['controller_name'].'/view/'.$currency_definition->denomination, 
-													$currency_definition->denomination
-													).'</td>';
-	$table_data_row.='<td align="center" >'.$currency_definition->display_name.'</td>';
-	$table_data_row.='<td align="center" >'.$currency_definition->display_order.'</td>';
+	$table_data_row.='<tr>';
+	$table_data_row.='<td>'.anchor($parms['controller_name'].'/view/'.$currency_definition->denomination, $currency_definition->denomination).'</td>';
+	$table_data_row.='<td>'.$currency_definition->display_name.'</td>';
+	$table_data_row.='<td style="text-align:center">'.$currency_definition->display_order.'</td>';
 	switch ($currency_definition->type)
 	{
-		case 'N':	
-			$table_data_row.='<td align="center" >'.$parms['CI']->lang->line('currency_definitions_type_N').'</td>';
+		case 'N':
+			$table_data_row.='<td>'.$parms['CI']->lang->line('currency_definitions_type_N').'</td>';
 		break;
-		
 		case 'C':
-			$table_data_row.='<td align="center" >'.$parms['CI']->lang->line('currency_definitions_type_C').'</td>';
-		break;	
+			$table_data_row.='<td>'.$parms['CI']->lang->line('currency_definitions_type_C').'</td>';
+		break;
 	}
-	$table_data_row.='<td align="center" >'.$currency_definition->cashtill.'</td>';
-	$table_data_row.='<td align="center" >'.$currency_definition->multiplier.'</td>';
-	
+	$table_data_row.='<td style="text-align:center">'.$currency_definition->cashtill.'</td>';
+	$table_data_row.='<td style="text-align:center">'.$currency_definition->multiplier.'</td>';
 	$table_data_row.='</tr>';
 
 	return $table_data_row;
@@ -1707,29 +1701,23 @@ function get_currencies_manage_table_data_rows($currencies, $controller, $parms=
 
 function get_currency_data_row($currency, $controller, $parms)
 {
-	// set up table data
 	$table_data_row = '';
-	$table_data_row.='<tr style="background-color:'.$_SESSION['line_colour'].'">';
-	$table_data_row.='<td align="center" >'.anchor	(
-													$parms['controller_name'].'/view/'.$currency->currency_id, 
-													$currency->currency_id
-													).'</td>';
-	$table_data_row.='<td align="center" >'.$currency->currency_name.'</td>';
-	$table_data_row.='<td align="center" >'.$currency->currency_description.'</td>';
-	$table_data_row.='<td align="center" >'.$currency->currency_code.'</td>';
-	$table_data_row.='<td align="center" >'.$currency->currency_sign.'</td>';
+	$table_data_row.='<tr>';
+	$table_data_row.='<td style="text-align:center">'.anchor($parms['controller_name'].'/view/'.$currency->currency_id, $currency->currency_id).'</td>';
+	$table_data_row.='<td>'.$currency->currency_name.'</td>';
+	$table_data_row.='<td>'.$currency->currency_description.'</td>';
+	$table_data_row.='<td style="text-align:center">'.$currency->currency_code.'</td>';
+	$table_data_row.='<td style="text-align:center">'.$currency->currency_sign.'</td>';
 	switch ($currency->currency_side)
 	{
-		case 'R':	
-			$table_data_row.='<td align="center" >'.$parms['CI']->lang->line('common_right').'</td>';
+		case 'R':
+			$table_data_row.='<td style="text-align:center">'.$parms['CI']->lang->line('common_right').'</td>';
 		break;
-		
 		case 'L':
-			$table_data_row.='<td align="center" >'.$parms['CI']->lang->line('common_left').'</td>';
-		break;	
+			$table_data_row.='<td style="text-align:center">'.$parms['CI']->lang->line('common_left').'</td>';
+		break;
 	}
-	$table_data_row.='<td align="center" >'.$currency->currency_display_order.'</td>';
-	
+	$table_data_row.='<td style="text-align:center">'.$currency->currency_display_order.'</td>';
 	$table_data_row.='</tr>';
 
 	return $table_data_row;

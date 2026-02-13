@@ -115,6 +115,13 @@ class Currency extends CI_Model
 		return							$this->db->count_all_results();
 	}
 	
+	function delete($currency_id)
+	{
+		$this->db->where('currency_id', $currency_id);
+		$this->db->where('currencies.branch_code', $this->config->item('branch_code'));
+		return $this->db->update('currencies', array('deleted' => 1));
+	}
+
 	/*
 	Inserts or updates a pricelist
 	*/

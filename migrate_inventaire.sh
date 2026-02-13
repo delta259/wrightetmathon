@@ -20,6 +20,7 @@
 #   7. API Mobile : contrôleur, JWT, session bypass, .htaccess, Apache
 #      7j. session.auto_start = 1 dans php.ini (requis pour $_SESSION)
 #      7k. davfs2 + HiDrive (montage WebDAV pour sync notifications)
+#      7l. Cloudflare Tunnel (accès WAN HTTPS, caméra mobile, sans config routeur)
 #   8. Vérifications finales
 #
 # Traçabilité audit trail :
@@ -1475,6 +1476,131 @@ else
     fi
 fi
 
+# ─── 7l. Cloudflare Tunnel (accès WAN HTTPS) ─────────────────────────────
+# Cloudflare Tunnel expose le serveur local sur Internet via HTTPS sans ouvrir
+# de port ni configurer de routeur. Requis pour :
+#   - Accès WAN au POS et à l'app mobile web
+#   - Caméra du téléphone (getUserMedia nécessite HTTPS)
+# L'URL change à chaque redémarrage (tunnel gratuit sans compte Cloudflare).
+# Le script cloudflared-save-url.sh sauvegarde l'URL dans .cloudflare_tunnel_url
+# pour que le QR code de la page inventaire soit toujours à jour.
+log_info "7l. Installation et configuration Cloudflare Tunnel..."
+
+CLOUDFLARED_BIN="/usr/local/bin/cloudflared"
+CLOUDFLARED_SERVICE="/etc/systemd/system/cloudflared-tunnel.service"
+CLOUDFLARED_SAVE_URL="/usr/local/bin/cloudflared-save-url.sh"
+TUNNEL_URL_FILE="$WEBROOT/.cloudflare_tunnel_url"
+
+# --- Installation du binaire cloudflared ---
+if [ -f "$CLOUDFLARED_BIN" ]; then
+    log_ok "cloudflared déjà installé ($($CLOUDFLARED_BIN --version 2>/dev/null | head -1))"
+else
+    log_info "Téléchargement de cloudflared..."
+    ARCH=$(uname -m)
+    case "$ARCH" in
+        x86_64)  CF_ARCH="amd64" ;;
+        aarch64) CF_ARCH="arm64" ;;
+        armv7l)  CF_ARCH="arm"   ;;
+        *)       CF_ARCH="amd64" ;;
+    esac
+    CF_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-${CF_ARCH}"
+    curl -sL "$CF_URL" -o "$CLOUDFLARED_BIN" 2>/dev/null
+    if [ $? -eq 0 ] && [ -f "$CLOUDFLARED_BIN" ]; then
+        chmod +x "$CLOUDFLARED_BIN"
+        log_ok "cloudflared installé ($($CLOUDFLARED_BIN --version 2>/dev/null | head -1))"
+    else
+        log_error "Échec téléchargement cloudflared depuis $CF_URL"
+    fi
+fi
+
+# --- Script de sauvegarde de l'URL du tunnel ---
+# Exécuté après le démarrage du tunnel pour capturer l'URL dans un fichier
+# que PHP peut lire (QR code dynamique dans manage.php)
+cat > "$CLOUDFLARED_SAVE_URL" << 'EOSAVEURL'
+#!/bin/bash
+# Capture l'URL du tunnel Cloudflare et la sauvegarde pour PHP
+URL_FILE="/var/www/html/wrightetmathon/.cloudflare_tunnel_url"
+for i in $(seq 1 30); do
+    URL=$(journalctl -u cloudflared-tunnel --no-pager -n 20 2>/dev/null | grep -oP 'https://[a-z0-9-]+\.trycloudflare\.com' | tail -1)
+    if [ -n "$URL" ]; then
+        echo "$URL" > "$URL_FILE"
+        chmod 644 "$URL_FILE"
+        exit 0
+    fi
+    sleep 1
+done
+rm -f "$URL_FILE"
+exit 0
+EOSAVEURL
+chmod +x "$CLOUDFLARED_SAVE_URL"
+log_ok "Script cloudflared-save-url.sh installé"
+
+# --- Service systemd ---
+if [ -f "$CLOUDFLARED_SERVICE" ]; then
+    log_warn "Service cloudflared-tunnel.service existe déjà"
+    # S'assurer que ExecStartPost est présent (mise à jour depuis ancienne version)
+    if ! grep -q "ExecStartPost" "$CLOUDFLARED_SERVICE" 2>/dev/null; then
+        cat > "$CLOUDFLARED_SERVICE" << 'EOSERVICE'
+[Unit]
+Description=Cloudflare Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://localhost:80
+ExecStartPost=/usr/local/bin/cloudflared-save-url.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOSERVICE
+        systemctl daemon-reload 2>/dev/null
+        log_ok "Service mis à jour avec ExecStartPost"
+    fi
+else
+    cat > "$CLOUDFLARED_SERVICE" << 'EOSERVICE'
+[Unit]
+Description=Cloudflare Tunnel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/cloudflared tunnel --url http://localhost:80
+ExecStartPost=/usr/local/bin/cloudflared-save-url.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOSERVICE
+    systemctl daemon-reload 2>/dev/null
+    log_ok "Service cloudflared-tunnel.service créé"
+fi
+
+# --- Activer au démarrage et lancer ---
+systemctl enable cloudflared-tunnel 2>/dev/null
+log_ok "cloudflared-tunnel activé au démarrage"
+
+if systemctl is-active cloudflared-tunnel &>/dev/null; then
+    # Redémarrer pour prendre en compte le nouveau ExecStartPost
+    systemctl restart cloudflared-tunnel 2>/dev/null
+    log_info "Tunnel redémarré..."
+else
+    systemctl start cloudflared-tunnel 2>/dev/null
+    log_info "Tunnel démarré..."
+fi
+
+# Attendre que l'URL soit capturée (max 35s)
+sleep 8
+if [ -f "$TUNNEL_URL_FILE" ]; then
+    TUNNEL_URL=$(cat "$TUNNEL_URL_FILE")
+    log_ok "Tunnel actif : $TUNNEL_URL"
+    log_ok "App web mobile : ${TUNNEL_URL}/wrightetmathon/mobile_web/"
+else
+    log_warn "URL du tunnel non capturée — vérifiez : sudo journalctl -u cloudflared-tunnel"
+fi
+
 # ─── 7i. Redémarrer Apache si nécessaire ─────────────────────────────────
 if [ $APACHE_RESTART_NEEDED -eq 1 ] && [ -n "$APACHE_SERVICE" ]; then
     log_info "Redémarrage d'Apache..."
@@ -1542,6 +1668,16 @@ else
     log_error ".htaccess manquant ou incomplet"
 fi
 
+# Vérifier Cloudflare Tunnel
+if systemctl is-active cloudflared-tunnel &>/dev/null; then
+    log_ok "Cloudflare Tunnel actif"
+    if [ -f "$WEBROOT/.cloudflare_tunnel_url" ]; then
+        log_ok "URL tunnel : $(cat "$WEBROOT/.cloudflare_tunnel_url")"
+    fi
+else
+    log_warn "Cloudflare Tunnel non actif"
+fi
+
 # Vérifier les fichiers critiques
 MISSING=0
 CRITICAL_FILES=(
@@ -1588,5 +1724,14 @@ echo ""
 echo "  Tests :"
 echo "    Web : http://localhost/wrightetmathon/index.php/inventaire"
 echo "    API : curl http://localhost/wrightetmathon/index.php/api_mobile/ping"
+echo ""
+if [ -f "$WEBROOT/.cloudflare_tunnel_url" ]; then
+    FINAL_TUNNEL=$(cat "$WEBROOT/.cloudflare_tunnel_url")
+    echo "  Cloudflare Tunnel (HTTPS) :"
+    echo "    POS  : ${FINAL_TUNNEL}/wrightetmathon/"
+    echo "    App  : ${FINAL_TUNNEL}/wrightetmathon/mobile_web/"
+    echo "    Note : l'URL change a chaque redemarrage du tunnel"
+    echo "    Voir : sudo journalctl -u cloudflared-tunnel | grep trycloudflare"
+fi
 echo "============================================================"
 echo ""

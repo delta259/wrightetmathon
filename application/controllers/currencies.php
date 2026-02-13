@@ -202,5 +202,18 @@ class Currencies extends CI_Controller
 			redirect("currencies");
 		}
 	}
+
+	function delete($currency_id)
+	{
+		if ($this->Currency->delete($currency_id))
+		{
+			$_SESSION['error_code']											=	'01660';
+		}
+		else
+		{
+			$_SESSION['error_code']											=	'00350';
+		}
+		redirect("currencies");
+	}
 }
 ?>

@@ -329,26 +329,6 @@ class Reports extends CI_Controller
 			if (method_exists($this->$model_name, 'getTaxBreakdownz'))
 			{
 				$data['tax_breakdown'] = $this->$model_name->getTaxBreakdownz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype));
-
-				// override summary HT/TVA with accurate line-level data
-				if (!empty($data['tax_breakdown']) && !empty($data['summary_data']))
-				{
-					$sum_ht = 0;
-					$sum_tva = 0;
-					foreach ($data['tax_breakdown'] as $tb)
-					{
-						$sum_ht  += $tb['base_ht'];
-						$sum_tva += $tb['tax_amount'];
-					}
-					$data['summary_data']['subtotal'] = round($sum_ht, 2);
-					$data['summary_data']['tax']      = round($sum_tva, 2);
-
-					// recalculate average basket from accurate HT
-					if ($invoice_count != 0)
-					{
-						$data['summary_data']['average_basket'] = round($sum_ht / $invoice_count, 2);
-					}
-				}
 			}
 		}
 

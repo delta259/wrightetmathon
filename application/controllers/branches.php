@@ -184,9 +184,10 @@ class Branches extends CI_Controller
 			break;
 		}
 
-		// clean up and redirect to list (no modal reopen)
+		// reopen modal to show message, JS will auto-close after 1s
 		unset($_SESSION['new']);
 		unset($_SESSION['first_time']);
+		$_SESSION['show_dialog']								=	1;
 		redirect("branches");
 	}
 
@@ -213,8 +214,8 @@ class Branches extends CI_Controller
 			OR 	empty($_SESSION['transaction_info']->branch_allows_check)
 			)
 		{
-			// set message
 			$_SESSION['error_code']			=	'00030';
+			$_SESSION['show_dialog']		=	1;
 			redirect("branches");
 		}
 
@@ -224,12 +225,12 @@ class Branches extends CI_Controller
 			$count							=	$this->Branch->check_duplicate();
 			if ($count > 0)
 			{
-				// set message
 				$_SESSION['error_code']		=	'01620';
+				$_SESSION['show_dialog']	=	1;
 				redirect("branches");
 			}
 		}
-		
+
 		// if allow-check = Y test entries
 		if ($_SESSION['transaction_info']->branch_allows_check == 'Y')
 		{
@@ -240,21 +241,21 @@ class Branches extends CI_Controller
 				OR 	empty($_SESSION['transaction_info']->branch_database)
 				)
 			{
-				// set message
 				$_SESSION['error_code']			=	'00030';
+				$_SESSION['show_dialog']		=	1;
 				redirect("branches");
 			}
-			
+
 			// check branch ip duplicate
 			if (($_SESSION['new'] ?? 0) == 1 OR (isset($_SESSION['transaction_info_original']) && $_SESSION['transaction_info']->branch_ip != $_SESSION['transaction_info_original']->branch_ip))
 			{
 				if (!$this	->	Branch->check_duplicate_ip())
 				{
-					// set message
 					$_SESSION['error_code']			=	'01630';
+					$_SESSION['show_dialog']		=	1;
 					redirect("branches");
 				}
-			}	
+			}
 		}
 		
 		// if allows_check is N, blank fields

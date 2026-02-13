@@ -129,6 +129,13 @@ class Currency_definition extends CI_Model
 		return							$this->db->count_all_results();
 	}
 	
+	function delete($denomination)
+	{
+		$this->db->where('denomination', $denomination);
+		$this->db->where('currency_definition.branch_code', $this->config->item('branch_code'));
+		return $this->db->update('currency_definition', array('deleted' => 1));
+	}
+
 	/*
 	Inserts or updates a warehouse
 	*/
