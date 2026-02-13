@@ -55,7 +55,7 @@ if($this->config->item('custom1_name')=='Y') {
                     'id'          => 'username',
                     'placeholder' => $this->lang->line('login_username'),
                     'size'        => '20',
-                    'class'       => 'colorobligatoire',
+                    'class'       => 'md-form-input',
                     'autocomplete'=> 'username'
                 )); ?>
             </div>
@@ -71,7 +71,7 @@ if($this->config->item('custom1_name')=='Y') {
                     'id'          => 'password',
                     'placeholder' => $this->lang->line('login_password'),
                     'size'        => '20',
-                    'class'       => 'colorobligatoire',
+                    'class'       => 'md-form-input',
                     'autocomplete'=> 'current-password'
                 )); ?>
             </div>
