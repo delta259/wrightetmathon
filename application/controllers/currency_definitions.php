@@ -35,18 +35,37 @@ class Currency_definitions extends CI_Controller
 		$data['links']				=	$this->pagination->create_links();	
 		$data['controller_name']	=	strtolower(get_class($this));
 		$data['form_width']			=	$this->Common_routines->set_form_width();
-		$create_headers				=	1;
-		$data['manage_table']		=	get_currency_definitions_manage_table($this->Currency_definition->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ) ), $this, $create_headers);
+		$data['manage_table_data']	=	$this->Currency_definition->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ) );
 		
 		$this->load->view('currency_definitions/manage',$data);
 	}
 
 	function search()
 	{
-		$search						=	$this->input->post('search');
-		$create_headers				=	0;
-		$data_rows					=	get_currency_definitions_manage_table($this->Currency_definition->search($search), $this, $create_headers);
-		echo $data_rows;
+		$search		=	$this->input->post('search');
+		$results	=	$this->Currency_definition->search($search);
+		$html		=	'';
+		if ($results && $results->num_rows() > 0)
+		{
+			foreach ($results->result() as $cd)
+			{
+				$type_label = ($cd->type == 'N') ? $this->lang->line('currency_definitions_type_N') : $this->lang->line('currency_definitions_type_C');
+				$type_class = ($cd->type == 'N') ? 'badge-success' : 'badge-info';
+				$html .= '<tr class="clickable-row" data-href="'.site_url('currency_definitions/view/'.$cd->denomination).'" style="cursor:pointer;">';
+				$html .= '<td>'.htmlspecialchars($cd->denomination).'</td>';
+				$html .= '<td><strong>'.htmlspecialchars($cd->display_name).'</strong></td>';
+				$html .= '<td style="text-align:center;">'.(int)$cd->display_order.'</td>';
+				$html .= '<td style="text-align:center;"><span class="badge '.$type_class.'">'.$type_label.'</span></td>';
+				$html .= '<td style="text-align:center;">'.htmlspecialchars($cd->cashtill).'</td>';
+				$html .= '<td style="text-align:right;">'.htmlspecialchars($cd->multiplier).'</td>';
+				$html .= '<td style="text-align:center;">';
+				$html .= '<a href="#" onclick="if(confirm(\'Confirmation de la suppression ?\')){window.location=\''.site_url('currency_definitions/delete/'.$cd->denomination).'\';} return false;" title="Supprimer" style="text-decoration:none;">';
+				$html .= '<svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+				$html .= '</a></td>';
+				$html .= '</tr>';
+			}
+		}
+		echo $html;
 	}
 
 	/*

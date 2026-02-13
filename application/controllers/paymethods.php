@@ -35,18 +35,31 @@ class Paymethods extends CI_Controller
 		$data['links']				=	$this->pagination->create_links();	
 		$data['controller_name']	=	strtolower(get_class($this));
 		$data['form_width']			=	$this->Common_routines->set_form_width();
-		$create_headers				=	1;
-		$data['manage_table']		=	get_paymethods_manage_table($this->Paymethod->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ) ), $this, $create_headers);
+		$data['manage_table_data']	=	$this->Paymethod->get_all($config['per_page'], $this->uri->segment( $config['uri_segment'] ) );
 		
 		$this->load->view('paymethods/manage',$data);
 	}
 
 	function search()
 	{
-		$search						=	$this->input->post('search');
-		$create_headers				=	0;
-		$data_rows					=	get_paymethods_manage_table($this->Paymethod->search($search), $this, $create_headers);
-		echo $data_rows;
+		$search		=	$this->input->post('search');
+		$results	=	$this->Paymethod->search($search);
+		$html		=	'';
+		if ($results && $results->num_rows() > 0)
+		{
+			foreach ($results->result() as $pm)
+			{
+				$include_label = ($pm->payment_method_include == 'Y') ? 'Oui' : 'Non';
+				$include_class = ($pm->payment_method_include == 'Y') ? 'badge-success' : 'badge-danger';
+				$html .= '<tr class="clickable-row" data-href="'.site_url('paymethods/view/'.$pm->payment_method_id).'" style="cursor:pointer;">';
+				$html .= '<td>'.htmlspecialchars($pm->payment_method_code).'</td>';
+				$html .= '<td><strong>'.htmlspecialchars($pm->payment_method_description).'</strong></td>';
+				$html .= '<td style="text-align:center;">'.(int)$pm->payment_method_display_order.'</td>';
+				$html .= '<td style="text-align:center;"><span class="badge '.$include_class.'">'.$include_label.'</span></td>';
+				$html .= '</tr>';
+			}
+		}
+		echo $html;
 	}
 
 	/*

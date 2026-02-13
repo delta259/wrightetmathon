@@ -3,8 +3,20 @@
 <script type="text/javascript">
 $(document).ready(function() {
     enable_search('<?php echo site_url("$controller_name/suggest")?>','<?php echo $this->lang->line("common_confirm_search")?>');
-    enable_row_selection();
+    init_table_sorting();
+
+    $(document).on('click', '.clickable-row', function(e) {
+        if ($(e.target).closest('a').length) return;
+        var href = $(this).data('href');
+        if (href) window.location = href;
+    });
 });
+
+function init_table_sorting() {
+    if ($('.tablesorter tbody tr').length > 1) {
+        $("#sortable_table").tablesorter({ sortList: [[2,0]], headers: {} });
+    }
+}
 </script>
 
 <!-- Page Header -->
@@ -47,7 +59,34 @@ $(document).ready(function() {
 <!-- Table Container -->
 <div class="table-container">
     <div class="table-wrapper">
-        <?php echo $manage_table; ?>
+        <table class="tablesorter" id="sortable_table">
+            <thead>
+                <tr>
+                    <th><?php echo $this->lang->line('paymethods_paymethod_code'); ?></th>
+                    <th><?php echo $this->lang->line('paymethods_paymethod_description'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('paymethods_paymethod_display_order'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('paymethods_paymethod_include'); ?></th>
+                </tr>
+            </thead>
+            <tbody id="table_contents">
+            <?php if ($manage_table_data && $manage_table_data->num_rows() > 0): ?>
+                <?php foreach ($manage_table_data->result() as $pm): ?>
+                <?php
+                    $include_label = ($pm->payment_method_include == 'Y') ? 'Oui' : 'Non';
+                    $include_class = ($pm->payment_method_include == 'Y') ? 'badge-success' : 'badge-danger';
+                ?>
+                <tr class="clickable-row" data-href="<?php echo site_url('paymethods/view/'.$pm->payment_method_id); ?>" style="cursor:pointer;">
+                    <td><?php echo htmlspecialchars($pm->payment_method_code); ?></td>
+                    <td><strong><?php echo htmlspecialchars($pm->payment_method_description); ?></strong></td>
+                    <td style="text-align:center;"><?php echo (int)$pm->payment_method_display_order; ?></td>
+                    <td style="text-align:center;"><span class="badge <?php echo $include_class; ?>"><?php echo $include_label; ?></span></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="4" style="text-align:center;padding:20px;color:#64748b;">Aucune méthode de paiement trouvée.</td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 
     <?php if (!empty($links)): ?>

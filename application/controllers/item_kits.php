@@ -32,26 +32,19 @@ class Item_kits extends CI_Controller
 		// setup output data
 		$data['links']													=	$this->pagination->create_links();	
 		$data['form_width']												=	$this->get_form_width();
-		$create_headers													=	1;
-//		$data['manage_table']=get_item_kits_manage_table( $this->Item_kit->get_all( $config['per_page'], $this->uri->segment( $config['uri_segment'] ) ), $this );
-	//	$data['manage_table']=get_item_kits_manage_table( $this->Item_kit->get_all( ), $this );
-		$data['manage_table']=get_item_kits_manage_table( $this->Item_kit->get_all_with_cost_price( ), $this );
-//		$this->calcul_cost_price_kits();
+		$data['manage_table_data']										=	$this->Item_kit->get_all_with_cost_price()->result();
 		// show data
 		$this						->	load->view('item_kits/manage', $data);
 	}
 
 	function search()
 	{
-		$search=$this->input->post('search');
-		//$data_rows=get_item_kits_manage_table_data_rows($this->Item_kit->search($search),$this);
-		//$data_rows=get_item_kits_manage_table($this->Item_kit->search($search),$this);
-		$data_rows=get_item_kits_manage_table($this->Item_kit->search_with_cost_price($search),$this);
-		$data['manage_table'] = $data_rows;
-		//$this->load->view('item_kits/manage', $data['manage_table']);
-		//echo $data_rows;
+		$search		=	$this->input->post('search');
+		$results	=	$this->Item_kit->search_with_cost_price($search);
+		$data		=	array();
+		$data['manage_table_data']	=	array_map(function($r) { return (object)$r; }, $results);
+		$data['links']				=	'';
 		$this						->	load->view('item_kits/manage', $data);
-        //$this->index();
 	}
 
     //search item à partir du code article SO.....

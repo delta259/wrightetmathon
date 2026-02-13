@@ -32,6 +32,13 @@ $(document).ready(function() {
             $("#item_kit_form_item_kit").submit();
         });
     }
+
+    // Clickable rows
+    $(document).on('click', '.clickable-row', function(e) {
+        if ($(e.target).closest('a').length) return;
+        var href = $(this).data('href');
+        if (href) window.location = href;
+    });
 });
 </script>
 
@@ -111,7 +118,73 @@ $_SESSION['line_number'] = 0;
 <!-- Table Container -->
 <div class="table-container">
     <div class="table-wrapper">
-        <?php echo $manage_table; ?>
+        <table class="tablesorter" id="sortable_table">
+            <colgroup>
+                <col style="width:40px;">
+                <col style="width:40px;">
+                <col style="width:150px;">
+                <col>
+                <col style="width:100px;">
+                <col style="width:100px;">
+                <col style="width:140px;">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="col-action"></th>
+                    <th class="col-icon" title="Code barre">EAN</th>
+                    <th><?php echo $this->lang->line('item_kits_name'); ?></th>
+                    <th><?php echo $this->lang->line('item_kits_description'); ?></th>
+                    <th class="col-price"><?php echo $this->lang->line('item_kits_cost_price'); ?></th>
+                    <th class="col-price"><?php echo $this->lang->line('item_kits_unit_price_with_tax'); ?></th>
+                    <th><?php echo $this->lang->line('item_kits_code_bar'); ?></th>
+                </tr>
+            </thead>
+            <tbody id="table_contents">
+            <?php if (!empty($manage_table_data)): ?>
+                <?php foreach ($manage_table_data as $kit): ?>
+                <?php
+                    $kit_id = $kit->item_kit_id;
+                    $tout = (string)$kit_id . ':0:item_kits';
+                    $row_class = (isset($kit->deleted) && $kit->deleted == 1) ? ' class="row-inactive clickable-row"' : ' class="clickable-row"';
+                    $cost = isset($kit->cost_kit) ? number_format((float)$kit->cost_kit, 2, ',', ' ') : '0,00';
+                    $price = isset($kit->unit_price_with_tax) ? number_format((float)$kit->unit_price_with_tax, 2, ',', ' ') : '0,00';
+                    $has_barcode = isset($kit->barcode) && strlen($kit->barcode) > 5;
+                ?>
+                <tr<?php echo $row_class; ?> data-href="<?php echo site_url('item_kits/view/'.$kit_id); ?>" style="cursor:pointer;">
+                    <td class="cell-action">
+                        <?php if (!isset($kit->deleted) || $kit->deleted == 0): ?>
+                        <a href="<?php echo site_url('item_kits/desactive/'.$tout); ?>" class="btn-icon btn-toggle-active" title="Désactiver">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </a>
+                        <?php else: ?>
+                        <a href="<?php echo site_url('item_kits/desactive/'.$tout); ?>" class="btn-icon btn-toggle-inactive" title="Activer">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </a>
+                        <?php endif; ?>
+                    </td>
+                    <td class="cell-action">
+                        <?php if ($has_barcode): ?>
+                        <a href="<?php echo site_url('item_kits/view/'.$kit_id); ?>" class="btn-icon btn-barcode-ok" title="Code barre existant">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5v14M6 5v14M9 5v14M12 5v14M15 5v14M18 5v14M21 5v14"/></svg>
+                        </a>
+                        <?php else: ?>
+                        <a href="<?php echo site_url('item_kits/view/'.$kit_id); ?>" class="btn-icon btn-barcode-missing" title="Code barre manquant">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5v14M6 5v14M9 5v14M12 5v14M15 5v14M18 5v14M21 5v14"/></svg>
+                        </a>
+                        <?php endif; ?>
+                    </td>
+                    <td class="cell-name"><a href="<?php echo site_url('item_kits/view/'.$kit_id); ?>" title="Éditer le kit"><span class="badge-ref"><?php echo htmlspecialchars($kit->name); ?></span></a></td>
+                    <td class="cell-desc" title="<?php echo htmlspecialchars($kit->description); ?>"><?php echo htmlspecialchars($kit->description); ?></td>
+                    <td class="cell-price"><?php echo $cost; ?> &euro;</td>
+                    <td class="cell-price"><?php echo $price; ?> &euro;</td>
+                    <td class="cell-barcode"><?php echo htmlspecialchars($kit->barcode ?? ''); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="7" style="text-align:center;padding:20px;color:#64748b;"><?php echo $this->lang->line('common_no_persons_to_display'); ?></td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 
     <div class="table-footer">

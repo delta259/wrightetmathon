@@ -6,26 +6,20 @@ $(document).ready(function() {
     enable_row_selection();
     enable_search('<?php echo site_url("$controller_name/suggest")?>','<?php echo $this->lang->line("common_confirm_search")?>');
 
-    // Add "Voir" button to each row
-    $('#sortable_table tbody tr').each(function() {
-        var firstTd = $(this).find('td:first');
-        var categoryId = $.trim(firstTd.text());
-        if (categoryId && !isNaN(categoryId)) {
-            $(this).find('td:last').after('<td align="center"><button type="button" class="btn-view-items" data-category-id="' + categoryId + '">Voir</button></td>');
-        }
+    // Clickable rows
+    $(document).on('click', '.clickable-row', function(e) {
+        if ($(e.target).closest('a').length || $(e.target).closest('.btn-view-items').length) return;
+        var href = $(this).data('href');
+        if (href) window.location = href;
     });
 
-    // Add header for the new column
-    $('#sortable_table thead tr').append('<th>Produits</th>');
-
     // Load items when clicking "Voir" button
-    $('.btn-view-items').click(function() {
+    $(document).on('click', '.btn-view-items', function(e) {
+        e.stopPropagation();
         var categoryId = $(this).attr('data-category-id');
         if (categoryId) {
-            // Highlight selected row
             $('#sortable_table tbody tr').removeClass('category-selected');
             $(this).parents('tr:first').addClass('category-selected');
-            // Load items
             loadCategoryItems(categoryId);
         }
     });
@@ -34,8 +28,8 @@ $(document).ready(function() {
 function init_table_sorting() {
     if($('.tablesorter tbody tr').length > 1) {
         $("#sortable_table").tablesorter({
-            sortList: [[1,0]],
-            headers: { 0: { sorter: false } }
+            sortList: [[0,0]],
+            headers: { 6: { sorter: false }, 7: { sorter: false } }
         });
     }
 }
@@ -88,7 +82,50 @@ function loadCategoryItems(categoryId) {
 <!-- Table Container -->
 <div class="table-container">
     <div class="table-wrapper">
-        <?php echo $manage_table; ?>
+        <table class="tablesorter" id="sortable_table">
+            <thead>
+                <tr>
+                    <th><?php echo $this->lang->line('common_last_name'); ?></th>
+                    <th><?php echo $this->lang->line('categories_category_desc'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('categories_update_sales_price'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('categories_defect_indicator'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('items_reorder_pack_size'); ?></th>
+                    <th style="text-align:center;"><?php echo $this->lang->line('categories_min_order_qty'); ?></th>
+                    <th style="text-align:center;width:50px;">Actions</th>
+                    <th style="text-align:center;width:60px;">Produits</th>
+                </tr>
+            </thead>
+            <tbody id="table_contents">
+            <?php if (!empty($manage_table_data)): ?>
+                <?php foreach ($manage_table_data as $cat): ?>
+                <?php
+                    $update_label = ($cat['category_update_sales_price'] == 'Y') ? 'Oui' : 'Non';
+                    $update_class = ($cat['category_update_sales_price'] == 'Y') ? 'badge-success' : 'badge-danger';
+                    $defect_label = ($cat['category_defect_indicator'] == 'Y') ? 'Oui' : 'Non';
+                    $defect_class = ($cat['category_defect_indicator'] == 'Y') ? 'badge-danger' : 'badge-success';
+                ?>
+                <tr class="clickable-row" data-href="<?php echo site_url('categories/view/'.$cat['category_id']); ?>" style="cursor:pointer;">
+                    <td><strong><?php echo htmlspecialchars($cat['category_name']); ?></strong></td>
+                    <td><?php echo htmlspecialchars($cat['category_desc'] ?? ''); ?></td>
+                    <td style="text-align:center;"><span class="badge <?php echo $update_class; ?>"><?php echo $update_label; ?></span></td>
+                    <td style="text-align:center;"><span class="badge <?php echo $defect_class; ?>"><?php echo $defect_label; ?></span></td>
+                    <td style="text-align:center;"><?php echo (int)($cat['category_pack_size'] ?? 0); ?></td>
+                    <td style="text-align:center;"><?php echo (int)($cat['category_min_order_qty'] ?? 0); ?></td>
+                    <td style="text-align:center;">
+                        <a href="#" onclick="if(confirm('<?php echo addslashes($this->lang->line('categories_confirm_delete')); ?>')){window.location='<?php echo site_url('categories/delete/'.$cat['category_id']); ?>';} return false;" title="Supprimer" style="text-decoration:none;">
+                            <svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </a>
+                    </td>
+                    <td style="text-align:center;">
+                        <button type="button" class="btn-view-items" data-category-id="<?php echo $cat['category_id']; ?>">Voir</button>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr><td colspan="8" style="text-align:center;padding:20px;color:#64748b;">Aucune famille trouvée.</td></tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 
     <?php if (!empty($links)): ?>

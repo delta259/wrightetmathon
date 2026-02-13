@@ -113,32 +113,20 @@ switch ($_SESSION['stock_action_id_stock_choix_liste'])
 
 													    <?php	include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
-													    <!-- table header -->
-													    <div class="submenu">
-													        <ul>
-													            <li class="search" >
-																				<?php echo form_open("receivings/add",array('id'=>'add_item_form')); ?>
-<!--																				<input id='item' name='item' placeholder="Recherche" width=" 250px;"tabindex="5" size="18"  type='text' class="champ_search" title="rechercher" value="" > <!-- -->
-																				<input id='item' name='item' placeholder="Recherche" width=" 250px;"tabindex="5" size="18"  type='text' class="champ_search" title="rechercher" value="" autofocus="autofocus" > <!-- -->
-																				<img src="<?php echo $_SESSION['url_image'];?>/search.png" class="img_search"    style=" margin-bottom: -16.5px;margin-left: -46px;"/>
-
-																				</form>
-																			</li>
-
-
-<span class="btnewc">
-
-	<!-- Show stock actions button -->
-	<?php
-		if (empty($cart))
-		{
-			echo anchor	($_SESSION['controller_name'].'/stock_actions_1/',
-						"<div class='btnew c_btcouleur' style='float: right;'><span>".$this->lang->line('receivings_stock_actions')."</span></div>"
-						);
-		}
-	?>
-</span>
-</ul>
+													    <!-- Search & Actions Bar -->
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
+	<?php echo form_open("receivings/add",array('id'=>'add_item_form')); ?>
+	<div class="search-input-wrapper" style="position:relative;">
+		<svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;opacity:0.4;"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+		<input id="item" name="item" type="text" class="md-form-input" placeholder="Recherche article..." style="max-width:300px;padding:8px 12px 8px 34px;" tabindex="5" autofocus="autofocus">
+	</div>
+	</form>
+	<?php if (empty($cart)): ?>
+	<a href="<?php echo site_url($_SESSION['controller_name'].'/stock_actions_1/'); ?>" class="btn-action btn-primary" style="white-space:nowrap;">
+		<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+		<?php echo $this->lang->line('receivings_stock_actions'); ?>
+	</a>
+	<?php endif; ?>
 </div>
 
 <?php
