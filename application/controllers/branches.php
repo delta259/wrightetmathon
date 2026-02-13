@@ -116,6 +116,8 @@ class Branches extends CI_Controller
 			case	-1:
 					$_SESSION['$title']							=	$this->lang->line($_SESSION['controller_name'].'_new');
 					$_SESSION['new']							=	1;
+					$_SESSION['transaction_info']->branch_user		=	$this->db->username;
+					$_SESSION['transaction_info']->branch_password	=	$this->db->password;
 			break;
 
 			// update existing

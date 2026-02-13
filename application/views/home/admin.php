@@ -207,6 +207,14 @@
     document.querySelectorAll('.admin-card[data-module]').forEach(function(card) {
         card.addEventListener('click', function() { openModal(this.dataset.module, this.dataset.size || 'lg'); });
     });
+
+    // Listen for height updates from iframe content (ResizeObserver in head.php)
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'iframeResize' && modal.classList.contains('active')) {
+            var maxH = window.innerHeight - 80;
+            iframe.style.height = Math.min(e.data.height + 10, maxH) + 'px';
+        }
+    });
 })();
 </script>
 

@@ -43,7 +43,7 @@ if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_
 <div class="md-modal-body">
 
 <?php if (!$is_del && !$is_undel) {
-    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
+    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form', 'autocomplete'=>'off'));
 ?>
 
     <!-- Onglets -->
@@ -127,6 +127,7 @@ if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_
                     'name'  => 'branch_user',
                     'id'    => 'branch_user',
                     'class' => 'md-form-input',
+                    'autocomplete' => 'off',
                     'value' => $info->branch_user ?? ''
                 )); ?>
             </div>
@@ -136,6 +137,7 @@ if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_
                     'name'  => 'branch_password',
                     'id'    => 'branch_password',
                     'class' => 'md-form-input',
+                    'autocomplete' => 'new-password',
                     'value' => $info->branch_password ?? ''
                 )); ?>
             </div>

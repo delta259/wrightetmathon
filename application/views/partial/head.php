@@ -123,23 +123,101 @@ else {
 
 <!-- Auto-detect iframe mode (admin panel) — runs before <body> to prevent FOUC -->
 <style>
+/* Hide chrome */
 html.iframe-admin .unified-header,
 html.iframe-admin .unified-footer,
 html.iframe-admin .theme-toggle,
 html.iframe-admin #theme-toggle,
 html.iframe-admin .theme-toggle-btn,
 html.iframe-admin [class*="theme-toggle"] { display: none !important; }
-html.iframe-admin, html.iframe-admin body {
-    background: var(--bg-container, #fff) !important;
+/* Collapse all wrapper structure */
+html.iframe-admin .body_colonne > h2 { display: none !important; }
+html.iframe-admin, html.iframe-admin body,
+html.iframe-admin #wrapper,
+html.iframe-admin .wlp-bighorn-book,
+html.iframe-admin .wlp-bighorn-book-content,
+html.iframe-admin #login_page,
+html.iframe-admin .body_page,
+html.iframe-admin .body_colonne,
+html.iframe-admin .md-modal,
+html.iframe-admin .md-modal-header,
+html.iframe-admin .md-modal-body,
+html.iframe-admin .md-modal-footer {
+    background: #FAFAF8 !important;
     background-image: none !important;
+    color: #212529 !important;
+}
+html.iframe-admin #wrapper,
+html.iframe-admin .wlp-bighorn-book,
+html.iframe-admin .wlp-bighorn-book-content,
+html.iframe-admin #login_page,
+html.iframe-admin .body_page,
+html.iframe-admin .body_colonne {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+}
+html.iframe-admin body { margin: 0 !important; }
+html.iframe-admin .body_page { padding: 10px 16px !important; }
+/* Dark mode — explicit colors, no CSS var fallback issues */
+html.iframe-admin[data-theme="dark"],
+html.iframe-admin[data-theme="dark"] body,
+html.iframe-admin[data-theme="dark"] #wrapper,
+html.iframe-admin[data-theme="dark"] .wlp-bighorn-book,
+html.iframe-admin[data-theme="dark"] .wlp-bighorn-book-content,
+html.iframe-admin[data-theme="dark"] #login_page,
+html.iframe-admin[data-theme="dark"] .body_page,
+html.iframe-admin[data-theme="dark"] .body_colonne,
+html.iframe-admin[data-theme="dark"] .md-modal,
+html.iframe-admin[data-theme="dark"] .md-modal-header,
+html.iframe-admin[data-theme="dark"] .md-modal-body,
+html.iframe-admin[data-theme="dark"] .md-modal-footer {
+    background: #1a1f2e !important;
+    color: #e2e8f0 !important;
+}
+html.iframe-admin[data-theme="dark"] .md-modal-header {
+    border-bottom-color: #334155 !important;
+}
+html.iframe-admin[data-theme="dark"] .md-modal-name,
+html.iframe-admin[data-theme="dark"] .md-modal-ref,
+html.iframe-admin[data-theme="dark"] h2,
+html.iframe-admin[data-theme="dark"] .page-title,
+html.iframe-admin[data-theme="dark"] label {
+    color: #e2e8f0 !important;
+}
+html.iframe-admin[data-theme="dark"] .md-form-input,
+html.iframe-admin[data-theme="dark"] .md-form-select {
+    background: rgba(255,255,255,0.05) !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(255,255,255,0.1) !important;
+}
+/* Flatten md-modal card — no "modal in modal" */
+html.iframe-admin .md-modal {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+    max-width: none !important;
     margin: 0 !important;
 }
-html.iframe-admin[data-theme="dark"], html.iframe-admin[data-theme="dark"] body {
-    background: var(--bg-container, #1e293b) !important;
+html.iframe-admin .md-modal-header {
+    border-radius: 0 !important;
+    padding: 12px 16px !important;
 }
-html.iframe-admin .body_colonne > h2 { display: none; }
-html.iframe-admin .body_page { padding: 8px 16px; }
-html.iframe-admin #wrapper { background: transparent !important; }
+html.iframe-admin .md-modal-footer {
+    border-radius: 0 !important;
+    padding: 10px 16px !important;
+}
+html.iframe-admin .md-modal-close,
+html.iframe-admin .md-btn-secondary,
+html.iframe-admin .btretour,
+html.iframe-admin .btlien { display: none !important; }
+html.iframe-admin div[style*="max-width"][style*="margin"] {
+    max-width: none !important;
+    margin: 0 !important;
+}
+/* Page header compact */
+html.iframe-admin .page-header { margin: 0 0 10px 0 !important; padding: 0 !important; }
+html.iframe-admin .table-container { margin: 0 !important; }
 </style>
 <script>
 (function(){
@@ -149,6 +227,17 @@ html.iframe-admin #wrapper { background: transparent !important; }
             var pt = window.parent.document.documentElement.getAttribute('data-theme');
             if (pt) document.documentElement.setAttribute('data-theme', pt);
         } catch(e) {}
+        // Notify parent of content height changes for iframe resize
+        document.addEventListener('DOMContentLoaded', function() {
+            function notifyHeight() {
+                var content = document.querySelector('.body_page') || document.querySelector('.modal-page-wrapper') || document.body;
+                var h = content.scrollHeight + 20;
+                window.parent.postMessage({type:'iframeResize', height:h}, '*');
+            }
+            notifyHeight();
+            setTimeout(notifyHeight, 150);
+            new ResizeObserver(notifyHeight).observe(document.body);
+        });
     }
 })();
 </script>
