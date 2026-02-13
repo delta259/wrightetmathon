@@ -1,153 +1,136 @@
-<?php $this->load->view("partial/header_popup"); ?>
-
-
-<dialog open class="fenetre modale cadre" style="
-    width: 650px;
-    ">
-
-    <!-- Header fenetre -->
-    <div class="fenetre-header">
-	<span id="page_title" class="fenetre-title">
-		<?php
-        include('../wrightetmathon/application/views/partial/show_title.php');
-        ?>
-	</span>
-
-        <?php
-        include('../wrightetmathon/application/views/partial/show_exit.php');
-        ?>
-
-	<br>
-
-    </div>
-
-
-    <!---CONTENT-->
-    <div class="fenetre-content">
-
-
-
-        <div class="centrepage">
-
-
-
-            <div class="blocformfond creationimmediate">
-
-
-
-	<?php
-		include('../wrightetmathon/application/views/partial/show_messages.php');
-	?>
+<style>
+.unified-header, .unified-footer { display: none !important; }
+.pl-form.md-modal-overlay { z-index: 10000; }
+.pl-form .md-modal { max-height: none !important; max-width: 550px; overflow: visible !important; }
+</style>
 
 <?php
-	// show data entry but not if deleted
-	if (($_SESSION['del'] ?? 0) != 1)
-	{
+$is_new  = (($_SESSION['new'] ?? 0) == 1);
+$is_del  = (($_SESSION['del'] ?? 0) == 1);
+$is_undel = (($_SESSION['undel'] ?? 0) == 1);
+$info    = $_SESSION['transaction_info'];
 ?>
-		<?php
-		// show enter button - only if item not undeleting
-		if (($_SESSION['undel'] ?? 0) != 1)
-		{
-			// when clicked use the controller, selecting method save and passing it the item ID.
-			echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
-			?>
-    <fieldset>
-				<table class="table_center" style="    width: 100%;
-    border-collapse: separate;
-    border-spacing: 8px;">
-					<tbody>
 
+<div class="md-modal-overlay pl-form">
+<div class="md-modal" style="max-width:550px;">
 
+<!-- ========== HEADER ========== -->
+<div class="md-modal-header">
+    <div class="md-modal-header-left">
+        <div style="background:var(--primary,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;flex-shrink:0;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+        </div>
+        <div class="md-modal-header-info">
+            <div class="md-modal-ref"><?php echo htmlspecialchars($info->pricelist_id ?? ''); ?></div>
+            <h2 class="md-modal-name" style="font-size:1.1em;"><?php echo $this->lang->line('modules_pricelists'); ?></h2>
+        </div>
+    </div>
+    <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </a>
+</div>
 
-									<tr>
-										<td colspan="2" class="zone_champ_saisie"><?php echo form_input	(	array	(
-																		'name'	=>	'pricelist_name',
-																		'id'	=>	'pricelist_name',
-																		'style'	=>	' font-size:15px;',
-																		'size'	=>	8,
-                                                'class '=>'colorobligatoire',
-                                                'placeholder'=>$this->lang->line('pricelists_pricelist_name'),
-																		'value'	=>	$_SESSION['transaction_info']->pricelist_name
-																				));?>
-                                            <a class="btaide" title="<?php $this->lang->line('pricelists_pricelist_name');?>"></a>
+<!-- ========== MESSAGES ========== -->
+<?php
+$_pl_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_pl_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
+include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
 
-                                        </td>
-										<td colspan="2" class="zone_champ_saisie"><?php echo form_input	(	array	(
-																		'name'	=>	'pricelist_description',
-																		'id'	=>	'pricelist_description',
-																		'style'	=>	' font-size:15px;',
-																		'size'	=>	25,
-                                                'class '=>'colorobligatoire',
-																		'placeholder'=>$this->lang->line('pricelists_pricelist_description'),
-																		'value'	=>	$_SESSION['transaction_info']->pricelist_description
-																				));?>
-                                            <a class="btaide" title="<?php echo $this->lang->line('pricelists_pricelist_description');?>"></a>
+<!-- ========== BODY ========== -->
+<div class="md-modal-body">
 
-                                        </td>
-									</tr>
+<?php if (!$is_del && !$is_undel) {
+    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
+?>
 
+    <div style="padding:16px 0;">
+        <!-- Ligne 1: Nom + Description -->
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1;min-width:100px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('pricelists_pricelist_name'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'pricelist_name',
+                    'id'    => 'pricelist_name',
+                    'class' => 'md-form-input',
+                    'value' => $info->pricelist_name ?? ''
+                )); ?>
+            </div>
+            <div class="md-form-group" style="flex:2;min-width:150px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('pricelists_pricelist_description'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'pricelist_description',
+                    'id'    => 'pricelist_description',
+                    'class' => 'md-form-input',
+                    'value' => $info->pricelist_description ?? ''
+                )); ?>
+            </div>
+        </div>
 
-
-									<tr>												<td align="center"><?php echo form_label($this->lang->line('pricelists_pricelist_currency'), 'pricelist_currency', array('class'=>'required')); ?></td>
-
-                                        <td  class="zone_champ_saisie"><?php echo form_dropdown	(
-																		'pricelist_currency',
-																		$_SESSION['currency_pick_list'],
-																		$_SESSION['transaction_info']->pricelist_currency,
-																		'style="font-size:15px" class="colorobligatoire"'
-																		);?>
-                                            <a class="btaide" title="<?php echo$this->lang->line('pricelists_pricelist_currency');?>"></a>
-
-                                        </td>
-                                        <td ><?php echo form_label($this->lang->line('pricelists_pricelist_default'), 'pricelist_currency', array('class'=>'required')); ?></td>
-
-                                        <td class="zone_champ_saisie"><?php echo form_dropdown	(
-																		'pricelist_default',
-																		$_SESSION['G']->YorN_pick_list,
-																		$_SESSION['transaction_info']->pricelist_default,
-																		'style=" font-size:15px" class="colorobligatoire"'
-																		); ?>
-                                            <a class="btaide" title="<?php echo $this->lang->line('pricelists_pricelist_default');?>"></a>
-
-                                        </td>
-
-									</tr>
-
-					</tbody>
-				</table>
-</fieldset>
-    <div id="required_fields_message" class="obligatoire">
-        <a class="btobligatoire" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
-        <?php echo $this->lang->line('common_fields_required_message'); ?>
+        <!-- Ligne 2: Devise + Par défaut -->
+        <div class="md-form-row" style="margin-top:12px;">
+            <div class="md-form-group" style="flex:1;min-width:150px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('pricelists_pricelist_currency'); ?></label>
+                <?php echo form_dropdown(
+                    'pricelist_currency',
+                    $_SESSION['currency_pick_list'] ?? array(),
+                    $info->pricelist_currency ?? '',
+                    'id="pricelist_currency" class="md-form-select"'
+                ); ?>
+            </div>
+            <div class="md-form-group" style="flex:0 0 140px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('pricelists_pricelist_default'); ?></label>
+                <?php echo form_dropdown(
+                    'pricelist_default',
+                    $_SESSION['G']->YorN_pick_list ?? array(),
+                    $info->pricelist_default ?? 'N',
+                    'id="pricelist_default" class="md-form-select"'
+                ); ?>
+            </div>
+        </div>
     </div>
 
-</div>
-<div class="txt_milieu">
+<?php echo form_close(); } ?>
 
-    <?php
-    $target	=	'target="_self"';
-    echo anchor			(
-        'common_controller/common_exit/','<div class="btretour btlien">'.$this->lang->line('common_reset').'</div>',
-        $target
-    );
-    ?>
-			<?php
-				echo form_submit					(	array	(
-																'name'	=>	'submit',
-																'id'	=>	'submit',
-																'value'	=>	$this->lang->line('common_submit'),
-																'class'	=>	'btsubmit'
-																)
-													);
-			?>
-</div>
-		<?php
-			echo form_close();
-		}
-		?>
+</div><!-- /md-modal-body -->
 
-
-	<?php
-	}
-	?>
+<!-- ========== FOOTER ========== -->
+<?php if (!$is_del && !$is_undel): ?>
+<div class="md-modal-footer">
+    <div class="md-modal-footer-left"></div>
+    <div class="md-modal-footer-right">
+        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+            <?php echo $this->lang->line('common_reset'); ?>
+        </a>
+        <button type="submit" form="item_form" name="submit" id="submit" class="md-btn md-btn-primary">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <?php echo $this->lang->line('common_submit'); ?>
+        </button>
+    </div>
 </div>
+<?php endif; ?>
+
+</div><!-- /md-modal -->
+</div><!-- /md-modal-overlay -->
+
+<script type="text/javascript">
+$(document).ready(function() {
+    <?php if ($_pl_msg_class === 'success_message'): ?>
+    setTimeout(function(){ window.location.href = '<?php echo site_url("pricelists"); ?>'; }, 1000);
+    <?php elseif ($is_new): ?>
+    $('#pricelist_name').focus();
+    <?php else: ?>
+    $('#pricelist_name').focus();
+    <?php endif; ?>
+});
+</script>

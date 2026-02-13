@@ -137,7 +137,15 @@ class Country extends CI_Model
 		}
 		return true;
 	}
-	
+
+	function delete($country_id)
+	{
+		$this->db->where('country_id', $country_id);
+		$this->db->where('countries.branch_code', $this->config->item('branch_code'));
+		$this->db->update('countries', array('deleted' => 1));
+		return ($this->db->affected_rows() > 0);
+	}
+
 	// load pick list
 	function	load_pick_list()
 	{

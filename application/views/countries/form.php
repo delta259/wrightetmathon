@@ -1,151 +1,128 @@
-<?php $this->load->view("partial/header_popup"); ?>
+<style>
+.unified-header, .unified-footer { display: none !important; }
+.country-form.md-modal-overlay { z-index: 10000; }
+.country-form .md-modal { max-height: none !important; max-width: 500px; overflow: visible !important; }
+</style>
 
+<?php
+$is_new  = (($_SESSION['new'] ?? 0) == 1);
+$is_del  = (($_SESSION['del'] ?? 0) == 1);
+$is_undel = (($_SESSION['undel'] ?? 0) == 1);
+$info    = $_SESSION['transaction_info'];
+?>
 
-<div open class="fenetre modale modal-md">
+<div class="md-modal-overlay country-form">
+<div class="md-modal" style="max-width:500px;">
 
-
-
-    <!-- Header fenetre -->
-    <div class="fenetre-header">
-	<span id="page_title" class="fenetre-title">
-		<?php echo $_SESSION['$title'].' '.$this->lang->line('modules_'.$_SESSION['controller_name']); ?>
-	</span>
-
-        <?php
-        include('../wrightetmathon/application/views/partial/show_exit.php');
-        ?>
-
-
+<!-- ========== HEADER ========== -->
+<div class="md-modal-header">
+    <div class="md-modal-header-left">
+        <div style="background:var(--primary,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;flex-shrink:0;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+        </div>
+        <div class="md-modal-header-info">
+            <div class="md-modal-ref"><?php echo htmlspecialchars($info->country_id ?? ''); ?></div>
+            <h2 class="md-modal-name" style="font-size:1.1em;"><?php echo $this->lang->line('modules_countries'); ?></h2>
+        </div>
     </div>
-
-
-    <!-- Contenu de la fenetre-->
-    <div class="fenetre-content">
-
-
-
-        <div class="centrepage">
-
-
-            <?php
-            // show data entry but not if deleted
-            if (($_SESSION['del'] ?? 0) != 1)
-            {
-                ?>
-                <?php
-                // show enter button - only if item not undeleting
-                if (($_SESSION['undel'] ?? 0) != 1)
-                {
-                    // when clicked use the controller, selecting method save and passing it the item ID.
-                    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
-                    ?>
-
-
-                    <div class="blocformfond creationimmediate">
-                        <div class="message_erreur">
-                            <?php
-                            include('../wrightetmathon/application/views/partial/show_messages.php');
-                            ?>
-                        </div>
-
-                        <fieldset class="fieldset">
-
-
-
-                            <table class="table_center">
-
-
-                                <tr>
-                                    <td align="left" class=" zone_champ_saisie "><?php echo form_input	(	array	(
-                                            'name'	=>	'country_name',
-                                            'id'	=>	'code',
-                                            'size'	=>	15,
-                                            'title'=> $this->lang->line('countries_country_name'),
-                                            'placeholder'=>$this->lang->line('countries_country_name'),
-                                            'value'	=>	$_SESSION['transaction_info']->country_name,
-                                            'class' => 'colorobligatoire'
-                                        ));?>
-                                        <a class="btaide"  title="<?php echo $this->lang->line('countries_country_name') ; ?>"></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td align="left" class=" zone_champ_saisie "><?php echo form_input	(	array	(
-                                            'name'	=>	'country_description',
-                                            'id'	=>	'country_description',
-                                            'size'	=>	30,
-                                            'class' => 'colorobligatoire',
-                                            'title'=>$this->lang->line('countries_country_description'),
-                                            'placeholder'=> $this->lang->line('countries_country_description'),
-                                            'value'	=>	$_SESSION['transaction_info']->country_description
-                                        ));?>
-                                        <a class="btaide"  id="" title="<?php echo $this->lang->line('countries_country_description')  ; ?>"></a>
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td align="left" class=" zone_champ_saisie "><?php echo form_input	(	array	(
-                                            'name'	=>	'country_display_order',
-                                            'id'	=>	'country_display_order',
-                                            'size'	=>	15,
-                                            'class' => 'colorobligatoire',
-                                            'title'=> $this->lang->line('countries_country_display_order'),
-                                            'placeholder'=>$this->lang->line('countries_country_display_order'),
-                                            'value'	=>	$_SESSION['transaction_info']->country_display_order
-                                        ));?>
-                                        <a class="btaide"  title="<?php echo $this->lang->line('countries_country_display_order'); ?>"></a>
-                                    </td>
-
-
-                                </tr>
-                            </table>
-
-
-
-                        </fieldset>
-
-                        <div id="required_fields_message" class="obligatoire">
-                            <a class="btobligatoire" id="" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
-                            <?php echo $this->lang->line('common_fields_required_message'); ?>
-                        </div>
-                    </div>
-
-                    <div class="txt_milieu">
-
-                        <?php
-                        $target	=	'target="_self"';
-                        echo anchor			(
-                            'common_controller/common_exit/','<div class="btretour btlien">'.$this->lang->line('common_reset').'</div>',
-                            $target
-                        );
-                        ?>
-                        <?php
-                        echo form_submit					(	array	(
-                                'name'	=>	'submit',
-                                'id'	=>	'submit',
-                                /*'disabled'=>'disabled',*/
-                                'value'	=>	$this->lang->line('common_submit'),
-                                'class'	=>	'btsubmit'
-                            )
-                        );
-                        ?>
-
-
-
-                    </div>
-
-
-
-
-
-                    <?php
-                    echo form_close();
-                }
-                ?>
-                <?php
-            }
-            ?></div>
-    </div>
-
-
+    <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </a>
 </div>
+
+<!-- ========== MESSAGES ========== -->
+<?php
+$_country_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_country_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
+include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
+
+<!-- ========== BODY ========== -->
+<div class="md-modal-body">
+
+<?php if (!$is_del && !$is_undel) {
+    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
+?>
+
+    <div style="padding:16px 0;">
+        <!-- Ligne 1: Nom + Description -->
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1;min-width:120px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('countries_country_name'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'country_name',
+                    'id'    => 'country_name',
+                    'class' => 'md-form-input',
+                    'value' => $info->country_name ?? ''
+                )); ?>
+            </div>
+            <div class="md-form-group" style="flex:2;min-width:150px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('countries_country_description'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'country_description',
+                    'id'    => 'country_description',
+                    'class' => 'md-form-input',
+                    'value' => $info->country_description ?? ''
+                )); ?>
+            </div>
+        </div>
+
+        <!-- Ligne 2: Ordre d'affichage -->
+        <div class="md-form-row" style="margin-top:12px;">
+            <div class="md-form-group" style="flex:0 0 150px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('countries_country_display_order'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'country_display_order',
+                    'id'    => 'country_display_order',
+                    'class' => 'md-form-input',
+                    'style' => 'text-align:center;',
+                    'value' => $info->country_display_order ?? ''
+                )); ?>
+            </div>
+        </div>
+    </div>
+
+<?php echo form_close(); } ?>
+
+</div><!-- /md-modal-body -->
+
+<!-- ========== FOOTER ========== -->
+<?php if (!$is_del && !$is_undel): ?>
+<div class="md-modal-footer">
+    <div class="md-modal-footer-left"></div>
+    <div class="md-modal-footer-right">
+        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+            <?php echo $this->lang->line('common_reset'); ?>
+        </a>
+        <button type="submit" form="item_form" name="submit" id="submit" class="md-btn md-btn-primary">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <?php echo $this->lang->line('common_submit'); ?>
+        </button>
+    </div>
+</div>
+<?php endif; ?>
+
+</div><!-- /md-modal -->
+</div><!-- /md-modal-overlay -->
+
+<script type="text/javascript">
+$(document).ready(function() {
+    <?php if ($_country_msg_class === 'success_message'): ?>
+    setTimeout(function(){ window.location.href = '<?php echo site_url("countries"); ?>'; }, 1000);
+    <?php elseif ($is_new): ?>
+    $('#country_name').focus();
+    <?php else: ?>
+    $('#country_name').focus();
+    <?php endif; ?>
+});
+</script>

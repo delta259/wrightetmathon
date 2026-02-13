@@ -1,157 +1,139 @@
-<?php $this->load->view("partial/header_popup"); ?>
+<style>
+.unified-header, .unified-footer { display: none !important; }
+.profile-form.md-modal-overlay { z-index: 10000; }
+.profile-form .md-modal { max-height: none !important; max-width: 500px; overflow: visible !important; }
+</style>
 
+<?php
+$is_new  = (($_SESSION['new'] ?? 0) == 1);
+$is_del  = (($_SESSION['del'] ?? 0) == 1);
+$is_undel = (($_SESSION['undel'] ?? 0) == 1);
+$info    = $_SESSION['transaction_info'];
+?>
 
-<div open class="fenetre modale" style="      position: absolute;
-    left: 50%;
-    right: 50%;
-    top: 0%;
-    transform: translate(-50%,50%);
-    width: 645px;
-    z-index: 101;">
+<div class="md-modal-overlay profile-form">
+<div class="md-modal" style="max-width:500px;">
 
-    <!-- Header fenetre -->
-    <div class="fenetre-header">
-	<span id="page_title" class="fenetre-title">
-		<?php
-        include('../wrightetmathon/application/views/partial/show_title.php');
-        ?>
-	</span>
+<!-- ========== HEADER ========== -->
+<div class="md-modal-header">
+    <div class="md-modal-header-left">
+        <div style="background:var(--primary,#2563eb);color:#fff;display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;flex-shrink:0;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                <path d="M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+        </div>
+        <div class="md-modal-header-info">
+            <div class="md-modal-ref"><?php echo htmlspecialchars($info->profile_id ?? ''); ?></div>
+            <h2 class="md-modal-name" style="font-size:1.1em;"><?php echo $this->lang->line('modules_customer_profiles'); ?></h2>
+        </div>
+    </div>
+    <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </a>
+</div>
 
-        <?php
-        include('../wrightetmathon/application/views/partial/show_exit.php');
-        ?>
+<!-- ========== MESSAGES ========== -->
+<?php
+$_profile_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_profile_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
+include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
 
+<!-- ========== BODY ========== -->
+<div class="md-modal-body">
 
+<?php if (!$is_del && !$is_undel) {
+    echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
+?>
+
+    <div style="padding:16px 0;">
+        <!-- Ligne 1: Nom + Description -->
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1;min-width:120px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('customer_profiles_profile_name'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'profile_name',
+                    'id'    => 'profile_name',
+                    'class' => 'md-form-input',
+                    'value' => $info->profile_name ?? ''
+                )); ?>
+            </div>
+            <div class="md-form-group" style="flex:2;min-width:150px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('customer_profiles_profile_description'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'profile_description',
+                    'id'    => 'profile_description',
+                    'class' => 'md-form-input',
+                    'value' => $info->profile_description ?? ''
+                )); ?>
+            </div>
+        </div>
+
+        <!-- Ligne 2: Remise + Fidélité -->
+        <div class="md-form-row" style="margin-top:12px;">
+            <div class="md-form-group" style="flex:1;min-width:120px;">
+                <label class="md-form-label"><?php echo $this->lang->line('customer_profiles_profile_discount') . $this->lang->line('common_percent'); ?></label>
+                <?php echo form_input(array(
+                    'name'  => 'profile_discount',
+                    'id'    => 'profile_discount',
+                    'class' => 'md-form-input',
+                    'style' => 'text-align:right;',
+                    'value' => $info->profile_discount ?? ''
+                )); ?>
+            </div>
+            <div class="md-form-group" style="flex:0 0 160px;">
+                <label class="md-form-label required"><?php echo $this->lang->line('customer_profiles_profile_fidelity'); ?></label>
+                <?php echo form_dropdown(
+                    'profile_fidelity',
+                    $_SESSION['G']->YorN_pick_list ?? array(),
+                    $info->profile_fidelity ?? 'N',
+                    'id="profile_fidelity" class="md-form-select"'
+                ); ?>
+            </div>
+        </div>
     </div>
 
-    <!---CONTENT-->
-    <div class="fenetre-content">
+<?php echo form_close(); } ?>
 
+</div><!-- /md-modal-body -->
 
+<!-- ========== FOOTER ========== -->
+<?php if (!$is_del && !$is_undel): ?>
+<div class="md-modal-footer">
+    <div class="md-modal-footer-left"></div>
+    <div class="md-modal-footer-right">
+        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+            <?php echo $this->lang->line('common_reset'); ?>
+        </a>
+        <button type="submit" form="item_form" name="submit" id="submit" class="md-btn md-btn-primary">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+            </svg>
+            <?php echo $this->lang->line('common_submit'); ?>
+        </button>
+    </div>
+</div>
+<?php endif; ?>
 
-        <div class="centrepage">
+</div><!-- /md-modal -->
+</div><!-- /md-modal-overlay -->
 
-
-
-            <div class="blocformfond creationimmediate">
-                <?php
-                include('../wrightetmathon/application/views/partial/show_messages.php');
-                ?>
-
-                <?php
-                // show data entry but not if deleted
-                if (($_SESSION['del'] ?? 0) != 1)
-                {
-                ?>
-                <?php
-                // show enter button - only if item not undeleting
-                if (($_SESSION['undel'] ?? 0) != 1)
-                {
-                // when clicked use the controller, selecting method save and passing it the item ID.
-                echo form_open($_SESSION['controller_name'].'/save/', array('id'=>'item_form'));
-                ?>
-                <fieldset>
-                    <table style="border-collapse: separate; border-spacing:5px;">
-                        <tbody>
-
-                        <tr>
-                            <td class="zone_champ_saisie"><?php echo form_input	(	array	(
-                                    'name'	=>	'profile_name',
-                                    'id'	=>	'profile_name',
-                                    'style'	=>	' font-size:15px;',
-                                    'size'	=>	13,
-                                    'class'	=>	'colorobligatoire',
-                                    'placeholder'=>$this->lang->line('customer_profiles_profile_name'),
-                                    'value'	=>	$_SESSION['transaction_info']->profile_name
-                                ));?>
-                                <a class="btaide" title="<?php echo $this->lang->line('customer_profiles_profile_name');?>"></a>
-
-                            </td>
-                            <td class="zone_champ_saisie"><?php echo form_input	(	array	(
-                                    'name'	=>	'profile_description',
-                                    'id'	=>	'profile_description',
-                                    'style'	=>	' font-size:15px;',
-                                    'size'	=>	25,
-                                    'class'	=>	'colorobligatoire',
-                                    'placeholder'=>$this->lang->line('customer_profiles_profile_description'),
-                                    'value'	=>	$_SESSION['transaction_info']->profile_description
-                                ));?>
-                                <a class="btaide" title="<?php echo $this->lang->line('customer_profiles_profile_description');?>"></a>
-
-                            </td>
-                        </tr>
-
-                        <tr>
-
-
-
-                            <td class="zone_champ_saisie">
-
-                                <?php echo form_input	(	array	(
-                                    'name'	=>	'profile_discount',
-                                    'id'	=>	'profile_discount',
-                                    'style'	=>	' text-align:right; font-size:15px;',
-                                    'size'	=>	5,
-                                    'class'	=>	'colorobligatoire',
-                                    'placeholder'=>$this->lang->line('customer_profiles_profile_discount').$this->lang->line('common_percent'),
-                                    'value'	=>	$_SESSION['transaction_info']->profile_discount
-                                ));?>
-                                <?php echo $this->lang->line('common_percent')?>
-                                <a class="btaide" title="<?php echo $this->lang->line('customer_profiles_profile_discount').$this->lang->line('common_percent');?>"></a>
-
-                            </td>
-
-                            <td class="zone_champ_saisie"><?php echo form_label($this->lang->line('customer_profiles_profile_fidelity').$this->lang->line('common_question'), 'profile_fidelity', array('class'=>'required')); ?>
-
-
-                                <?php echo form_dropdown	(
-                                    'profile_fidelity',
-                                    $_SESSION['G']->YorN_pick_list,
-                                    $_SESSION['transaction_info']->profile_fidelity,
-                                    'style=" font-size:15px" class="colorobligatoire"'
-                                );?>
-                                <a class="btaide" title="<?php echo $this->lang->line('customer_profiles_profile_fidelity');?>"></a>
-
-                            </td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-                </fieldset>
-                <div id="required_fields_message" class="obligatoire">
-                    <a class="btobligatoire" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
-                    <?php echo $this->lang->line('common_fields_required_message'); ?>
-                </div>
-
-            </div>
-            <div class="txt_milieu">
-
-                <?php
-                $target	=	'target="_self"';
-                echo anchor			(
-                    'common_controller/common_exit/','<div class="btretour btlien">'.$this->lang->line('common_reset').'</div>',
-                    $target
-                );
-                ?>
-
-
-                <?php
-                echo form_submit					(	array	(
-                        'name'	=>	'submit',
-                        'id'	=>	'submit',
-                        'value'	=>	$this->lang->line('common_submit'),
-                        'class'	=>	'btsubmit'
-                    )
-                );
-                ?>
-            </div>
-            <?php
-            echo form_close();
-            }
-            ?>
-
-
-            <?php
-            }
-            ?>
-        </div>
+<script type="text/javascript">
+$(document).ready(function() {
+    <?php if ($_profile_msg_class === 'success_message'): ?>
+    setTimeout(function(){ window.location.href = '<?php echo site_url("customer_profiles"); ?>'; }, 1000);
+    <?php elseif ($is_new): ?>
+    $('#profile_name').focus();
+    <?php else: ?>
+    $('#profile_name').focus();
+    <?php endif; ?>
+});
+</script>

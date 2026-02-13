@@ -125,8 +125,15 @@ class Module extends CI_Model
 		}
 		return true;
 	}
-	
-	
+
+	function delete($module_id)
+	{
+		$this->db->where('module_id', $module_id);
+		$this->db->delete('modules');
+		return ($this->db->affected_rows() > 0);
+	}
+
+
 	function	get_module_info			($module_name)
 	{
 		return							$this->db->get_where('modules',	array('module_name' => $module_name), 1);

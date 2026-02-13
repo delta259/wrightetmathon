@@ -132,5 +132,13 @@ class Tracker extends CI_Model
 		}
 		return true;
 	}
+
+	function delete($tracker_id)
+	{
+		$this->db->where('tracker_id', $tracker_id);
+		$this->db->where('tracker.branch_code', $this->config->item('branch_code'));
+		$this->db->delete('tracker');
+		return ($this->db->affected_rows() > 0);
+	}
 }
 ?>

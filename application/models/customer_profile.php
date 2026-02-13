@@ -137,7 +137,15 @@ class Customer_profile extends CI_Model
 		}
 		return true;
 	}
-	
+
+	function delete($profile_id)
+	{
+		$this->db->where('profile_id', $profile_id);
+		$this->db->where('customer_profiles.branch_code', $this->config->item('branch_code'));
+		$this->db->update('customer_profiles', array('deleted' => 1));
+		return ($this->db->affected_rows() > 0);
+	}
+
 	// load pick list
 	function	load_pick_list()
 	{

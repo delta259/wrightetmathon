@@ -137,7 +137,15 @@ class timezone extends CI_Model
 		}
 		return true;
 	}
-	
+
+	function delete($timezone_id)
+	{
+		$this->db->where('timezone_id', $timezone_id);
+		$this->db->where('timezones.branch_code', $this->config->item('branch_code'));
+		$this->db->update('timezones', array('deleted' => 1));
+		return ($this->db->affected_rows() > 0);
+	}
+
 	// load pick list
 	function	load_pick_list()
 	{

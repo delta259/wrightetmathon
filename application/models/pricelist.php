@@ -147,7 +147,15 @@ class Pricelist extends CI_Model
 		}
 		return true;
 	}
-	
+
+	function delete($pricelist_id)
+	{
+		$this->db->where('pricelist_id', $pricelist_id);
+		$this->db->where('pricelists.branch_code', $this->config->item('branch_code'));
+		$this->db->update('pricelists', array('deleted' => 1));
+		return ($this->db->affected_rows() > 0);
+	}
+
 	// reload pick list
 	function	load_pick_list()
 	{
