@@ -23,7 +23,15 @@ class ServerConfigService {
   static String? getServerUrl() {
     final ip = getServerIp();
     if (ip == null || ip.isEmpty) return null;
-    return 'http://$ip$_basePath';
+    final protocol = protocolForHost(ip);
+    return '$protocol://$ip$_basePath';
+  }
+
+  /// Determine protocol based on hostname.
+  /// HTTPS for known tunnel domains, HTTP for local IPs.
+  static String protocolForHost(String host) {
+    if (host.contains('.trycloudflare.com')) return 'https';
+    return 'http';
   }
 
   /// Save the server IP/hostname

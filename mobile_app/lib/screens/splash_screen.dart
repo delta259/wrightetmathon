@@ -33,8 +33,12 @@ class _SplashScreenState extends State<SplashScreen> {
           builder: (_) => const ServerConfigScreen(isInitialSetup: true),
         ),
       );
+    } else {
+      // Server configured — force a fresh auth check so BlocListener gets a transition
+      if (mounted) {
+        context.read<AuthBloc>().add(AuthCheckRequested());
+      }
     }
-    // If configured, the BlocListener below handles auth state navigation
   }
 
   @override

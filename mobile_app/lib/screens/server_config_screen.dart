@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../config/api_config.dart';
 import '../config/app_theme.dart';
+import '../services/api_service.dart';
 import '../services/server_config_service.dart';
 
 /// Screen for configuring the server URL.
@@ -42,7 +45,21 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
     String normalized = ip.trim();
     normalized = normalized.replaceFirst(RegExp(r'^https?://'), '');
     normalized = normalized.split('/').first;
-    return 'http://$normalized/wrightetmathon/index.php';
+    final protocol = ServerConfigService.protocolForHost(normalized);
+    return '$protocol://$normalized/wrightetmathon/index.php';
+  }
+
+  /// Auto-fill IP field with current page hostname (web only)
+  void _autoFillFromCurrentHost() {
+    if (!kIsWeb) return;
+    final host = Uri.base.host;
+    if (host.isNotEmpty) {
+      _ipController.text = host;
+      setState(() {
+        _testSuccess = null;
+        _testMessage = null;
+      });
+    }
   }
 
   Future<void> _testConnection() async {
@@ -120,7 +137,12 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
     if (ip.isEmpty || _testSuccess != true) return;
 
     await ServerConfigService.saveServerIp(ip);
-    ApiConfig.setBaseUrl(ServerConfigService.getServerUrl()!);
+    final newUrl = ServerConfigService.getServerUrl()!;
+    ApiConfig.setBaseUrl(newUrl);
+    // Also update the live ApiService instance's dio baseUrl
+    if (mounted) {
+      context.read<ApiService>().updateBaseUrl(newUrl);
+    }
 
     if (!mounted) return;
 
@@ -160,18 +182,24 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Icon
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppTheme.primaryBlue.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: const Icon(
-                          Icons.dns_outlined,
-                          size: 40,
-                          color: AppTheme.primaryBlue,
+                      // Icon — tap to auto-fill with current hostname (web)
+                      GestureDetector(
+                        onTap: _autoFillFromCurrentHost,
+                        child: Tooltip(
+                          message: 'Utiliser l\'adresse actuelle',
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryBlue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.dns_outlined,
+                              size: 40,
+                              color: AppTheme.primaryBlue,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 24),

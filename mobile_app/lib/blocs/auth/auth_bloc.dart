@@ -103,11 +103,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authService.login(event.username, event.password);
       emit(AuthAuthenticated(user: user));
     } catch (e) {
-      String message = 'Erreur de connexion';
-      if (e.toString().contains('Invalid credentials')) {
+      String message;
+      final errorStr = e.toString();
+      if (errorStr.contains('Invalid credentials')) {
         message = 'Identifiants incorrects';
-      } else if (e.toString().contains('connection')) {
+      } else if (errorStr.contains('connection') || errorStr.contains('Connection')) {
         message = 'Impossible de se connecter au serveur';
+      } else if (errorStr.contains('timeout') || errorStr.contains('Timeout')) {
+        message = 'Délai de connexion dépassé';
+      } else {
+        message = 'Erreur de connexion: $errorStr';
       }
       emit(AuthError(message: message));
       emit(AuthUnauthenticated());

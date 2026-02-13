@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +9,7 @@ import '../models/item.dart';
 import '../services/api_service.dart';
 import '../services/database_service.dart';
 import '../widgets/quantity_input_dialog.dart';
+import '../widgets/web_barcode_scanner.dart';
 
 class ScannerScreen extends StatefulWidget {
   final InventorySession session;
@@ -24,7 +26,8 @@ class ScannerScreen extends StatefulWidget {
 class _ScannerScreenState extends State<ScannerScreen>
     with SingleTickerProviderStateMixin {
   late InventorySession _session;
-  final MobileScannerController _scannerController = MobileScannerController();
+  // Only create native scanner controller on non-web platforms
+  MobileScannerController? _scannerController;
   final TextEditingController _searchController = TextEditingController();
 
   List<SessionItem> _scannedItems = [];
@@ -40,12 +43,15 @@ class _ScannerScreenState extends State<ScannerScreen>
   void initState() {
     super.initState();
     _session = widget.session;
+    if (!kIsWeb) {
+      _scannerController = MobileScannerController();
+    }
     _loadSessionItems();
   }
 
   @override
   void dispose() {
-    _scannerController.dispose();
+    _scannerController?.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -98,9 +104,39 @@ class _ScannerScreenState extends State<ScannerScreen>
   }
 
   Future<void> _processBarcode(String barcode) async {
+    // Show loading spinner while looking up the item
+    if (mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          content: Row(
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Recherche en cours...', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Text(barcode, style: TextStyle(color: Colors.grey[600], fontFamily: 'monospace')),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     try {
       final apiService = context.read<ApiService>();
       final itemJson = await apiService.getItemByBarcode(barcode);
+
+      // Close loading spinner
+      if (mounted) Navigator.of(context).pop();
 
       if (itemJson == null) {
         _showNotFoundDialog(barcode);
@@ -110,6 +146,9 @@ class _ScannerScreenState extends State<ScannerScreen>
       final item = Item.fromJson(itemJson);
       _showQuantityDialog(item);
     } catch (e) {
+      // Close loading spinner
+      if (mounted) Navigator.of(context).pop();
+
       // Try offline lookup
       final databaseService = context.read<DatabaseService>();
       final cachedItem = await databaseService.getItemByBarcode(barcode);
@@ -142,7 +181,10 @@ class _ScannerScreenState extends State<ScannerScreen>
           ),
         ],
       ),
-    );
+    ).then((_) {
+      // Re-show scanner overlay on web after dialog closes
+      if (kIsWeb) WebBarcodeScanner.showOverlay();
+    });
   }
 
   void _showQuantityDialog(Item item) {
@@ -153,7 +195,10 @@ class _ScannerScreenState extends State<ScannerScreen>
         item: item,
         onConfirm: (quantity) => _saveItemCount(item, quantity),
       ),
-    );
+    ).then((_) {
+      // Re-show scanner overlay on web after quantity dialog closes
+      if (kIsWeb) WebBarcodeScanner.showOverlay();
+    });
   }
 
   Future<void> _saveItemCount(Item item, double quantity) async {
@@ -284,7 +329,7 @@ class _ScannerScreenState extends State<ScannerScreen>
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: (kIsWeb && _showScanner) ? null : FloatingActionButton.extended(
         onPressed: _showManualSearch,
         icon: const Icon(Icons.search),
         label: const Text('Rechercher'),
@@ -337,11 +382,71 @@ class _ScannerScreenState extends State<ScannerScreen>
     );
   }
 
+  /// Handle barcode detected from web scanner
+  void _onWebBarcodeDetected(String barcode) {
+    if (_isProcessing) return;
+    if (barcode == _lastScannedCode) return;
+
+    setState(() {
+      _isProcessing = true;
+      _lastScannedCode = barcode;
+    });
+
+    HapticFeedback.mediumImpact();
+
+    // On web: hide scanner overlay to show Flutter quantity dialog
+    if (kIsWeb) {
+      WebBarcodeScanner.hideOverlay();
+    }
+
+    _processBarcode(barcode);
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _lastScannedCode = null;
+          _isProcessing = false;
+        });
+      }
+    });
+  }
+
+  /// Handle search request from web scanner overlay
+  void _onWebSearchRequested() {
+    if (kIsWeb) WebBarcodeScanner.hideOverlay();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => _ManualSearchSheet(
+        sessionId: _session.id,
+        onItemSelected: (item) {
+          Navigator.pop(context, item);
+        },
+      ),
+    ).then((result) {
+      if (result != null && result is Item) {
+        _showQuantityDialog(result);
+      } else {
+        // Dismissed without selection — resume scanner
+        if (kIsWeb) WebBarcodeScanner.showOverlay();
+      }
+    });
+  }
+
   Widget _buildScannerView() {
+    // On web, use html5-qrcode based scanner
+    if (kIsWeb) {
+      return WebBarcodeScanner(
+        onDetect: _onWebBarcodeDetected,
+        onSearch: _onWebSearchRequested,
+      );
+    }
+
+    // On native, use mobile_scanner
     return Stack(
       children: [
         MobileScanner(
-          controller: _scannerController,
+          controller: _scannerController!,
           onDetect: _onBarcodeDetected,
         ),
         // Scan overlay
@@ -630,8 +735,27 @@ class _ManualSearchSheet extends StatefulWidget {
 
 class _ManualSearchSheetState extends State<_ManualSearchSheet> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _searchFocus = FocusNode();
   List<Item> _results = [];
   bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // iOS Safari: autofocus doesn't trigger keyboard, try requestFocus after render
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 400), () {
+        if (mounted) _searchFocus.requestFocus();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   Future<void> _search(String query) async {
     if (query.length < 2) {
@@ -694,6 +818,7 @@ class _ManualSearchSheetState extends State<_ManualSearchSheet> {
             padding: const EdgeInsets.all(16),
             child: TextField(
               controller: _controller,
+              focusNode: _searchFocus,
               autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Rechercher par nom ou code...',

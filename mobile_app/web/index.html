@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="W&M Inventaire Mobile">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="W&M Inventaire">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>W&M Inventaire</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Barcode scanner v11: green viewfinder, zoom 2x, no auto-torch, pause/resume -->
+  <script src="quagga.min.js"></script>
+  <script>
+    var _wmScanner = {};
+
+    async function startBarcodeScanner(elementId, onSuccess, onError, onStart, onClose, onSearch) {
+      stopBarcodeScanner(elementId);
+
+      var container = document.getElementById(elementId);
+      if (!container) { if (onError) onError("Element introuvable"); return; }
+
+      try {
+        // 1. Get camera stream — iOS Safari compatible
+        var stream = null;
+        var constraintsList = [
+          { audio: false, video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } },
+          { audio: false, video: { facingMode: 'environment' } },
+          { audio: false, video: true }
+        ];
+        var usedConstraint = 0;
+        for (var ci = 0; ci < constraintsList.length; ci++) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia(constraintsList[ci]);
+            usedConstraint = ci;
+            break;
+          } catch(e) {
+            if (ci === constraintsList.length - 1) throw e;
+          }
+        }
+
+        var track = stream.getVideoTracks()[0];
+        var caps = (track.getCapabilities) ? track.getCapabilities() : {};
+        var settings = (track.getSettings) ? track.getSettings() : {};
+
+        // 2. Apply advanced constraints: focus only, NO torch
+        try {
+          var advanced = [];
+          if (caps.focusMode && caps.focusMode.includes('continuous')) {
+            advanced.push({ focusMode: 'continuous' });
+          }
+          // Set zoom to 2x
+          if (caps.zoom) {
+            var initZoom = Math.min(2.0, caps.zoom.max);
+            advanced.push({ zoom: initZoom });
+          }
+          if (advanced.length > 0) {
+            await track.applyConstraints({ advanced: advanced });
+          }
+        } catch(e) { /* iOS may not support advanced constraints */ }
+
+        // Try to bump resolution after stream is established
+        try {
+          await track.applyConstraints({ width: { ideal: 3840 }, height: { ideal: 2160 } });
+        } catch(e) {
+          try {
+            await track.applyConstraints({ width: { ideal: 1920 }, height: { ideal: 1080 } });
+          } catch(e2) {}
+        }
+
+        settings = (track.getSettings) ? track.getSettings() : {};
+
+        // 3. Create video element
+        var videoEl = document.createElement('video');
+        videoEl.srcObject = stream;
+        videoEl.autoplay = true;
+        videoEl.playsInline = true;
+        videoEl.muted = true;
+        videoEl.setAttribute('autoplay', '');
+        videoEl.setAttribute('playsinline', '');
+        videoEl.setAttribute('muted', '');
+        videoEl.setAttribute('webkit-playsinline', '');
+        videoEl.style.cssText = 'width:100%;height:100%;object-fit:cover;background:#000;';
+        container.appendChild(videoEl);
+
+        try {
+          await videoEl.play();
+        } catch(e) {
+          await new Promise(function(r) { setTimeout(r, 200); });
+          await videoEl.play();
+        }
+
+        // 4. Square viewfinder (APK-style: white border, green on detect)
+        var vfSize = Math.min(window.innerWidth * 0.65, 250);
+        var viewfinder = document.createElement('div');
+        viewfinder.style.cssText = 'position:fixed;z-index:99997;'
+          + 'width:' + vfSize + 'px;height:' + vfSize + 'px;'
+          + 'top:50%;left:50%;transform:translate(-50%,-50%);'
+          + 'border:3px solid rgba(255,255,255,0.9);border-radius:12px;'
+          + 'box-shadow:0 0 0 9999px rgba(0,0,0,0.35);'
+          + 'pointer-events:none;transition:border-color 0.3s;';
+        document.body.appendChild(viewfinder);
+
+        // Instruction text below viewfinder
+        var instructionText = document.createElement('div');
+        instructionText.style.cssText = 'position:fixed;z-index:99998;left:0;right:0;'
+          + 'top:calc(50% + ' + (vfSize / 2 + 24) + 'px);text-align:center;'
+          + 'color:#fff;font-size:16px;pointer-events:none;'
+          + 'text-shadow:0 2px 4px rgba(0,0,0,0.8);';
+        instructionText.textContent = 'Pointez vers un code-barres';
+        document.body.appendChild(instructionText);
+
+        // 5. Info overlay
+        var infoDiv = document.createElement('div');
+        infoDiv.style.cssText = 'position:fixed;top:70px;left:10px;z-index:99998;'
+          + 'color:rgba(255,255,255,0.9);font-size:11px;background:rgba(0,0,0,0.7);'
+          + 'padding:6px 10px;border-radius:6px;font-family:monospace;line-height:1.5;'
+          + 'max-width:70%;';
+        var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        var hwZoom = settings.zoom || 1;
+        infoDiv.innerHTML = (settings.width||'?') + 'x' + (settings.height||'?')
+          + ' z' + hwZoom + 'x | ' + (isIOS ? 'iOS' : 'Android')
+          + '<br>focus:' + (settings.focusMode||'n/a')
+          + ' | torch:' + (caps.torch ? 'off' : 'n/a');
+        document.body.appendChild(infoDiv);
+
+        var lastCode = '';
+        var lastTime = 0;
+        var detectCount = 0;
+        var scanCount = 0;
+
+        // 6. Frame decode loop
+        var scanCanvas = document.createElement('canvas');
+        var scanCtx = scanCanvas.getContext('2d');
+        var scanBusy = false;
+        var scanInterval = null;
+
+        async function _scanFrame() {
+          if (scanBusy || videoEl.readyState < 2) return;
+          scanBusy = true;
+          try {
+            var vw = videoEl.videoWidth;
+            var vh = videoEl.videoHeight;
+            if (vw === 0 || vh === 0) { scanBusy = false; return; }
+
+            scanCanvas.width = vw;
+            scanCanvas.height = vh;
+            scanCtx.drawImage(videoEl, 0, 0, vw, vh);
+
+            var dataUrl = scanCanvas.toDataURL('image/jpeg', 0.9);
+            scanCount++;
+
+            var result = await new Promise(function(resolve) {
+              try {
+                Quagga.decodeSingle({
+                  src: dataUrl,
+                  numOfWorkers: 0,
+                  locate: true,
+                  locator: { patchSize: 'large', halfSample: true },
+                  decoder: {
+                    readers: ['ean_reader','ean_8_reader','code_128_reader','code_39_reader',
+                              'upc_reader','upc_e_reader','codabar_reader','i2of5_reader'],
+                    multiple: false
+                  }
+                }, function(r) { resolve(r); });
+              } catch(e) { resolve(null); }
+              setTimeout(function() { resolve(null); }, 2000);
+            });
+
+            if (result && result.codeResult && result.codeResult.code) {
+              var code = result.codeResult.code;
+              var now = Date.now();
+              if (code !== lastCode || (now - lastTime) > 3000) {
+                lastCode = code;
+                lastTime = now;
+                detectCount++;
+                try { navigator.vibrate(100); } catch(e) {}
+                viewfinder.style.borderColor = '#22c55e';
+                instructionText.textContent = 'Traitement en cours...';
+                instructionText.style.color = '#22c55e';
+                infoDiv.innerHTML = '<b style="color:#0f0">SCAN</b> | '
+                  + detectCount + ' lu : ' + code;
+                onSuccess(code);
+              }
+            } else if (scanCount % 5 === 0) {
+              var s2 = track.getSettings ? track.getSettings() : {};
+              infoDiv.innerHTML = s2.width + 'x' + s2.height
+                + ' z' + (s2.zoom||1) + 'x'
+                + ' | focus:' + (s2.focusMode||'?')
+                + '<br>scan#' + scanCount
+                + ' | ' + (detectCount > 0 ? detectCount + ' lu' : 'aucun');
+            }
+          } catch(e) {}
+          scanBusy = false;
+        }
+
+        scanInterval = setInterval(_scanFrame, 500);
+
+        // 7. ISP photo scan every 3s (Android only, iOS has no ImageCapture)
+        var photoInterval = null;
+        var photoCount = 0;
+        var photoBusy = false;
+        var _photoScan = null;
+        if ('ImageCapture' in window) {
+          var imageCapture = new ImageCapture(track);
+
+          _photoScan = async function() {
+            if (!imageCapture || photoBusy) return;
+            photoBusy = true;
+            try {
+              var blob = await imageCapture.takePhoto();
+              photoCount++;
+              var sizeKB = Math.round(blob.size / 1024);
+
+              var imgUrl = URL.createObjectURL(blob);
+              var img = new Image();
+              img.src = imgUrl;
+              await new Promise(function(ok, fail) { img.onload = ok; img.onerror = fail; });
+
+              var cvs = document.createElement('canvas');
+              cvs.width = img.width;
+              cvs.height = img.height;
+              cvs.getContext('2d').drawImage(img, 0, 0);
+              var photoUrl = cvs.toDataURL('image/jpeg', 0.95);
+              URL.revokeObjectURL(imgUrl);
+
+              var result = await new Promise(function(resolve) {
+                try {
+                  Quagga.decodeSingle({
+                    src: photoUrl,
+                    numOfWorkers: 0,
+                    locate: true,
+                    locator: { patchSize: 'x-large', halfSample: false },
+                    decoder: {
+                      readers: ['ean_reader','ean_8_reader','code_128_reader','code_39_reader',
+                                'upc_reader','upc_e_reader','codabar_reader','i2of5_reader'],
+                      multiple: false
+                    }
+                  }, function(r) { resolve(r); });
+                } catch(e) { resolve(null); }
+                setTimeout(function() { resolve(null); }, 4000);
+              });
+
+              if (result && result.codeResult && result.codeResult.code) {
+                var code = result.codeResult.code;
+                var now = Date.now();
+                if (code !== lastCode || (now - lastTime) > 3000) {
+                  lastCode = code;
+                  lastTime = now;
+                  detectCount++;
+                  try { navigator.vibrate([100, 50, 100]); } catch(e) {}
+                  viewfinder.style.borderColor = '#22c55e';
+                  instructionText.textContent = 'Traitement en cours...';
+                  instructionText.style.color = '#22c55e';
+                  infoDiv.innerHTML = '<b style="color:#0f0">ISP</b> | '
+                    + detectCount + ' lu : ' + code;
+                  onSuccess(code);
+                }
+              }
+            } catch(e) {}
+            photoBusy = false;
+          }
+
+          photoInterval = setInterval(_photoScan, 3000);
+          setTimeout(_photoScan, 1500);
+        }
+
+        // 8. Store state (including scan functions for resume)
+        _wmScanner[elementId] = {
+          videoEl: videoEl,
+          stream: stream,
+          infoDiv: infoDiv,
+          viewfinder: viewfinder,
+          instructionText: instructionText,
+          inputBar: null,
+          track: track,
+          caps: caps,
+          hwZoom: hwZoom,
+          torch: false,
+          scanInterval: scanInterval,
+          photoInterval: photoInterval,
+          _scanFrame: _scanFrame,
+          _photoScan: _photoScan
+        };
+
+        // 9. Manual barcode input bar
+        var inputBar = document.createElement('div');
+        inputBar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;'
+          + 'display:flex;align-items:center;padding:8px 12px;gap:8px;'
+          + 'background:rgba(0,0,0,0.9);border-top:2px solid rgba(0,255,0,0.5);';
+
+        var inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.inputMode = 'numeric';
+        inputField.pattern = '[0-9]*';
+        inputField.placeholder = 'Saisir le code-barre...';
+        inputField.autocomplete = 'off';
+        inputField.style.cssText = 'flex:1;height:44px;font-size:18px;padding:0 12px;'
+          + 'border:2px solid #555;border-radius:8px;background:#222;color:#fff;'
+          + 'outline:none;font-family:monospace;';
+        inputField.addEventListener('focus', function() {
+          inputField.style.borderColor = '#0f0';
+        });
+        inputField.addEventListener('blur', function() {
+          inputField.style.borderColor = '#555';
+        });
+
+        var submitBtn = document.createElement('button');
+        submitBtn.textContent = 'OK';
+        submitBtn.style.cssText = 'height:44px;padding:0 20px;font-size:18px;font-weight:bold;'
+          + 'border:none;border-radius:8px;background:#22c55e;color:#fff;cursor:pointer;'
+          + 'min-width:60px;';
+
+        function _submitManual() {
+          var code = inputField.value.trim();
+          if (code.length >= 4) {
+            detectCount++;
+            try { navigator.vibrate(100); } catch(e) {}
+            infoDiv.innerHTML = 'Saisie manuelle | <b style="color:#0f0">' + detectCount + ' lu</b> : ' + code;
+            inputField.value = '';
+            onSuccess(code);
+          }
+        }
+
+        inputField.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') { e.preventDefault(); _submitManual(); }
+        });
+        submitBtn.addEventListener('click', _submitManual);
+
+        inputBar.appendChild(inputField);
+        inputBar.appendChild(submitBtn);
+
+        // Search button (APK-style) in input bar
+        if (onSearch) {
+          var searchBtn = document.createElement('button');
+          searchBtn.innerHTML = '&#128269;';
+          searchBtn.style.cssText = 'height:44px;padding:0 16px;font-size:20px;'
+            + 'border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer;'
+            + 'min-width:44px;-webkit-tap-highlight-color:transparent;';
+          searchBtn.addEventListener('click', function() {
+            // iOS Safari trick: focus a temp input synchronously in the click handler
+            // to trigger the keyboard, then hand off to Flutter's TextField
+            var isIOS2 = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (isIOS2) {
+              var tmpInput = document.createElement('input');
+              tmpInput.setAttribute('type', 'text');
+              tmpInput.style.cssText = 'position:fixed;top:40%;left:10%;width:80%;height:50px;'
+                + 'z-index:999999;font-size:18px;opacity:0.01;';
+              document.body.appendChild(tmpInput);
+              tmpInput.focus();
+              // Let keyboard open, then call Dart and clean up
+              setTimeout(function() { onSearch(); }, 150);
+              setTimeout(function() { tmpInput.remove(); }, 1500);
+            } else {
+              onSearch();
+            }
+          });
+          inputBar.appendChild(searchBtn);
+        }
+
+        document.body.appendChild(inputBar);
+
+        _wmScanner[elementId].inputBar = inputBar;
+
+        container.style.display = 'block';
+        if (onStart) onStart();
+
+      } catch(err) {
+        console.error("Scanner error:", err);
+        if (onError) onError(err.name + ': ' + err.message);
+      }
+    }
+
+    // Pause scanner: stop intervals, disable track (camera off), hide viewfinder
+    function pauseBarcodeScanner(elementId) {
+      var s = _wmScanner[elementId];
+      if (!s) return;
+      if (s.scanInterval) { clearInterval(s.scanInterval); s.scanInterval = null; }
+      if (s.photoInterval) { clearInterval(s.photoInterval); s.photoInterval = null; }
+      if (s.track) { s.track.enabled = false; }
+      if (s.videoEl) { try { s.videoEl.pause(); } catch(e) {} }
+      if (s.viewfinder) { s.viewfinder.style.display = 'none'; }
+      if (s.instructionText) { s.instructionText.style.display = 'none'; }
+      if (s.infoDiv) { s.infoDiv.style.display = 'none'; }
+      if (s.inputBar) { s.inputBar.style.display = 'none'; }
+    }
+
+    // Resume scanner: re-enable track, restart intervals with original callbacks
+    function resumeBarcodeScanner(elementId) {
+      var s = _wmScanner[elementId];
+      if (!s) return;
+      if (s.track) { s.track.enabled = true; }
+      if (s.videoEl) { try { s.videoEl.play(); } catch(e) {} }
+      // Reset viewfinder to white (idle state)
+      if (s.viewfinder) { s.viewfinder.style.display = ''; s.viewfinder.style.borderColor = 'rgba(255,255,255,0.9)'; }
+      if (s.instructionText) { s.instructionText.style.display = ''; s.instructionText.textContent = 'Pointez vers un code-barres'; s.instructionText.style.color = '#fff'; }
+      if (s.infoDiv) { s.infoDiv.style.display = ''; }
+      if (s.inputBar) { s.inputBar.style.display = ''; }
+      // Restart scan interval using the ORIGINAL _scanFrame function (with onSuccess callback)
+      if (!s.scanInterval && s._scanFrame) {
+        s.scanInterval = setInterval(s._scanFrame, 500);
+      }
+      // Restart photo interval
+      if (!s.photoInterval && s._photoScan) {
+        s.photoInterval = setInterval(s._photoScan, 3000);
+      }
+    }
+
+    function setBarcodeScannerZoom(elementId, zoomLevel) {
+      var s = _wmScanner[elementId];
+      if (!s || !s.track || !s.caps.zoom) return;
+      var newHw = Math.min(zoomLevel, s.caps.zoom.max);
+      try { s.track.applyConstraints({ advanced: [{ zoom: newHw }] }); s.hwZoom = newHw; } catch(e) {}
+    }
+
+    function toggleBarcodeScannerTorch(elementId) {
+      var s = _wmScanner[elementId];
+      if (!s || !s.track || !s.caps.torch) return false;
+      try {
+        s.torch = !s.torch;
+        s.track.applyConstraints({ advanced: [{ torch: s.torch }] });
+        return s.torch;
+      } catch(e) {}
+      return false;
+    }
+
+    function getBarcodeScannerZoomInfo(elementId) {
+      var s = _wmScanner[elementId];
+      if (s && s.caps && s.caps.zoom) {
+        return JSON.stringify({ min: s.caps.zoom.min, max: Math.min(s.caps.zoom.max, 8), current: s.hwZoom || 2 });
+      }
+      return "{}";
+    }
+
+    function getBarcodeScannerHasTorch(elementId) {
+      var s = _wmScanner[elementId];
+      return (s && s.caps && s.caps.torch) ? "true" : "false";
+    }
+
+    function stopBarcodeScanner(elementId) {
+      var s = _wmScanner[elementId];
+      if (s) {
+        if (s.scanInterval) clearInterval(s.scanInterval);
+        if (s.photoInterval) clearInterval(s.photoInterval);
+        if (s.stream) {
+          s.stream.getTracks().forEach(function(t) { t.stop(); });
+        }
+        if (s.videoEl) s.videoEl.remove();
+        if (s.infoDiv) s.infoDiv.remove();
+        if (s.instructionText) s.instructionText.remove();
+        if (s.inputBar) s.inputBar.remove();
+        if (s.viewfinder) s.viewfinder.remove();
+        delete _wmScanner[elementId];
+      }
+    }
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

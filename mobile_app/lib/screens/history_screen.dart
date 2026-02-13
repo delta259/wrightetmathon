@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../config/api_config.dart';
 import '../config/app_theme.dart';
 import '../models/inventory_session.dart';
@@ -15,7 +15,6 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   final ApiService _apiService = ApiService(baseUrl: ApiConfig.baseUrl);
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   List<dynamic> _sessions = [];
   bool _isLoading = true;
   String? _error;
@@ -27,8 +26,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _initAndLoad() async {
-    // Get token from secure storage
-    final token = await _storage.read(key: 'wm_token');
+    // Get token from shared preferences
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('wm_token');
     if (token != null) {
       _apiService.setToken(token);
     }

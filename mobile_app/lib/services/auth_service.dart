@@ -1,12 +1,14 @@
 import 'dart:convert';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user.dart';
 import 'api_service.dart';
 
 /// Authentication service handling login, logout, and token management
+/// Uses SharedPreferences instead of FlutterSecureStorage for web compatibility
+/// (window.crypto.subtle requires HTTPS, SharedPreferences uses localStorage on web)
 class AuthService {
   final ApiService _apiService;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  SharedPreferences? _prefs;
 
   static const String _userKey = 'wm_user';
   static const String _tokenKey = 'wm_token';
@@ -21,10 +23,17 @@ class AuthService {
   /// Check if user is logged in
   bool get isLoggedIn => _currentUser != null && !_currentUser!.isTokenExpired;
 
+  /// Ensure SharedPreferences is initialized
+  Future<SharedPreferences> _getPrefs() async {
+    _prefs ??= await SharedPreferences.getInstance();
+    return _prefs!;
+  }
+
   /// Initialize auth state from storage
   Future<User?> initialize() async {
     try {
-      final userJson = await _storage.read(key: _userKey);
+      final prefs = await _getPrefs();
+      final userJson = prefs.getString(_userKey);
       if (userJson != null) {
         final userData = json.decode(userJson) as Map<String, dynamic>;
         _currentUser = User.fromJson(userData);
@@ -58,12 +67,10 @@ class AuthService {
     _currentUser = User.fromJson(response);
     _apiService.setToken(_currentUser!.token);
 
-    // Save to secure storage
-    await _storage.write(
-      key: _userKey,
-      value: json.encode(_currentUser!.toJson()),
-    );
-    await _storage.write(key: _tokenKey, value: _currentUser!.token);
+    // Save to storage
+    final prefs = await _getPrefs();
+    await prefs.setString(_userKey, json.encode(_currentUser!.toJson()));
+    await prefs.setString(_tokenKey, _currentUser!.token);
 
     return _currentUser!;
   }
@@ -81,8 +88,9 @@ class AuthService {
     _currentUser = null;
     _apiService.clearToken();
 
-    await _storage.delete(key: _userKey);
-    await _storage.delete(key: _tokenKey);
+    final prefs = await _getPrefs();
+    await prefs.remove(_userKey);
+    await prefs.remove(_tokenKey);
   }
 
   /// Refresh token if needed
