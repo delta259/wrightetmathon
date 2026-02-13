@@ -48,7 +48,7 @@
                             <?php echo form_input(array(
                                 'name' => 'payment_method_code',
                                 'id' => 'payment_method_code',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'CB, ESP...',
                                 'value' => $_SESSION['transaction_info']->payment_method_code,
                                 'maxlength' => 10
@@ -59,7 +59,7 @@
                             <?php echo form_input(array(
                                 'name' => 'payment_method_description',
                                 'id' => 'payment_method_description',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'Carte bancaire, Espèces...',
                                 'value' => $_SESSION['transaction_info']->payment_method_description
                             )); ?>
@@ -70,7 +70,7 @@
                                 'name' => 'payment_method_display_order',
                                 'id' => 'payment_method_display_order',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1',
                                 'value' => $_SESSION['transaction_info']->payment_method_display_order
                             )); ?>
@@ -85,7 +85,7 @@
                                 'payment_method_include',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['transaction_info']->payment_method_include,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;">
@@ -94,7 +94,7 @@
                                 'payment_method_fidelity_flag',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['transaction_info']->payment_method_fidelity_flag,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                                 'payment_method_giftcard_flag',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['transaction_info']->payment_method_giftcard_flag,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;"></div>

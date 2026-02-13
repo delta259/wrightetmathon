@@ -101,8 +101,8 @@
 				<tr>
 				<!--	<td align="left"><?php /*echo anchor('items/item_warehouse_delete/'.$row->item_id.'/'.$row->warehouse_code.'/'.$row->warehouse_row.'/'.$row->warehouse_section.'/'.$row->warehouse_shelf.'/'.$row->warehouse_bin, '['.$this->lang->line('common_delete_short').']');*/?></td>-->
 
-                    <td> <a href="<?php echo site_url('items/item_warehouse_delete/'.$row->item_id.'/'.$row->warehouse_code.'/'.$row->warehouse_row.'/'.$row->warehouse_section.'/'.$row->warehouse_shelf.'/'.$row->warehouse_bin);?>">
-                            <img src="<?php echo base_url().'images2/del.png';?>" width="18px" height="18px" alt="Suppression" title="<?php echo $this->lang->line('common_delete'); ?>">
+                    <td> <a href="<?php echo site_url('items/item_warehouse_delete/'.$row->item_id.'/'.$row->warehouse_code.'/'.$row->warehouse_row.'/'.$row->warehouse_section.'/'.$row->warehouse_shelf.'/'.$row->warehouse_bin);?>" title="<?php echo $this->lang->line('common_delete'); ?>">
+                            <svg width="16" height="16" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
                         </a></td>
 
 
@@ -138,57 +138,57 @@
 				
 				<!-- now allow data entry -->
 				<tr>
-					<td align="center" class="zone_champ_saisie"><?php	echo form_open		('items/item_warehouse_add/');
+					<td align="center"><?php	echo form_open		('items/item_warehouse_add/');
 												echo form_dropdown	(
 																	'location_preferred', 
 																	$_SESSION['G']->YorN_pick_list, 
 																	$_SESSION['transaction_add_warehouse_info']->location_preferred,
-																	'style="font-size:15px"','class="colorobligatoire"'
+																	'style="font-size:15px"','class="md-form-input"'
 																	); ?>
 					</td>
-					<td	align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+					<td	align="center"><?php	echo form_dropdown	(
 																	'warehouse_code', 
 																	$_SESSION['warehouse_pick_list'],
 																	$_SESSION['transaction_add_warehouse_info']->warehouse_code,
-																	'style="font-size:15px"','class="colornormal"'
+																	'style="font-size:15px"','class="md-form-input"'
 																	);?>
 					</td>
 					
-					<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+					<td align="center"><?php	echo form_input(array	(
 																	'name'		=>	'warehouse_row',
 																	'id'		=>	'warehouse_row',
-                            'class'=>'colornormal',
+                            'class'=>'md-form-input',
 																	'style'		=>	'text-align:left; font-size:15px;',
 																	'value'		=>	$_SESSION['transaction_add_warehouse_info']->warehouse_row
 																	));?>		
 					</td>
 					
-					<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+					<td align="center"><?php	echo form_input(array	(
 																	'name'		=>	'warehouse_section',
 																	'id'		=>	'warehouse_section',
-                            'class'=>'colornormal',
+                            'class'=>'md-form-input',
 																	'style'		=>	'text-align:left; font-size:15px;',
 																	'value'		=>	$_SESSION['transaction_add_warehouse_info']->warehouse_section,
 																	'size'		=>	8,
 																	));?>
 					</td>
 					
-					<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+					<td align="center"><?php	echo form_input(array	(
 																	'name'		=>	'warehouse_shelf',
 																	'id'		=>	'warehouse_shelf',
 																	'style'		=>	'text-align:left; font-size:15px;',
 																	'size'		=>	5,
-																	'class'=>'colornormal',
+																	'class'=>'md-form-input',
 																	'value'		=>	$_SESSION['transaction_add_warehouse_info']->warehouse_shelf
 																	));?>		
 					</td>
 					
-					<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+					<td align="center"><?php	echo form_input(array	(
 																	'name'		=>	'warehouse_bin',
 																	'id'		=>	'warehouse_bin',
 																	'style'		=>	'text-align:left; font-size:15px;',
 																	'size'		=>	5,
-                            'class'=>'colornormal',
+                            'class'=>'md-form-input',
 																	'value'		=>	$_SESSION['transaction_add_warehouse_info']->warehouse_bin
 																	));?>		
 					</td>
@@ -197,7 +197,6 @@
 		</table>
     </fieldset>
                 <div id="required_fields_message" class="obligatoire">
-                    <a class="btobligatoire" id="" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
                     <?php echo $this->lang->line('common_fields_required_message'); ?>
                 </div>
             </div>

@@ -109,7 +109,7 @@ switch ($_SESSION['stock_action_id_stock_choix_liste'])
 
 
 
-													<div class="body_cadre_gris">
+													<div class="body_page">
 
 													    <?php	include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
@@ -312,13 +312,13 @@ if (!isset($_SESSION['show_dialog']))
 				if ($_SESSION['line'] == $line)
 				{
 				?>
-					<td class="zone_champ_saisie" style="text-align: right">
+					<td style="text-align: right">
 					<?php echo form_input(array(
 												'name'					=>	'quantity',
 												'value'					=>	number_format($item['quantity'], 2),
 												'style'					=>	'text-align:right;',
 												'size'					=>	'3',
-												'class'                 =>  'zone_champ_saisie',
+												'class'                 =>  'md-form-input',
 												'autofocus'				=>	'autofocus'
 												));
 					?>
@@ -328,7 +328,7 @@ if (!isset($_SESSION['show_dialog']))
 				else
 				{
 				?>
-					<td class="zone_champ_saisie" style="text-align: right">
+					<td style="text-align: right">
 					<?php echo form_input(array(
 												'name'=>'quantity',
 												'value'=>number_format($item['quantity'], 2),
@@ -366,7 +366,7 @@ if (!isset($_SESSION['show_dialog']))
 				?>
 
 				<!-- output discount field -->
-				<td class="zone_champ_saisie"  style="text-align: right">
+				<td style="text-align: right">
 					<?php echo form_input(array(
 												'name'=>'discount',
 												'value'=>$item['discount'],
@@ -468,7 +468,7 @@ margin-bottom: 10px;
 
 				<!-- Show comments -->
 				<label id="comment_label" for="comment"><?php echo $this->lang->line('common_comments'); ?>:</label>
-				<?php echo form_textarea(array('name'=>'comment', 'id' => 'comment', 'value'=>$comment,'rows'=>'3','cols'=>'20','class'=>'zone_champ_saisie'));?>
+				<?php echo form_textarea(array('name'=>'comment', 'id' => 'comment', 'value'=>$comment,'rows'=>'3','cols'=>'20','class'=>'md-form-input'));?>
 
 				<!-- show complete button -->
 				<div class='' style=''><span>

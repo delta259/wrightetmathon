@@ -3,8 +3,6 @@
 	$this->load->view("partial/header");
 ?>
 
-<div class="body_cadre_gris">
-
 <?php
 	// get userdata data
 	$values					=	array();
@@ -26,7 +24,6 @@
 
 <img src="<?php echo $image_path; ?>" alt="Barcode" style="width:350px;height:280px">
 
-</div>
 <?php
 	// show the footer
     $this->load->view("partial/pre_footer");

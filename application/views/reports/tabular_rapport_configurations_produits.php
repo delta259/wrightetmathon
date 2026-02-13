@@ -29,7 +29,6 @@ $this->load->view("partial/head");
                     <div class="body_colonne">
                         <h2 id="magasin"><?php echo $title; ?> </h2>
 
-<div class="body_cadre_gris">
     <div> <?php
         include('../wrightetmathon/application/views/partial/show_messages.php');
         ?>

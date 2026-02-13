@@ -12,10 +12,8 @@ if (isset($error_message))
 
 
 <?php if (($_SESSION['reprint'] ?? 0) == 1): ?>
-<style>.body_cadre_gris, .pre_footer, #footer { display: none !important; }</style>
+<style>.pre_footer, #footer { display: none !important; }</style>
 <?php endif; ?>
-
-<div class="body_cadre_gris">
 
     <div id="pr"   style="width: 1000px; background:white;">
         <br/><br/>

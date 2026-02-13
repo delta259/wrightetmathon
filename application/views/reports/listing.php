@@ -94,8 +94,6 @@
 [data-theme="dark"] .rpl-card { box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 </style>
 
-<div class="body_cadre_gris">
-
 <!-- Messages -->
 <div class="rpl-messages">
     <?php if (!empty($error)) { ?>
@@ -410,7 +408,6 @@
 
 </div><!-- end rpl-grid -->
 </div><!-- end rpl-page -->
-</div><!-- end body_cadre_gris -->
 
 <?php
 // Show the dialogs

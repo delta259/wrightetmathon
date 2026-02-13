@@ -7,9 +7,9 @@ echo form_open_multipart('items/do_excel_import/',array('id'=>'item_form'));
 <fieldset id="item_basic_info">
 <legend>Import</legend>
 
-<div class="field_row clearfix">	
+<div class="md-form-group">	
 <?php echo form_label('File path:', 'name',array('class'=>'wide')); ?>
-	<div class='form_field'>
+	<div class='md-form-input'>
 	<?php echo form_upload(array(
 		'name'=>'file_path',
 		'id'=>'file_path',
@@ -23,7 +23,7 @@ echo form_submit(array(
 	'name'=>'submitf',
 	'id'=>'submitf',
 	'value'=>$this->lang->line('common_submit'),
-	'class'=>'submit_button float_right')
+	'class'=>'btsubmit')
 );
 ?>
 </fieldset>

@@ -16,7 +16,6 @@
     <h2><?php echo $this->lang->line('login_welcome_message').' '.$this->config->item('company'); ?></h2>
 
                     <!-- div body gris colonne Droite -->
-                    <div class="body_cadre_gris" >
                         <div class="span3">
                             <?php
                             // return to login
@@ -33,7 +32,6 @@
 
 	<object data="flash_info_publish_me.pdf" type="application/pdf" width="1300px" height="800px" ></object>
 
-                    </div>
                     </div>
             </div>
     </main>

@@ -19,8 +19,6 @@
 
                         <div class="body_colonne">
                             <h2><?php echo $this->lang->line('config_info'); ?></h2>
-                            <div class="body_cadre_gris">
-
 <!-- set up the input form -->
 <?php echo form_open('config/save/', array('id'=>'config_form')); ?>
 
@@ -699,7 +697,6 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 
             <div id="required_fields_message" class="obligatoire">
-                <a class="btobligatoire" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
                 <?php echo $this->lang->line('common_fields_required_message'); ?>
             </div>
             </fieldset>

@@ -31,7 +31,7 @@ if($success_or_failure == 'F')
 
 	<table align="center" border="2" bgcolor="#CCCCCC">
 		
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 			
 			<!-- Output Item number -->
 			<tr>
@@ -236,7 +236,7 @@ if($success_or_failure == 'F')
 										'name'		=>	'add_kit_structure',
 										'id'		=>	'add_kit_structure',
 										'value'		=>	$this->lang->line('common_submit'),
-										'class'		=>	'submit_button float_right'
+										'class'		=>	'btsubmit'
 										);
 			echo form_submit($form_submit);
 	?>
@@ -330,7 +330,7 @@ if($success_or_failure == 'F')
 										'name'		=>	'add_kit_detail',
 										'id'		=>	'add_kit_detail',
 										'value'		=>	$this->lang->line('common_submit'),
-										'class'		=>	'submit_button float_right'
+										'class'		=>	'btsubmit'
 										);
 			echo form_submit($form_submit);
 	?>

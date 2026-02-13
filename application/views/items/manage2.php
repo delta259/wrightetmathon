@@ -128,9 +128,6 @@ function show_hide_search_filter(search_filter_section, switchImgTag) {
 
 </script>
 
-<div class="body_cadre_gris">
-
-
 <!-- output messages if not modal -->
 <?php
 if (!isset($_SESSION['show_dialog']))
@@ -252,8 +249,5 @@ if (!isset($_SESSION['show_dialog']))
 	}
 ?>
 
-
-
-</div>
 <?php $this->load->view("partial/pre_footer"); ?>
 <?php $this->load->view("partial/footer"); ?>

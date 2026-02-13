@@ -8,7 +8,6 @@ $(document).ready	(
 					);
 </script>
 
-<div class="body_cadre_gris">
 <!-- table header -->
 
 <div class="submenu">
@@ -67,7 +66,6 @@ if (!isset($_SESSION['show_dialog']))
 	echo form_close();
 ?>
 
-</div>
 <?php
 	// this is the modal dialog output when updating an existing record or adding a new one.
 	// show dialog depending on show dialog

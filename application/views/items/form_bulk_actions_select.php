@@ -40,7 +40,7 @@
 			// modify sales price TTC
 			case	20:
 				?>
-				<table class="table_center" border=2  style="border-collapse: separate; border-spacing:5px;">
+				<table border=2  style="border-collapse: separate; border-spacing:5px;">
 					<thead>
 					<tr>
 						<th align="center"><?php echo form_label($this->lang->line('pricelists_pricelist'), ' ', array('class'=>'required wide')); ?></th>
@@ -52,19 +52,19 @@
 					
 					<!-- now allow data entry -->
 					<tr>
-						<td align="center" class="zone_champ_saisie"><?php	echo form_open		('items/bulk_action_3');
+						<td align="center"><?php	echo form_open		('items/bulk_action_3');
 													echo form_dropdown	(
 																		'pricelist_id', 
 																		$_SESSION['G']->pricelist_pick_list, 
 																		$_SESSION['transaction_update_pricelist_info']->pricelist_id,
-																		'style="font-size:15px" class="colorobligatoire"'
+																		'style="font-size:15px" class="md-form-input"'
 																		);?>
 						</td>
-						<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+						<td align="center"><?php	echo form_input(array	(
 																		'name'		=>	'unit_price_with_tax',
 																		'id'		=>	'unit_price_with_tax',
 																		'style'		=>	'text-align:left; font-size:15px;',
-																		'class'=>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_pricelist_info']->unit_price_with_tax,
 																		));?>
 						</td>
@@ -77,17 +77,17 @@
 		// Reorder Policy
 		case	30:
 			?>
-			<table class="table_center" border=2  style="border-collapse: separate; border-spacing:5px;">
+			<table border=2  style="border-collapse: separate; border-spacing:5px;">
                 <tbody id="cart_contents">
 
 
                 <tr><td align="left"><?php echo form_label($this->lang->line('suppliers_supplier'), 		' ', array('class'=>'required wide')); ?></td>
-                    <td align="left" class="zone_champ_saisie"><?php	echo form_open		('items/bulk_action_3');
+                    <td align="left"><?php	echo form_open		('items/bulk_action_3');
                         echo form_dropdown	(
                             'supplier_id',
                             $_SESSION['G']->supplier_pick_list,
                             $_SESSION['transaction_update_supplier_info']->supplier_id,
-                            'style="font-size:15px" class="colorobligatoire"'
+                            'style="font-size:15px" class="md-form-input"'
                         );?>
                     </td>
                 </tr>
@@ -96,21 +96,21 @@
 					<tr>
                         <td align="left"><?php echo form_label($this->lang->line('items_reorder_policy'), 	' ', array('class'=>'required wide')); ?></td>
 
-						<td align="right" class="zone_champ_saisie"><?php	echo form_dropdown	(
+						<td align="right"><?php	echo form_dropdown	(
 																		'supplier_reorder_policy', 
 																		$_SESSION['G']->YorN_pick_list, 
 																		$_SESSION['transaction_update_supplier_info']->supplier_reorder_policy,
-																		'style=" font-size:15px" class="colorobligatoire"'
+																		'style=" font-size:15px" class="md-form-input"'
 																		);?>
 						</td>
                     </tr><tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_reorder_pack_size'), 	' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array	(
+                    <td align="right"><?php	echo form_input(array	(
 																		'name'		=>	'supplier_reorder_pack_size',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class'=>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_reorder_pack_size
 																		));?>		
 						</td>
@@ -118,11 +118,11 @@
                 <tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_min_order_qty'), 		' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array	(
+                    <td align="right"><?php	echo form_input(array	(
 																		'name'		=>	'supplier_min_order_qty',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class' =>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_min_order_qty
 																		));?>		
                     </td>
@@ -131,11 +131,11 @@
                 <tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_min_stock_qty'), 		' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array	(
+                    <td align="right"><?php	echo form_input(array	(
 																		'name'		=>	'supplier_min_stock_qty',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class' =>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_min_stock_qty
 																		));?>		
 						</td>
@@ -152,7 +152,7 @@
 		// DLUO
 		case	50:
 			?>
-			<table class="table_center" border=2   style="border-collapse: separate; border-spacing:5px;">
+			<table border=2   style="border-collapse: separate; border-spacing:5px;">
 
 
 
@@ -162,11 +162,11 @@
 					<tr>
                         <td align="center"><?php echo form_label($this->lang->line('items_dluo_indicator'), 	' ', array('class'=>'required wide')); ?></td>
 
-                        <td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+                        <td align="center"><?php	echo form_dropdown	(
 																		'dluo_indicator', 
 																		$_SESSION['G']->YorN_pick_list, 
 																		$_SESSION['transaction_info']->dluo_indicator,
-																		'style="font-size:15px" class="colorobligatoire"'
+																		'style="font-size:15px" class="md-form-input"'
 																		);?>
 						</td>
 					</tr>
@@ -176,7 +176,7 @@
 			break;
 		case	60:
 			?>
-			<table class="table_center" border=2  style="border-collapse: separate; border-spacing:5px;">
+			<table border=2  style="border-collapse: separate; border-spacing:5px;">
 				<thead>
 					<tr>
 						<th align="center"><?php echo form_label($this->lang->line('items_nom_des_fournisseur'), ' ', array('class'=>'required wide')); ?></th>
@@ -188,19 +188,19 @@
 					
 					<!-- now allow data entry -->
 					<tr>
-						<td align="center" class="zone_champ_saisie"><?php	echo form_open		('items/bulk_action_3');
+						<td align="center"><?php	echo form_open		('items/bulk_action_3');
 													echo form_dropdown	(
 																		'pricelist_id', 
 																		$_SESSION['G']->supplier_pick_list, 
 																		$_SESSION['transaction_update_pricelist_info']->pricelist_id,
-																		'style="font-size:15px" class="colorobligatoire"'
+																		'style="font-size:15px" class="md-form-input"'
 													);?>
 						</td>
-						<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+						<td align="center"><?php	echo form_input(array	(
 																		'name'		=>	'unit_price_without_tax',
 																		'id'		=>	'unit_price_without_tax',
 																		'style'		=>	'text-align:left; font-size:15px;',
-																		'class'=>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_pricelist_info']->unit_price_without_tax,
 																		));?>
 						</td>
@@ -213,28 +213,28 @@
 			//rattacher un lot d'article à un fournisseur
 			case 70:
 			?>
-			<table class="table_center" border=2  style="border-collapse: separate; border-spacing:5px;">
+			<table border=2  style="border-collapse: separate; border-spacing:5px;">
                 <tbody id="cart_contents">
 
 
                 <tr><td align="left"><?php /*echo form_label($this->lang->line('suppliers_supplier'), 		' ', array('class'=>'required wide')); ?></td>
-                    <td align="left" class="zone_champ_saisie"><?php	
+                    <td align="left"><?php	
                         echo form_dropdown	(
                             'supplier_id',
                             $_SESSION['G']->supplier_pick_list,
                             $_SESSION['transaction_update_supplier_info']->supplier_id,
-                            'style="font-size:15px" class="colorobligatoire"'
+                            'style="font-size:15px" class="md-form-input"'
                         );//*/    ?>
                     </td>
                 </tr>
 
 				<tr><td align="left"><?php echo form_label($this->lang->line('items_new_supplier'), 		' ', array('class'=>'required wide')); ?></td>
-                    <td align="left" class="zone_champ_saisie"><?php	
+                    <td align="left"><?php	
                         echo form_dropdown(
                             'supplier_id_new',
                             $_SESSION['G']->supplier_pick_list,
                             $_SESSION['transaction_update_supplier_info']->supplier_id,
-                            'style="font-size:15px" class="colorobligatoire"'
+                            'style="font-size:15px" class="md-form-input"'
                         );?>
                     </td>
 				</tr>
@@ -242,22 +242,22 @@
 					<tr>
                         <td align="left"><?php echo form_label($this->lang->line('items_supplier_preferred'), 	' ', array('class'=>'required wide')); ?></td>
 
-						<td align="right" class="zone_champ_saisie"><?php	echo form_dropdown(
+						<td align="right"><?php	echo form_dropdown(
 																		'supplier_preferred', 
 																		$_SESSION['G']->YorN_pick_list, 
 																		$_SESSION['transaction_update_supplier_info']->supplier_preferred,
-																		'style=" font-size:15px" class="colorobligatoire"'
+																		'style=" font-size:15px" class="md-form-input"'
 																		);?>
 						</td>
 					</tr>
 					<tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_reorder_pack_size'), 	' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array(
+                    <td align="right"><?php	echo form_input(array(
 																		'name'		=>	'supplier_reorder_pack_size',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class'=>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_reorder_pack_size
 																		));?>		
 						</td>
@@ -265,11 +265,11 @@
                 <tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_min_order_qty'), 		' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array(
+                    <td align="right"><?php	echo form_input(array(
 																		'name'		=>	'supplier_min_order_qty',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class' =>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_min_order_qty
 																		));?>		
                     </td>
@@ -278,11 +278,11 @@
                 <tr>
                     <td align="left"><?php echo form_label($this->lang->line('items_min_stock_qty'), 		' ', array('class'=>'required wide')); ?></td>
 
-                    <td align="right" class="zone_champ_saisie"><?php	echo form_input(array(
+                    <td align="right"><?php	echo form_input(array(
 																		'name'		=>	'supplier_min_stock_qty',
 																		'style'		=>	'text-align:right; font-size:15px;',
 																		'size'		=>	5,
-																		'class' =>"colorobligatoire",
+																		'class'=>"md-form-input",
 																		'value'		=>	$_SESSION['transaction_update_supplier_info']->supplier_min_stock_qty
 																		));?>		
 						</td>
@@ -311,7 +311,7 @@
 	<?php }
 	?>
 	<!-- now ask for SELECT info -->
-	<table class="table_center" border=2  style="border-collapse: separate; border-spacing:5px;">
+	<table border=2  style="border-collapse: separate; border-spacing:5px;">
 		<thead>
 
 			<tr>
@@ -328,87 +328,87 @@
 			<!-- now ask for WHERE info -->
 			<tr>
 				<td align="center"><?php	echo ' '?></td>
-				<td align="center" class="zone_champ_saisie "><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'column_id_1', 
 																$_SESSION['M']->items_table_column_pick_list,
 																$_SESSION['M']->items_table_column_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);  ?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'test_id_1', 
 																$_SESSION['M']->test_pick_list,
 																$_SESSION['M']->test_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+				<td align="center"><?php	echo form_input(array	(
 																'name'		=>	'value_1',
 																'id'		=>	'value_1',
 																'style'		=>	'text-align:left; font-size:15px;',
 																'value'		=>	' ',
-                        'class'=>'colorobligatoire',
+                        'class'=>'md-form-input',
 																));?>
 				</td>
 			</tr>
 			
 			<tr>
-				<td align="left" class="zone_champ_saisie"><?php	echo form_dropdown	(  'and_or_2',
+				<td align="left"><?php	echo form_dropdown	(  'and_or_2',
 																$_SESSION['M']->and_or_pick_list,
 																$_SESSION['M']->test_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'column_id_2', 
 																$_SESSION['M']->items_table_column_pick_list,
 																$_SESSION['M']->items_table_column_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'test_id_2', 
 																$_SESSION['M']->test_pick_list,
 																$_SESSION['M']->test_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+				<td align="center"><?php	echo form_input(array	(
 																'name'		=>	'value_2',
 																'id'		=>	'value_2',
 																'style'		=>	'text-align:left; font-size:15px;',
 																'value'		=>	' ',
-                        'class'=>"colorobligatoire",
+                        'class'=>"md-form-input",
 																));?>
 				</td>
 			</tr>
 			<tr>
-				<td align="left" class="zone_champ_saisie"><?php	echo form_dropdown	(  'and_or_3',
+				<td align="left"><?php	echo form_dropdown	(  'and_or_3',
 																$_SESSION['M']->and_or_pick_list,
 																$_SESSION['M']->test_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'column_id_3', 
 																$_SESSION['M']->items_table_column_pick_list,
 																$_SESSION['M']->items_table_column_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_dropdown	(
+				<td align="center"><?php	echo form_dropdown	(
 																'test_id_3', 
 																$_SESSION['M']->test_pick_list,
 																$_SESSION['M']->test_pick_list[0],
-																'style="font-size:15px" class="colorobligatoire"'
+																'style="font-size:15px" class="md-form-input"'
 																);?>
 				</td>
-				<td align="center" class="zone_champ_saisie"><?php	echo form_input(array	(
+				<td align="center"><?php	echo form_input(array	(
 																'name'		=>	'value_3',
 																'id'		=>	'value_3',
 																'style'		=>	'text-align:left; font-size:15px;',
 																'value'		=>	' ',
-                        'class'=>"colorobligatoire",
+                        'class'=>"md-form-input",
 																));?>
 				</td>
 			</tr>
@@ -418,7 +418,6 @@
 
 </fieldset>
                 <div id="required_fields_message" class="obligatoire">
-                    <a class="btobligatoire" id="" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
                     <?php echo $this->lang->line('common_fields_required_message'); ?>
                 </div>
             </div>

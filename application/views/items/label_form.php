@@ -50,7 +50,7 @@
 				<br>
 				<tbody>
 					<tr>
-						<td class="zone_champ_saisie" style="text-align:center;">	<?php 	echo form_open('items/label_do/');
+						<td style="text-align:center;">	<?php 	echo form_open('items/label_do/');
 																								echo form_input	(array	(
 																														'name'	=>	'item_number',
 																														'id'	=>	'item_number',
@@ -61,7 +61,7 @@
 																												);
 																						?></td>
 
-						<td class="zone_champ_saisie"  > <?php 	echo form_input	(array	(
+						<td  > <?php 	echo form_input	(array	(
 																														'name'	=>	'name',
 																														'id'	=>	'name',
 																														'value'	=>	$_SESSION['transaction_info']->name,
@@ -70,7 +70,7 @@
 																														)
 																												);
 																						?></td>
-						<td class="zone_champ_saisie"  style="text-align:center;"> <?php 	echo form_input	(array	(
+						<td  style="text-align:center;"> <?php 	echo form_input	(array	(
 																														'name'	=>	'category',
 																														'id'	=>	'category',
 																														'value'	=>	$_SESSION['transaction_info']->category,
@@ -89,7 +89,7 @@
 			if ($_SESSION['label_show'] == 1)
 			{
 			?>
-				<table class="table_center" border=2>
+				<table border=2>
 					<tr>	<!-- src		="<?php /* echo base_url().$_SESSION['transaction_info']->server_image; */?>" -->
 						<td style="text-align:center;"><img src="<?php echo base_url().'label/'.$_SESSION['transaction_info']->server_image;; ?>"
 															alt		="<?php echo $this->lang->line('items_label')?>"

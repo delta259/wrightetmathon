@@ -15,7 +15,7 @@
 		include('../wrightetmathon/application/views/partial/show_messages.php');
 	?>
     <fieldset >
-    <table class="table_center table table-bordered" >
+    <table class="table table-bordered" >
         <thead>
             <?php    
             foreach($headers as $head => $heads)

@@ -94,7 +94,6 @@ if (isset($manage_table_data) && is_object($manage_table_data) && $manage_table_
 .emp-header .btn-group-modern { display: flex; gap: 0.4em; }
 </style>
 
-<div class="body_cadre_gris">
 <div class="emp-page">
 <div class="emp-card">
 
@@ -203,8 +202,6 @@ switch ($_SESSION['show_dialog'] ?? 0)
     break;
 }
 ?>
-
-</div>
 
 <script>
 $(document).ready(function() {

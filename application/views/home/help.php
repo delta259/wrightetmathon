@@ -33,14 +33,13 @@ if(!isset($_SESSION['G']->login_employee_id))
 
                         <div class="body_colonne">
                             <h2><?php echo $this->lang->line('modules_home');?></h2>
-                            <div class="body_cadre_gris">
                             <div id="new_button"class="btnewc">
                 
     <a href="<?php echo $redirect; ?>" title="retour">
       <div class='btnew c_btcouleur' style='float: left;'><span> <?php echo $this->lang->line('common_return'); ?> </span></div>
     </a>
   </div>
-                <table class="table_center" width="100%">
+                <table width="100%">
                 <td>    
                 <table >
                     <tr>
@@ -193,7 +192,6 @@ if(!isset($_SESSION['G']->login_employee_id))
                 </table>
               <!--  <object data="flash_info_publish_me.pdf" type="application/pdf" width="800px" height="800px" internalinstanceid="23"></object>
  <!--   --> 
-                            </div>
                         </div>
 
                     </div>

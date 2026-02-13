@@ -33,7 +33,7 @@ if (!function_exists('rpt_is_amount')) {
             <main id="login_page" class="wlp-bighorn-page-unconnect" role="main">
                 <div class="body_page">
                     <div class="body_colonne">
-                        <div class="body_cadre_gris rpt-host">
+                        <div class="rpt-host">
 
 <!-- Report card -->
 <div class="rpt-card">

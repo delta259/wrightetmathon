@@ -4,7 +4,7 @@ $this->load->view("partial/header");
 ?>
 
 
-<div class="body_cadre_gris">
+<div class="body_page">
 
     <div id="title_bar">
         <!-- Title -->
@@ -52,7 +52,7 @@ $this->load->view("partial/header");
 
                     <tbody id="cart_contents">
                     <td style="text-align:center;"><h4><?php echo $this->lang->line('recvs_enter_code'); ?></h4></td>
-                    <td class="zone_champ_saisie" >	<?php 	echo form_open('receivings/reprint_check');
+                    <td >	<?php 	echo form_open('receivings/reprint_check');
                         echo form_input	(array	(
                                 'name'			=>	'reprint_code',
                                 'id'			=>	'reprint_code',

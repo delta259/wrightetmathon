@@ -7,9 +7,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 ?>
 <fieldset id="item_basic_info">
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_name').':', 'name',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie' >
+			<div class='md-form-input' >
 			<?php echo form_input(array(
 				'name'=>'name',
 				'id'=>'name')
@@ -17,9 +17,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_category').':', 'category',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'category',
 				'id'=>'category')
@@ -27,16 +27,16 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_supplier').':', 'supplier',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_dropdown('supplier_id', $suppliers, '');?>
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_cost_price').':', 'cost_price',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'cost_price',
 				'size'=>'8',
@@ -45,9 +45,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_unit_price').':', 'unit_price',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'unit_price',
 				'size'=>'8',
@@ -56,9 +56,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_tax_1').':', 'tax_percent_1',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'tax_names[]',
 				'id'=>'tax_name_1',
@@ -66,7 +66,7 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 				'value'=> isset($item_tax_info[0]['name']) ? $item_tax_info[0]['name'] : $this->config->item('default_tax_1_name'))
 			);?>
 			</div>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'tax_percents[]',
 				'id'=>'tax_percent_name_1',
@@ -77,9 +77,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_tax_2').':', 'tax_percent_2',array('class'=>'wide')); ?>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'tax_names[]',
 				'id'=>'tax_name_2',
@@ -87,7 +87,7 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 				'value'=> isset($item_tax_info[1]['name']) ? $item_tax_info[1]['name'] : '')
 			);?>
 			</div>
-			<div class='zone_champ_saisie'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'tax_percents[]',
 				'id'=>'tax_percent_name_2',
@@ -101,9 +101,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 
 	<fieldset>
 		<legend> <?php echo $this->lang->line('items_reorder'); ?> </legend>
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_reorder_policy').' Y/N :', 'reorder_policy',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'reorder_policy',
 				'id'=>'reorder_policy')
@@ -111,9 +111,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_reorder_level').':', 'reorder_level',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'reorder_level',
 				'id'=>'reorder_level')
@@ -121,9 +121,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_reorder_quantity').':', 'reorder_quantity',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'reorder_quantity',
 				'id'=>'reorder_quantity')
@@ -131,9 +131,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_reorder_pack_size').':', 'reorder_pack_size',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'reorder_pack_size',
 				'id'=>'reorder_pack_size')
@@ -144,9 +144,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 
 	<fieldset>
 		<legend> <?php echo $this->lang->line('items_dluo_indicator'); ?> </legend>
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_dluo_indicator').':', 'dluo_indicator',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'dluo_indicator',
 				'id'=>'dluo_indicator')
@@ -157,9 +157,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 
 	<fieldset>
 		<legend> <?php echo $this->lang->line('items_giftcard_indicator'); ?> </legend>
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_giftcard_indicator').':', 'giftcard_indicator',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'giftcard_indicator',
 				'id'=>'giftcard_indicator')
@@ -170,12 +170,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 
 	<fieldset>
 		<legend> <?php echo $this->lang->line('items_DynamicKit'); ?> </legend>
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_DynamicKit').'  =>  '.$this->lang->line('items_kit_reference').':', 'DynamicKit',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_dropdown('DynamicKit', $DynamicKit_choices);?>
 			</div>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'kit_reference',
 				'id'=>'kit_reference')
@@ -184,9 +184,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 	</fieldset>
 
 	<fieldset>
-		<div class="field_row clearfix">	
+		<div class="md-form-group">	
 		<?php echo form_label($this->lang->line('items_location').':', 'location',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'location',
 				'id'=>'location')
@@ -194,9 +194,9 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_description').':', 'description',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_textarea(array(
 				'name'=>'description',
 				'id'=>'description',
@@ -206,16 +206,16 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_allow_alt_desciption').':', 'allow_alt_description',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_dropdown('allow_alt_description', $allow_alt_desciption_choices);?>
 			</div>
 		</div>
 
-		<div class="field_row clearfix">
+		<div class="md-form-group">
 		<?php echo form_label($this->lang->line('items_is_serialized').':', 'is_serialized',array('class'=>'wide')); ?>
-			<div class='form_field'>
+			<div class='md-form-input'>
 			<?php echo form_dropdown('is_serialized', $serialization_choices);?>
 			</div>
 		</div>
@@ -225,12 +225,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 	<!-- end Wright added -->
 
 	<!--  GARRISON ADDED 4/21/2013 -->
-	<div class="field_row clearfix">	
+	<div class="md-form-group">	
 	<?php
 	if($this->config->item('custom1_name') != NULL)
 	{
 		echo form_label($this->config->item('custom1_name').':', 'custom1',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom1',
 				'id'=>'custom1')
@@ -239,12 +239,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom2_name') != NULL)
 	{
 		echo form_label($this->config->item('custom2_name').':', 'custom2',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom2',
 				'id'=>'custom2')
@@ -253,12 +253,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom3_name') != NULL)
 	{
 		echo form_label($this->config->item('custom3_name').':', 'custom3',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom3',
 				'id'=>'custom3')
@@ -267,12 +267,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom4_name') != NULL)
 	{
 		echo form_label($this->config->item('custom4_name').':', 'custom4',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom4',
 				'id'=>'custom4')
@@ -281,12 +281,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom5_name') != NULL)
 	{
 		echo form_label($this->config->item('custom5_name').':', 'custom5',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom5',
 				'id'=>'custom5')
@@ -295,12 +295,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom6_name') != NULL)
 	{
 		echo form_label($this->config->item('custom6_name').':', 'custom6',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom6',
 				'id'=>'custom6')
@@ -309,12 +309,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom7_name') != NULL)
 	{
 		echo form_label($this->config->item('custom7_name').':', 'custom7',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom7',
 				'id'=>'custom7')
@@ -323,12 +323,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom8_name') != NULL)
 	{
 		echo form_label($this->config->item('custom8_name').':', 'custom8',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom8',
 				'id'=>'custom8')
@@ -337,12 +337,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom9_name') != NULL)
 	{
 		echo form_label($this->config->item('custom9_name').':', 'custom9',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom9',
 				'id'=>'custom9')
@@ -351,12 +351,12 @@ echo form_open('items/bulk_update/',array('id'=>'item_form'));
 		</div>
 	<?php }//end if?>
 
-	<div class="field_row clearfix">
+	<div class="md-form-group">
 	<?php
 	if($this->config->item('custom10_name') != NULL)
 	{
 		echo form_label($this->config->item('custom10_name').':', 'custom10',array('class'=>'wide')); ?>
-		<div class='form_field'>
+		<div class='md-form-input'>
 			<?php echo form_input(array(
 				'name'=>'custom10',
 				'id'=>'custom10')

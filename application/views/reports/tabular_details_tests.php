@@ -26,7 +26,7 @@ if($export_excel == 1){
 
                         <h2><?php echo $title; ?> </h2>
 
-                        <div class="body_cadre_gris">
+                        <div class="body_page">
 
 <div id="page_title" style="margin-bottom:8px;">
 <?php 

@@ -49,7 +49,7 @@
                             <?php echo form_input(array(
                                 'name' => 'category_name',
                                 'id' => 'category_name',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => $this->lang->line('categories_category_name'),
                                 'value' => $_SESSION['transaction_info']->category_name ?? ''
                             )); ?>
@@ -65,7 +65,7 @@
                                 'name' => 'category_pack_size',
                                 'id' => 'category_pack_size',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'style' => 'text-align: right;',
                                 'value' => $_SESSION['transaction_info']->category_pack_size ?? ''
                             )); ?>
@@ -76,7 +76,7 @@
                                 'name' => 'category_min_order_qty',
                                 'id' => 'category_min_order_qty',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'style' => 'text-align: right;',
                                 'value' => $_SESSION['transaction_info']->category_min_order_qty ?? ''
                             )); ?>
@@ -112,7 +112,7 @@
                                 'category_update_sales_price',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['selected_update_sales_price'] ?? 'N',
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;">
@@ -121,7 +121,7 @@
                                 'category_defect_indicator',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['selected_defect_indicator'] ?? 'N',
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                                 'category_offer_indicator',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['selected_offer_indicator'] ?? 'N',
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;"></div>

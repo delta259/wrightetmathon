@@ -69,7 +69,7 @@ $(document).ready	(
 		<!-- show the kit structure -->
 		<fieldset style="margin-top:5px; border:1px solid #0A6184; border-radius:8px; box-shadow:0 0 15px #0A6184">
 			
-			<table class="table_center">
+			<table>
 				<caption style="text-align:center;font-size:20px;font-weight:bold;color:#161FDA"><?php echo $this->lang->line('common_manage').' '.$this->lang->line('items_kit_detail'); ?></caption>
 				<thead>
 					<tr>
@@ -111,7 +111,7 @@ $(document).ready	(
 																														'name'		=>	'add_kit_detail',
 																														'id'		=>	'add_kit_detail',
 																														'value'		=>	$this->lang->line('common_submit'),
-																														'class'		=>	'submit_button float_right'
+																														'class'		=>	'btsubmit'
 																														);
 																								echo form_submit($form_submit);
 																								echo form_close();

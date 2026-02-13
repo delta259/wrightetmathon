@@ -26,10 +26,7 @@
 
                         <div class="body_colonne">
                             <h2><?php echo $this->lang->line('modules_home');?></h2>
-                            <div class="body_cadre_gris">
-
-
-				<table class="table_center">			
+				<table>			
 					<tbody>
 						<tr>
 							<td align="center"><h3><a <?php echo site_url('home/user');?>><?php echo $this->lang->line('login_user_menu'); ?></a></h3></td>
@@ -57,7 +54,6 @@
 					</tbody>
 				</table>
 
-                            </div>
                         </div>
 
                     </div>

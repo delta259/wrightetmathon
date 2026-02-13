@@ -29,10 +29,10 @@ $(document).ready(function()
 			// when clicked use the controller, selecting method save and passing it the item ID. 
 			echo form_open('login/first_use_setup');
 			?>
-				<table class="table_center">			
+				<table>			
 					<tbody>
 						<td>
-							<table class="table_center">
+							<table>
 								<tr>
 									<td align="center"><?php echo form_label($this->lang->line('branches_branch_code'), 'branch_code', array('class'=>'required')); ?></td>
 									<td align="center"><?php echo form_label($this->lang->line('branches_branch_description'), 'branch_description', array('class'=>'required')); ?></td>
@@ -100,7 +100,7 @@ $(document).ready(function()
 																'name'	=>	'submit',
 																'id'	=>	'submit',
 																'value'	=>	$this->lang->line('common_submit'),
-																'class'	=>	'customer_submit_button'
+																'class'	=>	'btsubmit'
 																)
 													);
 			?>

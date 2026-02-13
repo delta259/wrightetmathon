@@ -115,30 +115,29 @@
 							</tr>-->
 
 							<tr class="table-row">
-								<td class="zone_champ_obligatoire"><?php echo form_input(array	(
+								<td><?php echo form_input(array	(
 																'name'			=>	'merge_from_id',
 																'id'			=>	'merge_from_id',
 																'style'			=>	'font-size:15px;',
 																'placeholder'	=>	'Client ID 1 ',
 																'value'			=>	$_SESSION['transaction_info']->merge_from_id
 																));?>
-                                    <a class="btaide" title="<?php echo 'Client ID 1';?>"></a>
+
 								</td>
-								<td class="zone_champ_obligatoire"><?php echo form_input(array	(
+								<td><?php echo form_input(array	(
 																'name'			=>	'merge_to_id',
 																'id'			=>	'merge_to_id',
 																'style'			=>	'font-size:15px;',
 																'placeholder'	=>	'Client ID 2',
 																'value'			=>	$_SESSION['transaction_info']->merge_to_id
 																));?>
-                                    <a class="btaide" title="<?php echo 'Client ID 2';?>"></a>
+
 								</td>
 							</tr>
 						</tbody>
 					</table>
             </fieldset>
             <div id="required_fields_message" class="obligatoire">
-                <a class="btobligatoire" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
                 <?php echo $this->lang->line('common_fields_required_message'); ?>
             </div>
 

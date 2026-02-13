@@ -110,7 +110,6 @@ foreach ($targets_rows as $r) {
 .tgt-header .btn-group-modern { display: flex; gap: 0.4em; }
 </style>
 
-<div class="body_cadre_gris">
 <div class="tgt-page">
 <div class="tgt-card">
 
@@ -209,8 +208,6 @@ foreach ($targets_rows as $r) {
 
 <!-- Messages -->
 <?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
-
-</div>
 
 <script>
 $(document).ready(function() {

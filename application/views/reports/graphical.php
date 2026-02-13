@@ -27,7 +27,6 @@
                             <h2><?php echo $title; ?></h2>
 <!-- Output the titles -->
 <!-- -->
-<div class="body_cadre_gris">
 	<div id="page_title" style="margin-bottom:8px;"><?php include('../wrightetmathon/application/views/partial/show_buttons.php'); ?></div>
 	<div id="page_subtitle" style="margin-bottom:8px;"><h3><?php echo $subtitle ?></h3></div>
 

@@ -48,7 +48,7 @@
                             <?php echo form_input(array(
                                 'name' => 'column_letter',
                                 'id' => 'column_letter',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'A, B, C...',
                                 'value' => $_SESSION['transaction_info']->column_letter,
                                 'maxlength' => 3
@@ -59,7 +59,7 @@
                             <?php echo form_input(array(
                                 'name' => 'column_label',
                                 'id' => 'column_label',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'Libellé de la colonne',
                                 'value' => $_SESSION['transaction_info']->column_label
                             )); ?>
@@ -74,7 +74,7 @@
                                 'name' => 'column_number',
                                 'id' => 'column_number',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1, 2, 3...',
                                 'value' => $_SESSION['transaction_info']->column_number
                             )); ?>
@@ -85,7 +85,7 @@
                                 'column_data_type',
                                 $_SESSION['C']->data_type_pick_list,
                                 $_SESSION['transaction_info']->column_data_type,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                                 'column_database_field_name',
                                 $_SESSION['C']->column_database_field_name_pick_list,
                                 array_search($_SESSION['transaction_info']->column_database_field_name, $_SESSION['C']->column_database_field_name_pick_list),
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>

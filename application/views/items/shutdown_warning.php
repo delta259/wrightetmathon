@@ -46,7 +46,7 @@
 			<?php 
 				echo form_open("home/shutdown_all");
 				?>
-					<table class="table_center">
+					<table>
 						<thead>
 							<tr>
 								<th><?php //echo $this->lang->line('sales_CN_select_invoice'); ?></th>

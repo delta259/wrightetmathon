@@ -6,7 +6,7 @@
 
 
 
-<div class="body_cadre_gris">
+<div class="body_page">
 
     <div id="pr"   style="width: 1000px; background:white;">
         <?php

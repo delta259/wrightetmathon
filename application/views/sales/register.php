@@ -484,7 +484,7 @@ css can be found in pos-register.css and modern-theme.css
                                         <td><?php echo $cart_line->quantity;?></td>
                                         <td style="text-align:right;"><?php echo number_format($cart_line->line_priceTTC, 2); ?></td>
 
-                                        <td class="zone_champ_saisie_1">
+                                        <td>
                                             <?php
                                             $qty_val = round(number_format($cart_line->line_quantity, 2), 0);
                                             echo form_input(array(
@@ -499,7 +499,7 @@ css can be found in pos-register.css and modern-theme.css
                                             ?>
                                         </td>
 
-                                        <td class="zone_champ_saisie">
+                                        <td>
                                             <?php
                                             if ($cart_line->line_discount == 0 AND $_SESSION['CSI']['CT'][$line]->CN_line != 'Y')
                                             {
@@ -520,7 +520,7 @@ css can be found in pos-register.css and modern-theme.css
                                             ?>
                                         </td>
 
-                                        <td class="zone_champ_saisie">
+                                        <td>
                                             <?php
                                             if ($_SESSION['CSI']['CT'][$line]->CN_line == 'Y')
                                             {
@@ -859,7 +859,7 @@ css can be found in pos-register.css and modern-theme.css
                                 ?>
                                 <tr class="pos-discount-row">
                                     <td class="pos-totals-label"><?php echo $this->lang->line('sales_discount').$this->lang->line('common_space').$this->lang->line('sales_discount_percentage');?></td>
-                                    <td class="pos-totals-value zone_champ_saisie"><?php echo form_input(array(
+                                    <td class="pos-totals-value"><?php echo form_input(array(
                                         'name'  => 'overall_discount_percentage',
                                         'id'    => 'overall_discount_percentage',
                                         'value' => $_SESSION['CSI']['SHV']->overall_discount,

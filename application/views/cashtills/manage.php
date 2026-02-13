@@ -122,7 +122,6 @@ if ($till_final == 1) {
 .ct-icon-movements { background: rgba(139,92,246,0.12); color: #7c3aed; }
 </style>
 
-<div class="body_cadre_gris">
 <div class="ct-page">
 <div class="ct-card">
 
@@ -286,9 +285,7 @@ if (!isset($_SESSION['show_dialog']) || $_SESSION['show_dialog'] == 0) {
 </div><!-- /ct-card -->
 </div><!-- /ct-page -->
 
-</div><!-- /body_cadre_gris -->
-
-<!-- Modal dialogs (outside body_cadre_gris to avoid overflow:hidden clipping) -->
+<!-- Modal dialogs -->
 <?php
 switch ($_SESSION['show_dialog'] ?? 0)
 {

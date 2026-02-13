@@ -23,12 +23,12 @@
         <div class="vendor-login-form">
             <div class="vendor-login-field">
                 <label for="pseudo"><?php echo $this->lang->line('sales_user'); ?></label>
-                <input type="text" class="colorobligatoire" name="pseudo" id="pseudo" placeholder="<?php echo $this->lang->line('sales_user'); ?>" autofocus>
+                <input type="text" class="md-form-input" name="pseudo" id="pseudo" placeholder="<?php echo $this->lang->line('sales_user'); ?>" autofocus>
             </div>
 
             <div class="vendor-login-field">
                 <label for="password"><?php echo $this->lang->line('sales_password'); ?></label>
-                <input type="password" class="colorobligatoire" name="password" id="password" placeholder="<?php echo $this->lang->line('sales_password'); ?>">
+                <input type="password" class="md-form-input" name="password" id="password" placeholder="<?php echo $this->lang->line('sales_password'); ?>">
             </div>
         </div>
 

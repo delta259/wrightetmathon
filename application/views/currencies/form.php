@@ -48,7 +48,7 @@
                             <?php echo form_input(array(
                                 'name' => 'currency_name',
                                 'id' => 'currency_name',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'EUR, USD...',
                                 'value' => $_SESSION['transaction_info']->currency_name,
                                 'maxlength' => 15
@@ -59,7 +59,7 @@
                             <?php echo form_input(array(
                                 'name' => 'currency_description',
                                 'id' => 'currency_description',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'Euro, Dollar...',
                                 'value' => $_SESSION['transaction_info']->currency_description
                             )); ?>
@@ -73,7 +73,7 @@
                             <?php echo form_input(array(
                                 'name' => 'currency_code',
                                 'id' => 'currency_code',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => 'EUR',
                                 'value' => $_SESSION['transaction_info']->currency_code,
                                 'maxlength' => 10
@@ -84,7 +84,7 @@
                             <?php echo form_input(array(
                                 'name' => 'currency_sign',
                                 'id' => 'currency_sign',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '€',
                                 'value' => $_SESSION['transaction_info']->currency_sign,
                                 'maxlength' => 10
@@ -96,7 +96,7 @@
                                 'name' => 'currency_display_order',
                                 'id' => 'currency_display_order',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1',
                                 'value' => $_SESSION['transaction_info']->currency_display_order
                             )); ?>
@@ -111,7 +111,7 @@
                                 'currency_side',
                                 $_SESSION['LorR_pick_list'],
                                 $_SESSION['transaction_info']->currency_side,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;">
@@ -120,7 +120,7 @@
                                 'currency_tax',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['transaction_info']->currency_tax,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>

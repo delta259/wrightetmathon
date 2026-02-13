@@ -53,7 +53,7 @@
 				
 				?>
 				<form action="<?php echo site_url("/reports/dluo_future_date")?>" method="post" accept-chaset="utf-8" >
-					<table class="table_center">
+					<table>
 						<thead>
 							<tr>
 								<th><?php 

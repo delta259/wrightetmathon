@@ -9,9 +9,9 @@ echo form_open('items/create_label/'.$item_info->item_id, array('id'=>'item_form
 <fieldset id="item_basic_info">
 <legend><?php echo $this->lang->line("items_basic_information"); ?></legend>
 
-<div class="field_row clearfix">
+<div class="md-form-group">
 <?php echo form_label($this->lang->line('items_item_number').':', 'name',array('class'=>'wide')); ?>
-	<div class='form_field'>
+	<div class='md-form-input'>
 	<?php echo form_input(array(
 		'name'=>'item_number',
 		'id'=>'item_number',
@@ -20,11 +20,11 @@ echo form_open('items/create_label/'.$item_info->item_id, array('id'=>'item_form
 	</div>
 </div>
 
-<div class="field_row clearfix">
+<div class="md-form-group">
 <?php 
 
 	echo form_label($this->lang->line('items_name').':', 'name',array('class'=>'wide')); ?>
-	<div class='form_field'>
+	<div class='md-form-input'>
 	<?php echo form_input(array(
 		'name'=>'name',
 		'id'=>'name',
@@ -33,9 +33,9 @@ echo form_open('items/create_label/'.$item_info->item_id, array('id'=>'item_form
 	</div>
 </div>
 
-<div class="field_row clearfix">
+<div class="md-form-group">
 <?php echo form_label($this->lang->line('items_category').':', 'category',array('class'=>'wide')); ?>
-	<div class='form_field'>
+	<div class='md-form-input'>
 	<?php echo form_input(array(
 		'name'=>'category',
 		'id'=>'category',
@@ -44,9 +44,9 @@ echo form_open('items/create_label/'.$item_info->item_id, array('id'=>'item_form
 	</div>
 </div>
 
-<div class="field_row clearfix">
+<div class="md-form-group">
 <?php echo form_label($this->lang->line('sales_price').':', 'sales_price',array('class'=>'required wide')); ?>
-	<div class='form_field'>
+	<div class='md-form-input'>
 	<?php echo form_input(array(
 		'name'=>'sales_price',
 		'size'=>'8',

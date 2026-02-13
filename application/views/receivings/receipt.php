@@ -6,8 +6,6 @@
 
 
 
-<div class="body_cadre_gris">
-
     <div id="pr"   style="width: 1000px; background:white;">
         <?php
         if (isset($error_message))

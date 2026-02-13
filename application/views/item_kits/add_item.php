@@ -51,7 +51,7 @@
                 <div class="form-row" style="align-items: flex-end;">
                     <div class="form-group" style="flex: 0 0 150px;">
                         <label class="form-label required"><?php echo $this->lang->line('items_quantity'); ?></label>
-                        <input type="number" step="1" id="quantity" name="quantity" class="form-control colorobligatoire"
+                        <input type="number" step="1" id="quantity" name="quantity" class="form-control"
                                value="1" min="1" style="text-align: center;">
                     </div>
                     <div class="form-group">

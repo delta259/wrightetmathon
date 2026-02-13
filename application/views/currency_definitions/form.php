@@ -48,7 +48,7 @@
                             <?php echo form_input(array(
                                 'name' => 'denomination',
                                 'id' => 'denomination',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '0.01, 0.50, 5...',
                                 'value' => $_SESSION['transaction_info']->denomination
                             )); ?>
@@ -58,7 +58,7 @@
                             <?php echo form_input(array(
                                 'name' => 'display_name',
                                 'id' => 'display_name',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1 centime, 50 centimes, 5 euros...',
                                 'value' => $_SESSION['transaction_info']->display_name
                             )); ?>
@@ -73,7 +73,7 @@
                                 'name' => 'display_order',
                                 'id' => 'display_order',
                                 'type' => 'number',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1, 2, 3...',
                                 'value' => $_SESSION['transaction_info']->display_order
                             )); ?>
@@ -83,7 +83,7 @@
                             <?php echo form_input(array(
                                 'name' => 'multiplier',
                                 'id' => 'multiplier',
-                                'class' => 'form-control colorobligatoire',
+                                'class' => 'form-control',
                                 'placeholder' => '1, 100...',
                                 'value' => $_SESSION['transaction_info']->multiplier
                             )); ?>
@@ -98,7 +98,7 @@
                                 'type',
                                 $_SESSION['currency_type_pick_list'],
                                 $_SESSION['transaction_info']->type,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                         <div class="form-group" style="flex: 1;">
@@ -107,7 +107,7 @@
                                 'cashtill',
                                 $_SESSION['G']->YorN_pick_list,
                                 $_SESSION['transaction_info']->cashtill,
-                                'class="form-control colorobligatoire"'
+                                'class="form-control"'
                             ); ?>
                         </div>
                     </div>

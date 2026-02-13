@@ -32,7 +32,7 @@
                         <?php echo form_input(array(
                             'name' => 'name',
                             'id' => 'name',
-                            'class' => 'form-control colorobligatoire',
+                            'class' => 'form-control',
                             'placeholder' => $this->lang->line('item_kits_name'),
                             'value' => $_SESSION['transaction_info']->name ?? ''
                         )); ?>
@@ -42,7 +42,7 @@
                         <?php echo form_input(array(
                             'name' => 'description',
                             'id' => 'description',
-                            'class' => 'form-control colorobligatoire',
+                            'class' => 'form-control',
                             'placeholder' => $this->lang->line('item_kits_description'),
                             'value' => $_SESSION['transaction_info']->description ?? ''
                         )); ?>
@@ -58,7 +58,7 @@
                             'id' => 'unit_price_with_tax',
                             'type' => 'number',
                             'step' => '0.01',
-                            'class' => 'form-control colorobligatoire',
+                            'class' => 'form-control',
                             'style' => 'text-align: right;',
                             'value' => isset($_SESSION['transaction_info_pricelist'][0]['unit_price_with_tax']) ? $_SESSION['transaction_info_pricelist'][0]['unit_price_with_tax'] : 0
                         )); ?>
@@ -69,7 +69,7 @@
                             'category_id',
                             $_SESSION['category_pick_list'] ?? array(),
                             $_SESSION['selected_category'] ?? '',
-                            'class="form-control colorobligatoire"'
+                            'class="form-control"'
                         ); ?>
                     </div>
                     <div class="form-group" style="flex: 1;">

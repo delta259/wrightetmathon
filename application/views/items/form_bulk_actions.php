@@ -39,10 +39,10 @@
 	?>
     <fieldset class="fieldset">
 		<!-- show action dropdown picklist-->
-		<table class="table_center" style="border-collapse: separate; border-spacing:5px;">
+		<table style="border-collapse: separate; border-spacing:5px;">
 			<thead>
 				<tr>
-                    <th align="center" class='zone_champ_saisie'><h2><?php echo form_label($this->lang->line('items_bulk_picklist'), ' ', array('class'=>'')); ?></h2></th>
+                    <th align="center"><h2><?php echo form_label($this->lang->line('items_bulk_picklist'), ' ', array('class'=>'')); ?></h2></th>
 				</tr>
 			</thead>
 			<br>

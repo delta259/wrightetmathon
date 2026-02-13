@@ -25,10 +25,10 @@ if (!isset($_SESSION['show_dialog']))
 // when clicked use the controller, selecting method  
 			echo form_open_multipart('updates/manage_items_manual');
 			?>
-				<table class="table_center">			
+				<table>			
 					<tbody>
 						<td>
-							<table class="table_center">	
+							<table>	
 								<tr>			
 									<td align="center">	<?php 
 												echo $this->lang->line('common_choose_file');
@@ -74,7 +74,7 @@ if (!isset($_SESSION['show_dialog']))
 						</td>
 						
 						<td>
-							<table class="table_center">
+							<table>
 								<tr>
 									<td align="center" style="font-weight: bold; background-color:powderblue" colspan="5"><?php echo $this->lang->line('imports_data_model'); ?></td>
 								</tr>

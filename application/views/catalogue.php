@@ -16,9 +16,6 @@
     <h2><?php echo $this->lang->line('login_welcome_message').' '.$this->config->item('company'); ?></h2>
 
                     <!-- div body gris colonne Droite -->
-                    <div class="body_cadre_gris" >
-
-
 
 
 <!-- show the flah_info document -->
@@ -26,7 +23,6 @@
                         <object type="application/vnd.ms-excel" data="test_catalogue.xls" >
                             alt : <a href="test_catalogue.xls">test.xls</a>
                         </object>
-                    </div>
                     </div>
             </div>
     </main>

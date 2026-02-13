@@ -116,7 +116,7 @@
             border-collapse: separate;">
               <tbody>
                 <tr>
-                      <td  class="zone_champ_obligatoire"><?php echo form_input(array	(
+                      <td ><?php echo form_input(array	(
                         'name'		=>	'item_number',
                         'id'		=>	'item_number',
                         'style'		=>	'font-size:15px;',
@@ -125,10 +125,10 @@
                         'placeholder'=>  $this->lang->line('items_item_number'),
                         'value'		=>	$_SESSION['transaction_info']->item_number
                       ));?>
-                      <a class="btaide" id="" title="<?php echo $this->lang->line('items_item_number');?>"></a>
+
                     </td>
 
-                    <td colspan="3" class="zone_champ_obligatoire" ><?php echo form_input(array	(
+                    <td colspan="3" ><?php echo form_input(array	(
                       'name'		=>	'name',
                       'id'		=>	'name',
                       'style'		=>	'font-size:15px;',
@@ -136,7 +136,7 @@
                       'size'		=>	35,
                       'value'		=>	$_SESSION['transaction_info']->name
                     ));?>
-                    <a class="btaide" id="" title="<?php echo $this->lang->line('items_name');?>"></a>
+
                   </td>
 
 
@@ -144,7 +144,7 @@
 
       <tr>
 
-            <td class="zone_champ_obligatoire" ><?php echo form_label($this->lang->line('items_category'), 'category_id',array('class'=>'required wide')); ?>
+            <td ><?php echo form_label($this->lang->line('items_category'), 'category_id',array('class'=>'required wide')); ?>
 
             <?php echo form_dropdown	(
               'category_id',
@@ -153,9 +153,9 @@
               'style="margin-left:4px; margin-bottom:10px;font-size:15px"',
               'class="select_obligatoire"'
             );?>
-              <a class="btaide" id="" title="<?php echo $this->lang->line('items_category');?>"></a>
+
           </td>
-          <td  class="zone_champ_saisie"><?php echo form_input(array	(
+          <td ><?php echo form_input(array	(
             'name'		=>	'volume',
             'id'		=>	'volume',
             'style'		=>	'text-align:right; font-size:15px;',
@@ -164,9 +164,9 @@
             'title' => $this->lang->line('items_volume'),
             'value'		=>	$_SESSION['transaction_info']->volume
           )); echo 'MG/ML'; ?>
-          <a class="btaide" id="" title="<?php echo $this->lang->line('items_volume');?>"></a>
+
         </td>
-        <td class="zone_champ_saisie"><?php echo form_input(array	(
+        <td><?php echo form_input(array	(
           'name'		=>	'nicotine',
           'id'		=>	'nicotine',
           'style'		=>	'text-align:right; font-size:15px;',
@@ -175,7 +175,7 @@
           'title' =>$this->lang->line('items_nicotine'),
           'value'		=>	$_SESSION['transaction_info']->nicotine
         )); echo 'ML';?>
-        <a class="btaide" id="" title="<?php echo $this->lang->line('items_nicotine');?>"></a>
+
         </td>
 
 
@@ -188,7 +188,7 @@
     $_SESSION['selected_dluo_indicator'],
     'style="font-size:15px"','class="select_obligatoire"'
   );?>
-  <a class="btaide" id="" title="<?php echo $this->lang->line('items_dluo_indicator');?>"></a>
+
   </td>
   <td ><?php echo form_label($this->lang->line('items_offer_indicator').$this->lang->line('common_question'), 'offer_indicator', array('class'=>'required wide')); ?>
 
@@ -198,9 +198,9 @@
   $_SESSION['selected_offer_indicator'],
   'style="font-size:15px"','class="select_obligatoire"'
   );?>
-    <a class="btaide" id="" title="<?php echo $this->lang->line('items_offer_indicator');?>"></a>
+
   </td>
-      <td class="zone_champ_obligatoire"><?php echo $this->lang->line('items_tax_1'); ?>
+      <td><?php echo $this->lang->line('items_tax_1'); ?>
       <?php echo form_input(array	(
         'name'		=>	'tax_percent_1',
         'id'		=>	'tax_percent_1',
@@ -209,7 +209,6 @@
         'style'		=>	'text-align:right; font-size:15px;',
         'value'		=>	isset($_SESSION['item_tax_info[0]']->percent) ? $_SESSION['item_tax_info[0]']->percent : $this->config->item('default_tax_1_rate')
       ));?>
-      <a class="btaide" id="" title="<?php echo $this->lang->line('items_tax_1');?>"></a>
     </td>
 
 
@@ -237,7 +236,6 @@ border-collapse: separate;">
             $_SESSION['selected_export_to_franchise'],
             'style="font-size:15px"','class="select_obligatoire"'
           );?>
-          <a class="btaide" id="" title="<?php echo $this->lang->line('items_tax_1');?>"></a>
         </td>
         <td ><?php echo form_label($this->lang->line('items_export_to_integrated'), 'export_i',array('class'=>'required wide')); ?></td>
 
@@ -247,20 +245,20 @@ border-collapse: separate;">
           $_SESSION['selected_export_to_integrated'],
           'style="font-size:15px"'
         );?>
-        <a class="btaide" id="" title="<?php echo $this->lang->line('items_export_to_integrated');?>"></a>
+  
       </td>
 
       <td align="left"><?php echo form_label($this->lang->line('items_export_to_other'), 'export_o',array('class'=>'required wide')); ?></td>
 
-      <td align="left" class="zone_champ_obligatoire"><?php echo form_dropdown	(
+      <td align="left"><?php echo form_dropdown	(
         'export_to_other',
         $_SESSION['G']->YorN_pick_list,
         $_SESSION['selected_export_to_other'],
         'style="font-size:15px"','class="select_obligatoire"'
       );?>
-      <a class="btaide" id="" title="<?php echo $this->lang->line('items_export_to_other');?>"></a>
+
     </td>
-    <td  class="zone_champ_saisie" align="right"><?php echo form_input(array	(
+    <td  align="right"><?php echo form_input(array	(
       'name'		=>	'image_file_name',
       'id'		=>	'image_file_name',
       'style'		=>	'   margin-bottom: 3px;
@@ -270,7 +268,7 @@ border-collapse: separate;">
       'placeholder'=> $this->lang->line('items_image_file_name'),
       'value'		=>	$_SESSION['transaction_info']->image_file_name
     ));?>
-    <a class="btaide" id="" title="<?php echo $this->lang->line('items_image_file_name');?>"></a>
+
   </td>
 
 </tr></table>
@@ -278,7 +276,7 @@ border-collapse: separate;">
 
 
 
-  <table class="table_center" style="      border: solid 2px #000000;
+  <table style="      border: solid 2px #000000;
     padding: 10px;
     margin-top: 15px;
     margin-bottom: 15px;
@@ -339,7 +337,7 @@ border-collapse: separate;">
 </fieldset>
 
 <div id="required_fields_message" class="obligatoire">
-  <a class="btobligatoire" id="" title="<?php $this->lang->line('common_fields_required_message')?>"></a>
+
   <?php echo $this->lang->line('common_fields_required_message'); ?>
 </div>
 
