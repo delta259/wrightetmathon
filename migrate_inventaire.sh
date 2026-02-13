@@ -22,6 +22,7 @@
 #      7k. davfs2 + HiDrive (montage WebDAV pour sync notifications)
 #      7l. Cloudflare Tunnel (accès WAN HTTPS, caméra mobile, sans config routeur)
 #   8. Vérifications finales
+#   9. Afficheur client Bixolon BCD-2000K (ftdi_sio, udev, permissions)
 #
 # Traçabilité audit trail :
 #   - ospos_inventory_session_items.counted_by = employé qui a COMPTÉ l'article
@@ -1617,7 +1618,7 @@ fi
 # ÉTAPE 8 : VÉRIFICATIONS FINALES
 # =============================================================================
 
-log_info "Étape 8/8 : Vérifications finales..."
+log_info "Étape 8/9 : Vérifications finales..."
 
 # Vérifier les permissions
 chown -R apache:apache "$WEBROOT/application/views/inventaire/" 2>/dev/null
@@ -1703,6 +1704,68 @@ for f in "${CRITICAL_FILES[@]}"; do
     fi
 done
 
+# =============================================================================
+# ÉTAPE 9 : AFFICHEUR CLIENT BIXOLON BCD-2000K (ftdi_sio)
+# =============================================================================
+
+log_info "Étape 9 : Configuration afficheur Bixolon BCD-2000K..."
+
+# 9a. Charger le module ftdi_sio
+if ! lsmod | grep -q ftdi_sio; then
+    modprobe ftdi_sio 2>/dev/null
+    log_ok "Module ftdi_sio chargé"
+else
+    log_ok "Module ftdi_sio déjà chargé"
+fi
+
+# Charger ftdi_sio au démarrage
+if ! grep -q "ftdi_sio" /etc/modules-load.d/*.conf 2>/dev/null; then
+    echo "ftdi_sio" > /etc/modules-load.d/ftdi_sio.conf
+    log_ok "ftdi_sio ajouté au chargement automatique"
+else
+    log_ok "ftdi_sio déjà dans modules-load.d"
+fi
+
+# 9b. Règle udev pour auto-bind VID/PID Bixolon + permissions
+UDEV_RULE="/etc/udev/rules.d/99-bixolon-bcd2000.rules"
+cat > "$UDEV_RULE" << 'UDEV_EOF'
+# Bixolon BCD-2000K Customer Display — charger ftdi_sio + permissions
+ACTION=="add", ATTRS{idVendor}=="1504", ATTRS{idProduct}=="008c", RUN+="/sbin/modprobe -q ftdi_sio", RUN+="/bin/sh -c 'echo 1504 008c > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'", MODE="0666"
+UDEV_EOF
+udevadm control --reload-rules 2>/dev/null
+log_ok "Règle udev Bixolon installée : $UDEV_RULE"
+
+# 9c. Ajouter apache au groupe dialout (accès /dev/ttyUSB*)
+if ! groups apache 2>/dev/null | grep -q dialout; then
+    usermod -a -G dialout apache 2>/dev/null
+    log_ok "Utilisateur apache ajouté au groupe dialout"
+    APACHE_RESTART_NEEDED=1
+else
+    log_ok "apache déjà dans le groupe dialout"
+fi
+
+# 9d. Permissions script bcd2000.py
+if [ -f "$WEBROOT/scripts/bcd2000.py" ]; then
+    chmod +x "$WEBROOT/scripts/bcd2000.py"
+    log_ok "scripts/bcd2000.py exécutable"
+else
+    log_warn "scripts/bcd2000.py non trouvé"
+fi
+
+# 9e. Binder le device si déjà branché
+if lsusb | grep -q "1504:008c"; then
+    echo "1504 008c" > /sys/bus/usb-serial/drivers/ftdi_sio/new_id 2>/dev/null
+    sleep 1
+    if [ -e /dev/ttyUSB0 ]; then
+        chmod 666 /dev/ttyUSB0
+        log_ok "Bixolon BCD-2000K détecté sur /dev/ttyUSB0"
+    else
+        log_warn "Bixolon détecté en USB mais /dev/ttyUSB0 non créé"
+    fi
+else
+    log_info "Bixolon BCD-2000K non branché — sera configuré au branchement"
+fi
+
 echo ""
 echo "============================================================"
 if [ $MISSING -eq 0 ] && [ $TABLES_OK -eq 1 ]; then
@@ -1722,8 +1785,9 @@ echo "    - application/models/inventory_session.php"
 echo "    - application/views/inventaire/*.php"
 echo ""
 echo "  Tests :"
-echo "    Web : http://localhost/wrightetmathon/index.php/inventaire"
-echo "    API : curl http://localhost/wrightetmathon/index.php/api_mobile/ping"
+echo "    Web       : http://localhost/wrightetmathon/index.php/inventaire"
+echo "    API       : curl http://localhost/wrightetmathon/index.php/api_mobile/ping"
+echo "    Afficheur : python3 $WEBROOT/scripts/bcd2000.py text 'HELLO' 'WORLD'"
 echo ""
 if [ -f "$WEBROOT/.cloudflare_tunnel_url" ]; then
     FINAL_TUNNEL=$(cat "$WEBROOT/.cloudflare_tunnel_url")
