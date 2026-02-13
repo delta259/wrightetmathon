@@ -3,27 +3,58 @@ class Giftcards extends CI_Controller
 {
 	function index()
 	{
+		// manage session
+		$_SESSION['controller_name'] = strtolower(get_class($this));
+
 		// get flash data
 		$data['success_or_failure']	=	$this->session->flashdata('success_or_failure');
 		$data['message']			=	$this->session->flashdata('message');
-		
+
+		$config						=	$this->Common_routines->set_up_pagination();
 		$config['base_url'] = site_url('/giftcards/index');
 		$config['total_rows'] = $this->Giftcard->count_all();
-		$config['per_page'] = '20';
-		$config['uri_segment'] = 3;
 		$this->pagination->initialize($config);
-		
-		$data['controller_name']=strtolower(get_class($this));
-		$data['form_width']=$this->get_form_width();
-		$data['manage_table']=get_giftcards_manage_table( $this->Giftcard->get_all( $config['per_page'], $this->uri->segment( $config['uri_segment'] ) ), $this );
-		$this->load->view('giftcards/manage',$data);
+
+		$data['controller_name'] = $_SESSION['controller_name'];
+		$data['links'] = $this->pagination->create_links();
+		$data['manage_table_data'] = $this->Giftcard->get_all($config['per_page'], $this->uri->segment($config['uri_segment']));
+		$this->load->view('giftcards/manage', $data);
 	}
 
 	function search()
 	{
-		$search=$this->input->post('search');
-		$data_rows=get_giftcards_manage_table_data_rows($this->Giftcard->search($search),$this);
-		echo $data_rows;
+		$search = $this->input->post('search');
+		$results = $this->Giftcard->search($search);
+		$html = '';
+		if ($results && $results->num_rows() > 0)
+		{
+			foreach ($results->result() as $gc)
+			{
+				$balance = $gc->value - $gc->value_used;
+				$bal_class = ($balance > 0) ? 'gc-badge-green' : 'gc-badge-red';
+				$html .= '<tr class="gc-row" data-href="'.site_url('giftcards/view/'.$gc->giftcard_id).'">';
+				$html .= '<td style="text-align:center;"><input type="checkbox" id="giftcard_'.$gc->giftcard_id.'" value="'.$gc->giftcard_id.'"></td>';
+				$html .= '<td><strong>'.htmlspecialchars($gc->giftcard_number).'</strong></td>';
+				$html .= '<td>'.htmlspecialchars($gc->last_name).'</td>';
+				$html .= '<td>'.htmlspecialchars($gc->first_name).'</td>';
+				$html .= '<td style="text-align:right;"><span class="gc-badge-blue">'.to_currency($gc->value).'</span></td>';
+				$html .= '<td style="text-align:right;">'.to_currency($gc->value_used).'</td>';
+				$html .= '<td style="text-align:right;"><span class="'.$bal_class.'">'.to_currency($balance).'</span></td>';
+				$html .= '<td style="text-align:center;">';
+				if ($gc->sale_id > 0) { $html .= '<a href="'.site_url('sales/receipt/'.$gc->sale_id).'" style="color:var(--primary,#2563eb);">'.$gc->sale_id.'</a>'; }
+				$html .= '</td>';
+				$html .= '<td style="text-align:center;">'.htmlspecialchars($gc->sale_date).'</td>';
+				$html .= '<td style="text-align:center;"><a href="#" onclick="if(confirm(\''.$this->lang->line('giftcards_confirm_delete').'\'))'.'{window.location=\''.site_url('giftcards/delete_single/'.$gc->giftcard_id).'\';} return false;" style="text-decoration:none;"><svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></a></td>';
+				$html .= '</tr>';
+			}
+		}
+		else
+		{
+			$html .= '<tr><td colspan="10" style="text-align:center;padding:20px;color:#64748b;">';
+			$html .= $this->lang->line('common_no_persons_to_display');
+			$html .= '</td></tr>';
+		}
+		echo $html;
 	}
 
 	/*
@@ -53,9 +84,21 @@ class Giftcards extends CI_Controller
 
 	function view($giftcard_id=-1)
 	{
-		$data['giftcard_info']=$this->Giftcard->get_info($giftcard_id);
+		$_SESSION['show_dialog'] = 1;
+		$_SESSION['giftcard_info'] = $this->Giftcard->get_info($giftcard_id);
 
-		$this->load->view("giftcards/form",$data);
+		if ($giftcard_id == -1)
+		{
+			$_SESSION['$title'] = $this->lang->line('giftcards_new');
+			$_SESSION['new'] = 1;
+		}
+		else
+		{
+			$_SESSION['$title'] = $this->lang->line('common_edit').' '.$_SESSION['giftcard_info']->giftcard_number;
+			unset($_SESSION['new']);
+		}
+
+		redirect('giftcards');
 	}
 	
 	function save($giftcard_id=-1)
@@ -173,6 +216,21 @@ class Giftcards extends CI_Controller
 		}
 	}
 		
+	function delete_single($giftcard_id)
+	{
+		if ($this->Giftcard->delete($giftcard_id))
+		{
+			$this->session->set_flashdata('success_or_failure', 'S');
+			$this->session->set_flashdata('message', $this->lang->line('giftcards_successful_deleted'));
+		}
+		else
+		{
+			$this->session->set_flashdata('success_or_failure', 'F');
+			$this->session->set_flashdata('message', $this->lang->line('giftcards_cannot_be_deleted'));
+		}
+		redirect('giftcards');
+	}
+
 	/*
 	get the width for the add/edit form
 	*/

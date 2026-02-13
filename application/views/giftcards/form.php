@@ -1,111 +1,80 @@
+<?php $this->load->view("partial/header_popup"); ?>
 
+<dialog open class="fenetre modale cadre" style="width:500px;">
 
-<div id="required_fields_message" style="font-size:20px;font-weight:bold">
-	<?php echo $this->lang->line('common_fields_required_message'); ?>
-	<br>
-	<br>
-	<?php echo $this->lang->line('giftcards_strict'); ?>
-</div>
+    <!-- Header fenetre -->
+    <div class="fenetre-header">
+        <span id="page_title" class="fenetre-title">
+            <?php echo $_SESSION['$title'] ?? $this->lang->line('giftcards_new'); ?>
+        </span>
+        <?php include('../wrightetmathon/application/views/partial/show_exit.php'); ?>
+    </div>
 
-<ul id="error_message_box"></ul>
-<?php
-echo form_open('giftcards/save/'.$giftcard_info->giftcard_id,array('id'=>'giftcard_form'));
-?>
-<fieldset id="giftcard_basic_info" style="padding: 5px;">
-<legend><?php echo $this->lang->line("giftcards_basic_information"); ?></legend>
+    <!-- Content -->
+    <div class="fenetre-content" style="padding:16px 20px;">
 
-<div class="field_row clearfix">
-<?php echo form_label($this->lang->line('giftcards_giftcard_number').':', 'name',array('class'=>'required wide')); ?>
-	<div class='form_field'>
-	<?php echo form_input(array(
-		'name'=>'giftcard_number',
-		'id'=>'giftcard_number',
-		'value'=>$giftcard_info->giftcard_number)
-	);?>
-	</div>
-</div>
+        <?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
-<div class="field_row clearfix">
-<?php echo form_label($this->lang->line('giftcards_card_value').':', 'value',array('class'=>'required wide')); ?>
-	<div class='form_field'>
-	<?php echo form_input(array(
-		'name'=>'value',
-		'id'=>'value',
-		'value'=>$giftcard_info->value)
-	);?>
-	</div>
-</div>
+        <?php
+        $gc_info = $_SESSION['giftcard_info'] ?? new stdClass();
+        echo form_open('giftcards/save/'.($gc_info->giftcard_id ?? -1), array('id'=>'giftcard_form'));
+        ?>
 
-<div class="field_row clearfix">
-<?php echo form_label($this->lang->line('giftcards_sale_date').' : '.$this->lang->line('common_date_format'), 'sale_date',array('class'=>'required wide')); ?>
-	<div class='form_field'>
-	<?php echo form_input(array(
-		'name'=>'sale_date',
-		'id'=>'sale_date',
-		'value'=>$giftcard_info->sale_date)
-	);?>
-	</div>
-</div>
+        <div class="md-card" style="margin-bottom:12px;">
+            <div class="md-card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                <?php echo $this->lang->line('giftcards_basic_information'); ?>
+            </div>
+            <div class="md-form-row">
+                <div class="md-form-group" style="flex:1">
+                    <label class="md-form-label required"><?php echo $this->lang->line('giftcards_giftcard_number'); ?></label>
+                    <?php echo form_input(array(
+                        'name'=>'giftcard_number','id'=>'giftcard_number',
+                        'class'=>'md-form-input required',
+                        'placeholder'=>$this->lang->line('giftcards_giftcard_number'),
+                        'value'=>$gc_info->giftcard_number ?? ''
+                    )); ?>
+                </div>
+                <div class="md-form-group" style="flex:1">
+                    <label class="md-form-label required"><?php echo $this->lang->line('giftcards_card_value'); ?></label>
+                    <?php echo form_input(array(
+                        'name'=>'value','id'=>'value',
+                        'class'=>'md-form-input required',
+                        'placeholder'=>$this->lang->line('giftcards_card_value'),
+                        'value'=>$gc_info->value ?? ''
+                    )); ?>
+                </div>
+            </div>
+            <div class="md-form-row">
+                <div class="md-form-group" style="flex:0 0 200px;">
+                    <label class="md-form-label required"><?php echo $this->lang->line('giftcards_sale_date'); ?> (JJ/MM/AAAA)</label>
+                    <?php echo form_input(array(
+                        'name'=>'sale_date','id'=>'sale_date',
+                        'class'=>'md-form-input required',
+                        'placeholder'=>'JJ/MM/AAAA',
+                        'value'=>$gc_info->sale_date ?? ''
+                    )); ?>
+                </div>
+            </div>
+        </div>
 
-<?php
-echo form_submit(array(
-	'name'=>'submit',
-	'id'=>'submit',
-	'value'=>$this->lang->line('common_submit'),
-	'class'=>'submit_button float_right')
-);
-?>
-</fieldset>
-<?php
-echo form_close();
-?>
-<script type='text/javascript'>
+        <div id="required_fields_message" class="obligatoire" style="margin-bottom:10px;">
+            <?php echo $this->lang->line('common_fields_required_message'); ?>
+            <br><?php echo $this->lang->line('giftcards_strict'); ?>
+        </div>
 
-//validation and submit handling
-$(document).ready(function()
-{	
-	$('#giftcard_form').validate({
-		submitHandler:function(form)
-		{
-			form.submit();
-		},
-		
-		errorLabelContainer: "#error_message_box",
- 		wrapper: "li",
-		rules:
-		{
-			giftcard_number:
-			{
-				required:true,
-				number:true
-			},
-			sale_date:
-			{
-				required:true	
-			},
-			value:
-			{
-				required:true,
-				number:true
-			}
-   		},
-		messages:
-		{
-			giftcard_number:
-			{
-				required:"<?php echo $this->lang->line('giftcards_number_required'); ?>",
-				number:"<?php echo $this->lang->line('giftcards_number'); ?>"
-			},
-			value:
-			{
-				required:"<?php echo $this->lang->line('giftcards_value_required'); ?>",
-				number:"<?php echo $this->lang->line('giftcards_value'); ?>"
-			}
-			sale_date:
-			{
-				required:"<?php echo $this->lang->line('giftcards_sale_date_required'); ?>",
-			}
-		}
-	});
+        <div style="display:flex;justify-content:flex-end;gap:10px;">
+            <?php echo anchor('common_controller/common_exit/','<div class="btretour btlien">'.$this->lang->line('common_reset').'</div>','target="_self"'); ?>
+            <?php echo form_submit(array('name'=>'submit','id'=>'submit','value'=>$this->lang->line('common_submit'),'class'=>'btsubmit')); ?>
+        </div>
+
+        <?php echo form_close(); ?>
+
+    </div>
+</dialog>
+
+<script>
+$(document).ready(function() {
+    $('#giftcard_number').focus();
 });
 </script>

@@ -35,8 +35,7 @@ class Suppliers extends CI_controller
 		$data['links']				=	$this->pagination->create_links();	
 		$data['controller_name']	=	strtolower(get_class($this));
 		$data['form_width']			=	$this->get_form_width();
-		$create_headers				=	1;
-		$data['manage_table']		=	get_supplier_manage_table($this->Supplier->get_all($config['per_page'], $this->uri->segment($config['uri_segment'])), $this, $create_headers);
+		$data['manage_table_data']	=	$this->Supplier->get_all($config['per_page'], $this->uri->segment($config['uri_segment']));
 		
 		// show data
 		$this						->	load->view('suppliers/manage', $data);
@@ -48,9 +47,32 @@ class Suppliers extends CI_controller
 	function search()
 	{
 		$search						=	$this->input->post('search');
-		$create_headers				=	0;
-		$data_rows					=	get_supplier_manage_table($this->Supplier->search($search), $this, $create_headers);
-		echo $data_rows;
+		$results					=	$this->Supplier->search($search);
+		$html						=	'';
+		if ($results && $results->num_rows() > 0)
+		{
+			foreach ($results->result() as $supplier)
+			{
+				$html .= '<tr class="supplier-row" data-href="'.site_url('suppliers/view/'.$supplier->person_id).'">';
+				$html .= '<td style="text-align:center;"><input type="checkbox" id="'.$supplier->person_id.'" value="'.$supplier->person_id.'"></td>';
+				$html .= '<td><strong>'.htmlspecialchars($supplier->company_name).'</strong></td>';
+				$html .= '<td>'.htmlspecialchars($supplier->last_name).'</td>';
+				$html .= '<td>'.htmlspecialchars($supplier->first_name).'</td>';
+				$html .= '<td style="text-align:center;"><span style="background:#eff6ff;color:#1e40af;border:1px solid #3b82f6;padding:2px 8px;border-radius:12px;font-size:0.8rem;font-weight:500;">'.htmlspecialchars($supplier->account_number).'</span></td>';
+				$html .= '<td>'.htmlspecialchars($supplier->email).'</td>';
+				$html .= '<td style="text-align:center;">'.htmlspecialchars($supplier->phone_number).'</td>';
+				$html .= '<td style="text-align:center;"><a href="#" onclick="if(confirm(\''.$this->lang->line('suppliers_confirm_delete').'\'))'.'{window.location=\''.site_url('suppliers/delete/'.$supplier->person_id).'\';} return false;" title="'.$this->lang->line('suppliers_delete').'" style="text-decoration:none;"><svg width="18" height="18" fill="none" stroke="#ef4444" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></a></td>';
+				$html .= '</tr>';
+			}
+		}
+		else
+		{
+			$html .= '<tr><td colspan="8" style="text-align:center;padding:20px;color:#64748b;">';
+			$html .= '<svg width="40" height="40" fill="none" stroke="#94a3b8" stroke-width="1.5" viewBox="0 0 24 24" style="display:block;margin:0 auto 8px;"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>';
+			$html .= $this->lang->line('common_no_persons_to_display');
+			$html .= '</td></tr>';
+		}
+		echo $html;
 	}
 	
 	/*
@@ -220,8 +242,14 @@ class Suppliers extends CI_controller
 	/*
 	This deletes supplier from the suppliers table
 	*/
-	function delete()
+	function delete($supplier_id = null)
 	{
+		// If called from manage list with explicit ID, load supplier info into session
+		if ($supplier_id !== null)
+		{
+			$_SESSION['transaction_info'] = $this->Supplier->get_info($supplier_id);
+		}
+
 		if($this->Supplier->delete())
 		{
 			// set success message
@@ -232,7 +260,7 @@ class Suppliers extends CI_controller
 		{
 			$_SESSION['error_code']			=	'00350';
 		}
-		
+
 		redirect($_SESSION['controller_name']);
 	}
 	

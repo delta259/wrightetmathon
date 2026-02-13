@@ -282,8 +282,6 @@ if (($_SESSION['Stock_only'] ?? 1) != 1) {
 }
 ?>
 
-<div class="body_cadre_gris">
-
 <!-- Header bar -->
 <div class="rcv-header-bar">
     <div class="rcv-title-group">
@@ -645,8 +643,6 @@ if (($_SESSION['Stock_only'] ?? 1) != 1) {
 </div><!-- /rcv-sidebar -->
 
 </div><!-- /rcv-layout -->
-
-</div><!-- /body_cadre_gris -->
 
 </div><!-- /body_colonne -->
 </div><!-- /body_page -->

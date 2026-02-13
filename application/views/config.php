@@ -254,87 +254,67 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="tab-systeme" class="config-tab-panel" style="display:none">
 
-    <!-- Langue -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_language').':', 'language', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown('language', array(
-            'Azerbaijan'        => 'Azerbaijan',
-            'BahasaIndonesia'   => 'BahasaIndonesia',
-            'English'           => 'English',
-            'French'            => 'French',
-            'Spanish'           => 'Spanish',
-            'Russian'           => 'Russian'
-        ), $this->config->item('language'), 'class="colorobligatoire"'); ?>
-        </span>
+    <div class="md-grid-2eq">
+
+    <!-- Card : Localisation -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            Localisation
+        </div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_language'); ?></label>
+            <?php echo form_dropdown('language', array(
+                'Azerbaijan'=>'Azerbaijan','BahasaIndonesia'=>'BahasaIndonesia',
+                'English'=>'English','French'=>'French','Spanish'=>'Spanish','Russian'=>'Russian'
+            ), $this->config->item('language'), 'class="md-form-select"'); ?>
+        </div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('currencies_currency_name'); ?></label>
+            <?php echo form_dropdown('currency', $_SESSION['G']->currency_pick_list, $this->config->item('currency'), 'class="md-form-select"'); ?>
+        </div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_timezone'); ?></label>
+            <?php echo form_dropdown('timezone', $_SESSION['G']->timezone_pick_list, $this->config->item('timezone'), 'class="md-form-select"'); ?>
+        </div>
     </div>
 
-    <!-- Devise -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('currencies_currency_name').':', 'currency', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'currency',
-            $_SESSION['G']->currency_pick_list,
-            $this->config->item('currency'),
-            'style="text-align:center; font-size:16px" class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
+    <!-- Card : Formats -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Formats
+        </div>
 
-    <!-- Fuseau horaire -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_timezone').':', 'timezone', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'timezone',
-            $_SESSION['G']->timezone_pick_list,
-            $this->config->item('timezone'),
-            'style="text-align:center; font-size:16px" class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_dateformat'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'dateformat','id'=>'dateformat','class'=>'md-form-input required','style'=>'flex:1;','value'=>$this->config->item('dateformat'))); ?>
+                <span style="font-size:0.82em;color:var(--text-secondary,#64748b);white-space:nowrap;"><?php echo $this->lang->line('config_dateformatexample'); ?></span>
+            </div>
+        </div>
 
-    <!-- Format date -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_dateformat').':', 'dateformat', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'dateformat',
-            'id'=>'dateformat',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('dateformat'))); echo $this->lang->line('config_dateformatexample'); ?>
-        </span>
-    </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_timeformat'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'timeformat','id'=>'timeformat','class'=>'md-form-input required','style'=>'flex:1;','value'=>$this->config->item('timeformat'))); ?>
+                <span style="font-size:0.82em;color:var(--text-secondary,#64748b);white-space:nowrap;"><?php echo $this->lang->line('config_timeformatexample'); ?></span>
+            </div>
+        </div>
 
-    <!-- Format heure -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_timeformat').':', 'timeformat', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'timeformat',
-            'id'=>'timeformat',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('timeformat'))); echo $this->lang->line('config_timeformatexample'); ?>
-        </span>
-    </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_numberformat'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'numberformat','id'=>'numberformat','class'=>'md-form-input required','style'=>'flex:1;','value'=>$this->config->item('numberformat'))); ?>
+                <span style="font-size:0.82em;color:var(--text-secondary,#64748b);white-space:nowrap;"><?php echo $this->lang->line('config_numberformatexample'); ?></span>
+            </div>
+        </div>
 
-    <!-- Format numerique -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_numberformat').':', 'numberformat', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'numberformat',
-            'id'=>'numberformat',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('numberformat'))); echo $this->lang->line('config_numberformatexample'); ?>
-        </span>
-    </div>
-
-    <!-- Touchscreen toggle -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_touchscreen').':', 'touchscreen', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
+        <div class="md-form-group">
+            <label class="md-form-label"><?php echo $this->lang->line('config_touchscreen'); ?></label>
             <div class="md-toggle-group">
                 <label class="md-toggle">
                     <input type="hidden" name="touchscreen" value="0">
@@ -344,8 +324,10 @@
                 </label>
                 <span class="md-toggle-value"><?php echo ($this->config->item('touchscreen') == '1') ? 'ON' : 'OFF'; ?></span>
             </div>
-        </span>
+        </div>
     </div>
+
+    </div><!-- /md-grid-2eq -->
 
 </div>
 
@@ -354,56 +336,29 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="tab-ticket" class="config-tab-panel" style="display:none">
 
-    <!-- Message de politesse -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_polite_message').':', 'polite_message', array('class'=>'Fwide')); ?>
-        <div class='zone_champ_saisie'>
-        <?php echo form_textarea(array(
-            'name'=>'polite_message',
-            'id'=>'polite_message',
-            'rows'=>'10',
-            'cols'=>'30',
-            'value'=>$this->config->item('polite_message'))); ?>
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Messages du ticket
         </div>
-    </div>
 
-    <!-- Message de saison -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_season_message').':', 'season_message', array('class'=>'Fwide')); ?>
-        <div class='zone_champ_saisie'>
-        <?php echo form_textarea(array(
-            'name'=>'season_message',
-            'id'=>'season_message',
-            'rows'=>'10',
-            'cols'=>'30',
-            'value'=>$this->config->item('season_message'))); ?>
-        </div>
-    </div>
-
-    <!-- Message fidelite -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_fidelity_message').':', 'fidelity_message', array('class'=>'Fwide')); ?>
-        <div class='zone_champ_saisie'>
-        <?php echo form_textarea(array(
-            'name'=>'fidelity_message',
-            'id'=>'fidelity_message',
-            'rows'=>'10',
-            'cols'=>'30',
-            'value'=>$this->config->item('fidelity_message'))); ?>
-        </div>
-    </div>
-
-    <!-- Politique de retour -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('common_return_policy').':', 'return_policy', array('class'=>'Fwide required')); ?>
-        <div class='zone_champ_saisie'>
-        <?php echo form_textarea(array(
-            'name'=>'return_policy',
-            'id'=>'return_policy',
-            'rows'=>'10',
-            'cols'=>'30',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('return_policy'))); ?>
+        <div class="md-grid-2eq">
+            <div class="md-form-group">
+                <label class="md-form-label"><?php echo $this->lang->line('config_polite_message'); ?></label>
+                <?php echo form_textarea(array('name'=>'polite_message','id'=>'polite_message','rows'=>'6','class'=>'md-form-input','value'=>$this->config->item('polite_message'))); ?>
+            </div>
+            <div class="md-form-group">
+                <label class="md-form-label"><?php echo $this->lang->line('config_season_message'); ?></label>
+                <?php echo form_textarea(array('name'=>'season_message','id'=>'season_message','rows'=>'6','class'=>'md-form-input','value'=>$this->config->item('season_message'))); ?>
+            </div>
+            <div class="md-form-group">
+                <label class="md-form-label"><?php echo $this->lang->line('config_fidelity_message'); ?></label>
+                <?php echo form_textarea(array('name'=>'fidelity_message','id'=>'fidelity_message','rows'=>'6','class'=>'md-form-input','value'=>$this->config->item('fidelity_message'))); ?>
+            </div>
+            <div class="md-form-group">
+                <label class="md-form-label required"><?php echo $this->lang->line('common_return_policy'); ?></label>
+                <?php echo form_textarea(array('name'=>'return_policy','id'=>'return_policy','rows'=>'6','class'=>'md-form-input required','value'=>$this->config->item('return_policy'))); ?>
+            </div>
         </div>
     </div>
 
@@ -414,137 +369,80 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="tab-caisse" class="config-tab-panel" style="display:none">
 
-    <h3><?php echo $this->lang->line('config_cashtill_configuration'); ?></h3>
+    <div class="md-grid-2eq">
 
-    <!-- Verifier total caisse -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_cashtill_check_total').':', 'cashtill_check_total', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'cashtill_check_total',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('cashtill_check_total'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
+    <!-- Card : Configuration Caisse -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            <?php echo $this->lang->line('config_cashtill_configuration'); ?>
+        </div>
+
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_cashtill_check_total'); ?></label>
+                <?php echo form_dropdown('cashtill_check_total', $_SESSION['G']->YorN_pick_list, $this->config->item('cashtill_check_total'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_cashtill_total'); ?></label>
+                <?php echo form_input(array('name'=>'cashtill_total','id'=>'cashtill_total','class'=>'md-form-input required','style'=>'text-align:right;max-width:120px;','value'=>$this->config->item('cashtill_total'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_cashtill_allow_correction'); ?></label>
+                <?php echo form_dropdown('cashtill_allow_correction', $_SESSION['G']->YorN_pick_list, $this->config->item('cashtill_allow_correction'), 'class="md-form-select"'); ?>
+            </div>
+        </div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_cashtill_notification_email'); ?></label>
+            <?php echo form_input(array('name'=>'cashtill_notification_email','id'=>'cashtill_notification_email','class'=>'md-form-input required','value'=>$this->config->item('cashtill_notification_email'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_cashtill_notification_password'); ?></label>
+            <?php echo form_password(array('name'=>'cashtill_notification_password','id'=>'cashtill_notification_password','class'=>'md-form-input required','value'=>$this->config->item('cashtill_notification_password'))); ?>
+        </div>
     </div>
 
-    <!-- Total caisse -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_cashtill_total').':', 'cashtill_total', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'cashtill_total',
-            'id'=>'cashtill_total',
-            'style'=>'text-align:right',
-            'size'=>6,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('cashtill_total'))); ?>
-        </span>
+    <!-- Card : Fidelite -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <?php echo $this->lang->line('config_fidelity'); ?>
+        </div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_fidelity_rule_1'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'fidelity_rule','id'=>'fidelity_rule','class'=>'md-form-input required','style'=>'text-align:right;max-width:120px;','value'=>$this->config->item('fidelity_rule'))); ?>
+                <span style="font-size:0.82em;color:var(--text-secondary,#64748b);white-space:nowrap;"><?php echo $currency_info->currency_sign.' '.$this->lang->line('sales_TTC').' '.$this->lang->line('config_fidelity_rule_2'); ?></span>
+            </div>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_fidelity_value'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'fidelity_value','id'=>'fidelity_value','class'=>'md-form-input required','style'=>'text-align:right;max-width:120px;','value'=>$this->config->item('fidelity_value'))); ?>
+                <span style="font-size:0.82em;color:var(--text-secondary,#64748b);"><?php echo $currency_info->currency_sign.' '.$this->lang->line('sales_TTC'); ?></span>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_fidelity_minimum'); ?></label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <?php echo form_input(array('name'=>'fidelity_minimum','id'=>'fidelity_minimum','class'=>'md-form-input required','style'=>'text-align:right;max-width:100px;','value'=>$this->config->item('fidelity_minimum'))); ?>
+                    <span style="font-size:0.82em;color:var(--text-secondary,#64748b);"><?php echo $currency_info->currency_sign; ?></span>
+                </div>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_fidelity_maximum'); ?></label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <?php echo form_input(array('name'=>'fidelity_maximum','id'=>'fidelity_maximum','class'=>'md-form-input required','style'=>'text-align:right;max-width:100px;','value'=>$this->config->item('fidelity_maximum'))); ?>
+                    <span style="font-size:0.82em;color:var(--text-secondary,#64748b);"><?php echo $currency_info->currency_sign; ?></span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Correction caisse -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_cashtill_allow_correction').':', 'cashtill_allow_correction', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'cashtill_allow_correction',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('cashtill_allow_correction'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Notification email -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_cashtill_notification_email').':', 'cashtill_notification_email', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'cashtill_notification_email',
-            'id'=>'cashtill_notification_email',
-            'style'=>'text-align:left',
-            'size'=>60,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('cashtill_notification_email'))); ?>
-        </span>
-    </div>
-
-    <!-- Notification password -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_cashtill_notification_password').':', 'cashtill_notification_password', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_password(array(
-            'name'=>'cashtill_notification_password',
-            'id'=>'cashtill_notification_password',
-            'style'=>'text-align:left',
-            'size'=>60,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('cashtill_notification_password'))); ?>
-        </span>
-    </div>
-
-    <h3><?php echo $this->lang->line('config_fidelity'); ?></h3>
-
-    <!-- Regle fidelite -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_fidelity_rule_1').':', 'fidelity_rule', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'fidelity_rule',
-            'id'=>'fidelity_rule',
-            'style'=>'text-align:right',
-            'size'=>6,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('fidelity_rule')));
-            echo $currency_info->currency_sign.$this->lang->line('common_space').$this->lang->line('sales_TTC').$this->lang->line('common_space').$this->lang->line('config_fidelity_rule_2'); ?>
-        </span>
-    </div>
-
-    <!-- Valeur fidelite -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_fidelity_value').':', 'fidelity_value', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'fidelity_value',
-            'id'=>'fidelity_value',
-            'style'=>'text-align:right',
-            'size'=>6,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('fidelity_value')));
-            echo $currency_info->currency_sign.$this->lang->line('common_space').$this->lang->line('sales_TTC'); ?>
-        </span>
-    </div>
-
-    <!-- Minimum fidelite -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_fidelity_minimum').':', 'fidelity_minimum', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'fidelity_minimum',
-            'id'=>'fidelity_minimum',
-            'style'=>'text-align:right',
-            'size'=>6,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('fidelity_minimum')));
-            echo $currency_info->currency_sign.$this->lang->line('common_space').$this->lang->line('sales_TTC'); ?>
-        </span>
-    </div>
-
-    <!-- Maximum fidelite -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_fidelity_maximum').':', 'fidelity_maximum', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'fidelity_maximum',
-            'id'=>'fidelity_maximum',
-            'style'=>'text-align:right',
-            'size'=>6,
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('fidelity_maximum')));
-            echo $currency_info->currency_sign.$this->lang->line('common_space').$this->lang->line('sales_TTC'); ?>
-        </span>
-    </div>
+    </div><!-- /md-grid-2eq -->
 
 </div>
 
@@ -553,216 +451,108 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="tab-parametres" class="config-tab-panel" style="display:none">
 
-    <!-- DLUO -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_use_DLUO').':', 'use_DLUO', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'use_DLUO',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('use_DLUO'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
+    <div class="md-grid-2eq">
 
-    <!-- Grille tarifaire -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('pricelists_pricelist_name').' '.$this->lang->line('common_default').':', 'pricelist', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'pricelist_id',
-            $_SESSION['G']->pricelist_pick_list,
-            $this->config->item('pricelist_id'),
-            'style="text-align:center; font-size:16px" class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Profil client -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('customer_profiles_profile_name').' '.$this->lang->line('common_default').':', 'profile', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'profile_id',
-            $_SESSION['G']->profile_pick_list,
-            $this->config->item('profile_id'),
-            'style="text-align:center; font-size:16px" class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Client par defaut -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_default_client_id').':', 'default_client_id', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_client_id',
-            'id'=>'default_client_id',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_client_id'))); ?>
-        </span>
-    </div>
-
-    <!-- Afficher commentaires -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_person_show_comments').':', 'person_show_comments', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'person_show_comments',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('person_show_comments'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Fournisseur par defaut -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_default_supplier_id').':', 'default_supplier_id', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_supplier_id',
-            'id'=>'default_supplier_id',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_supplier_id'))); ?>
-        </span>
-    </div>
-
-    <!-- Sans fournisseur -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_no_supplier_id').':', 'no_supplier_id', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'no_supplier_id',
-            'id'=>'no_supplier_id',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('no_supplier_id'))); ?>
-        </span>
-    </div>
-
-    <!-- Entrepot par defaut -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_default_warehouse_code').':', 'default_warehouse_code', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_warehouse_code',
-            'id'=>'default_warehouse_code',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_warehouse_code'))); ?>
-        </span>
-    </div>
-
-    <!-- Historique -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_historique').':', 'historique', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'historique',
-            'id'=>'historique',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('historique'))); echo " (en jour)"; ?>
-        </span>
-    </div>
-
-    <!-- Prevision stock -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_nbre_jour_prevision_stock').':', 'nbre_jour_prevision_stock', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'nbre_jour_prevision_stock',
-            'id'=>'nbre_jour_prevision_stock',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('nbre_jour_prevision_stock'))); echo " (en jour)"; ?>
-        </span>
-    </div>
-
-    <!-- Multi vendeur -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_multi_vendeur').':', 'multi_vendeur', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'multi_vendeur',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('multi_vendeur'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Distributeur VapeSelf -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_distributeur_vapeself').':', 'distributeur_vapeself', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'distributeur_vapeself',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('distributeur_vapeself'),
-            'class="colorobligatoire"'
-        ); ?>
-        </span>
-    </div>
-
-    <!-- Code distributeur VapeSelf -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_distributeur_vapeself_code').':', 'distributeur_vapeself_code', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'distributeur_vapeself_code',
-            'id'=>'distributeur_vapeself_code',
-            'size'=>'5',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('distributeur_vapeself_code'))); ?>
-        </span>
-    </div>
-
-    <h3>Configuration Commande fournisseur</h3>
-
-    <!-- Email commande fournisseur -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_POemail').':', 'POemail', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'POemail',
-            'id'=>'POemail',
-            'class'=>'colorobligatoire',
-            'size'=>'60',
-            'value'=>$this->config->item('POemail'))); ?>
-        </span>
-    </div>
-
-    <!-- Mot de passe email PO -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_POemailpwd').':', 'POemailpwd', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'POemailpwd',
-            'id'=>'POemailpwd',
-            'class'=>'colorobligatoire',
-            'size'=>'60',
-            'value'=>$this->config->item('POemailpwd'))); ?>
-        </span>
-    </div>
-
-    <!-- Message commande fournisseur -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_POemailmsg').':', 'POemailmsg', array('class'=>'Fwide required')); ?>
-        <div class='zone_champ_saisie'>
-        <?php echo form_textarea(array(
-            'name'=>'POemailmsg',
-            'id'=>'POemailmsg',
-            'rows'=>'5',
-            'class'=>'colorobligatoire',
-            'cols'=>'70',
-            'value'=>$this->config->item('POemailmsg'))); ?>
+    <!-- Card : Valeurs par defaut -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/></svg>
+            Valeurs par defaut
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_use_DLUO'); ?></label>
+                <?php echo form_dropdown('use_DLUO', $_SESSION['G']->YorN_pick_list, $this->config->item('use_DLUO'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_person_show_comments'); ?></label>
+                <?php echo form_dropdown('person_show_comments', $_SESSION['G']->YorN_pick_list, $this->config->item('person_show_comments'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_multi_vendeur'); ?></label>
+                <?php echo form_dropdown('multi_vendeur', $_SESSION['G']->YorN_pick_list, $this->config->item('multi_vendeur'), 'class="md-form-select"'); ?>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('pricelists_pricelist_name').' '.$this->lang->line('common_default'); ?></label>
+                <?php echo form_dropdown('pricelist_id', $_SESSION['G']->pricelist_pick_list, $this->config->item('pricelist_id'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('customer_profiles_profile_name').' '.$this->lang->line('common_default'); ?></label>
+                <?php echo form_dropdown('profile_id', $_SESSION['G']->profile_pick_list, $this->config->item('profile_id'), 'class="md-form-select"'); ?>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_default_client_id'); ?></label>
+                <?php echo form_input(array('name'=>'default_client_id','id'=>'default_client_id','class'=>'md-form-input required','style'=>'max-width:100px;','value'=>$this->config->item('default_client_id'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_default_supplier_id'); ?></label>
+                <?php echo form_input(array('name'=>'default_supplier_id','id'=>'default_supplier_id','class'=>'md-form-input required','style'=>'max-width:100px;','value'=>$this->config->item('default_supplier_id'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_no_supplier_id'); ?></label>
+                <?php echo form_input(array('name'=>'no_supplier_id','id'=>'no_supplier_id','class'=>'md-form-input required','style'=>'max-width:100px;','value'=>$this->config->item('no_supplier_id'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_default_warehouse_code'); ?></label>
+                <?php echo form_input(array('name'=>'default_warehouse_code','id'=>'default_warehouse_code','class'=>'md-form-input required','style'=>'max-width:100px;','value'=>$this->config->item('default_warehouse_code'))); ?>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_historique'); ?></label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <?php echo form_input(array('name'=>'historique','id'=>'historique','class'=>'md-form-input required','style'=>'text-align:right;max-width:80px;','value'=>$this->config->item('historique'))); ?>
+                    <span style="font-size:0.82em;color:var(--text-secondary,#64748b);">jours</span>
+                </div>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_nbre_jour_prevision_stock'); ?></label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <?php echo form_input(array('name'=>'nbre_jour_prevision_stock','id'=>'nbre_jour_prevision_stock','class'=>'md-form-input required','style'=>'text-align:right;max-width:80px;','value'=>$this->config->item('nbre_jour_prevision_stock'))); ?>
+                    <span style="font-size:0.82em;color:var(--text-secondary,#64748b);">jours</span>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Card : VapeSelf & Commandes -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            VapeSelf &amp; Commandes fournisseur
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_distributeur_vapeself'); ?></label>
+                <?php echo form_dropdown('distributeur_vapeself', $_SESSION['G']->YorN_pick_list, $this->config->item('distributeur_vapeself'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_distributeur_vapeself_code'); ?></label>
+                <?php echo form_input(array('name'=>'distributeur_vapeself_code','id'=>'distributeur_vapeself_code','class'=>'md-form-input required','style'=>'max-width:100px;','value'=>$this->config->item('distributeur_vapeself_code'))); ?>
+            </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color,#e2e8f0);margin:12px 0;"></div>
+
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_POemail'); ?></label>
+            <?php echo form_input(array('name'=>'POemail','id'=>'POemail','class'=>'md-form-input required','value'=>$this->config->item('POemail'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_POemailpwd'); ?></label>
+            <?php echo form_input(array('name'=>'POemailpwd','id'=>'POemailpwd','class'=>'md-form-input required','value'=>$this->config->item('POemailpwd'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_POemailmsg'); ?></label>
+            <?php echo form_textarea(array('name'=>'POemailmsg','id'=>'POemailmsg','rows'=>'4','class'=>'md-form-input required','value'=>$this->config->item('POemailmsg'))); ?>
+        </div>
+    </div>
+
+    </div><!-- /md-grid-2eq -->
 
 </div>
 
@@ -771,231 +561,136 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div id="tab-technique" class="config-tab-panel" style="display:none">
 
-    <!-- Imprimante ticket -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_ticket_printer').':', 'ticket_printer', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'ticket_printer',
-            'id'=>'ticket_printer',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('ticket_printer'))); ?>
-        </span>
+    <div class="md-grid-2eq">
+
+    <!-- Card : Impression -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Impression
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_ticket_printer'); ?></label>
+            <?php echo form_input(array('name'=>'ticket_printer','id'=>'ticket_printer','class'=>'md-form-input required','value'=>$this->config->item('ticket_printer'))); ?>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:0 0 auto;">
+                <label class="md-form-label"><?php echo $this->lang->line('config_print_after_sale'); ?></label>
+                <div class="md-toggle-group">
+                    <label class="md-toggle">
+                        <input type="hidden" name="print_after_sale" value="0">
+                        <?php echo form_checkbox(array('name'=>'print_after_sale','id'=>'print_after_sale','value'=>'print_after_sale','checked'=>$this->config->item('print_after_sale'),'class'=>'md-toggle-input')); ?>
+                        <span class="md-toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label"><?php echo $this->lang->line('config_print_receipt_for_categories'); ?></label>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <?php echo form_input(array('name'=>'print_receipt_categories','id'=>'print_receipt_categories','class'=>'md-form-input','value'=>$this->config->item('print_receipt_categories'))); ?>
+                    <span style="font-size:0.78em;color:var(--text-secondary,#64748b);white-space:nowrap;"><?php echo $this->lang->line('config_print_receipt_for_categories_format'); ?></span>
+                </div>
+            </div>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_default_tax_rate_1'); ?></label>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <?php echo form_input(array('name'=>'default_tax_1_name','id'=>'default_tax_1_name','class'=>'md-form-input required','style'=>'max-width:150px;','value'=>$this->config->item('default_tax_1_name')!==FALSE ? $this->config->item('default_tax_1_name') : $this->lang->line('items_sales_tax_1'))); ?>
+                <?php echo form_input(array('name'=>'default_tax_1_rate','id'=>'default_tax_1_rate','class'=>'md-form-input','style'=>'max-width:80px;text-align:right;','value'=>$this->config->item('default_tax_1_rate'))); ?>
+                <span style="font-size:0.9em;font-weight:600;">%</span>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label"><?php echo $this->lang->line('config_create_stock_valuation_records'); ?></label>
+                <?php echo form_dropdown('createstockvaluationrecords', $_SESSION['G']->YorN_pick_list, $this->config->item('createstockvaluationrecords'), 'class="md-form-select"'); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label"><?php echo $this->lang->line('config_create_category_records'); ?></label>
+                <?php echo form_dropdown('createcategoryrecords', $_SESSION['G']->YorN_pick_list, $this->config->item('createcategoryrecords'), 'class="md-form-select"'); ?>
+            </div>
+        </div>
     </div>
 
-    <!-- Impression apres vente -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_print_after_sale').':', 'print_after_sale', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_checkbox(array(
-            'name'=>'print_after_sale',
-            'id'=>'print_after_sale',
-            'value'=>'print_after_sale',
-            'checked'=>$this->config->item('print_after_sale'))); ?>
-        </span>
+    <!-- Card : Repertoires -->
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+            Repertoires de stockage
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label"><?php echo $this->lang->line('config_POsavepath'); ?></label>
+            <?php echo form_input(array('name'=>'POsavepath','id'=>'POsavepath','class'=>'md-form-input','value'=>$this->config->item('POsavepath'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_RPsavepath'); ?></label>
+            <?php echo form_input(array('name'=>'RPsavepath','id'=>'RPsavepath','class'=>'md-form-input required','value'=>$this->config->item('RPsavepath'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_BUsavepath'); ?></label>
+            <?php echo form_input(array('name'=>'BUsavepath','id'=>'BUsavepath','class'=>'md-form-input required','value'=>$this->config->item('BUsavepath'))); ?>
+        </div>
+
+        <div style="border-top:1px solid var(--border-color,#e2e8f0);margin:12px 0;"></div>
+        <div style="font-size:0.78em;font-weight:600;text-transform:uppercase;color:var(--text-secondary,#64748b);margin-bottom:8px;">MaJ Prix Achat/Vente</div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:2">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_PPsavepath'); ?></label>
+                <?php echo form_input(array('name'=>'PPsavepath','id'=>'PPsavepath','class'=>'md-form-input required','value'=>$this->config->item('PPsavepath'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_PPfilename'); ?></label>
+                <?php echo form_input(array('name'=>'PPfilename','id'=>'PPfilename','class'=>'md-form-input required','value'=>$this->config->item('PPfilename'))); ?>
+            </div>
+        </div>
+        <div class="md-form-row">
+            <div class="md-form-group" style="flex:2">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_SPsavepath'); ?></label>
+                <?php echo form_input(array('name'=>'SPsavepath','id'=>'SPsavepath','class'=>'md-form-input required','value'=>$this->config->item('SPsavepath'))); ?>
+            </div>
+            <div class="md-form-group" style="flex:1">
+                <label class="md-form-label required"><?php echo $this->lang->line('config_SPfilename'); ?></label>
+                <?php echo form_input(array('name'=>'SPfilename','id'=>'SPfilename','class'=>'md-form-input required','value'=>$this->config->item('SPfilename'))); ?>
+            </div>
+        </div>
     </div>
 
-    <!-- Familles ticket -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_print_receipt_for_categories').':', 'print_receipt_categories', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'print_receipt_categories',
-            'id'=>'print_receipt_categories',
-            'value'=>$this->config->item('print_receipt_categories'))); echo $this->lang->line('config_print_receipt_for_categories_format'); ?>
-        </span>
+    </div><!-- /md-grid-2eq -->
+
+    <!-- Card : Etiquettes + Custom (full width) -->
+    <div class="md-grid-2eq" style="margin-top:12px;">
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            Etiquettes
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_label_font'); ?></label>
+            <?php echo form_input(array('name'=>'default_label_font','id'=>'default_label_font','class'=>'md-form-input required','value'=>$this->config->item('default_label_font'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_label_image'); ?></label>
+            <?php echo form_input(array('name'=>'default_label_image','id'=>'default_label_image','class'=>'md-form-input required','value'=>$this->config->item('default_label_image'))); ?>
+        </div>
+        <div class="md-form-group">
+            <label class="md-form-label required"><?php echo $this->lang->line('config_label_store'); ?></label>
+            <?php echo form_input(array('name'=>'default_label_store','id'=>'default_label_store','class'=>'md-form-input required','value'=>$this->config->item('default_label_store'))); ?>
+        </div>
     </div>
 
-    <!-- TVA par defaut -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_default_tax_rate_1').':', 'default_tax_1_rate', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_tax_1_name',
-            'id'=>'default_tax_1_name',
-            'class'=>'colorobligatoire',
-            'size'=>'10',
-            'value'=>$this->config->item('default_tax_1_name')!==FALSE ? $this->config->item('default_tax_1_name') : $this->lang->line('items_sales_tax_1'))); ?>
-        <?php echo form_input(array(
-            'name'=>'default_tax_1_rate',
-            'id'=>'default_tax_1_rate',
-            'size'=>'4',
-            'value'=>$this->config->item('default_tax_1_rate'))); ?>%
-        </span>
+    <div class="md-card">
+        <div class="md-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Configuration Custom
+        </div>
+        <?php for ($i = 2; $i <= 10; $i++) { ?>
+        <div class="md-form-group">
+            <label class="md-form-label"><?php echo $this->lang->line('config_custom'.$i); ?></label>
+            <?php echo form_input(array('name'=>'custom'.$i.'_name','id'=>'custom'.$i.'_name','class'=>'md-form-input','value'=>$this->config->item('custom'.$i.'_name'))); ?>
+        </div>
+        <?php } ?>
     </div>
-
-    <!-- Valorisation des stocks -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_create_stock_valuation_records').':', 'createstockvaluationrecords', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'createstockvaluationrecords',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('createstockvaluationrecords')
-        ); ?>
-        </span>
     </div>
-
-    <!-- Enregistrements familles -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_create_category_records').':', 'createcategoryrecords', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_dropdown(
-            'createcategoryrecords',
-            $_SESSION['G']->YorN_pick_list,
-            $this->config->item('createcategoryrecords')
-        ); ?>
-        </span>
-    </div>
-
-    <h3>Configuration des repertoires de stockage</h3>
-
-    <!-- Chemin commandes fournisseurs -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_POsavepath').':', 'POsavepath', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'POsavepath',
-            'id'=>'POsavepath',
-            'size'=>'60',
-            'value'=>$this->config->item('POsavepath'))); ?>
-        </span>
-    </div>
-
-    <!-- Chemin rapports -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_RPsavepath').':', 'RPsavepath', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'RPsavepath',
-            'id'=>'RPsavepath',
-            'class'=>'colorobligatoire',
-            'size'=>'60',
-            'value'=>$this->config->item('RPsavepath'))); ?>
-        </span>
-    </div>
-
-    <!-- Chemin sauvegardes -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_BUsavepath').':', 'BUsavepath', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'BUsavepath',
-            'id'=>'BUsavepath',
-            'class'=>'colorobligatoire',
-            'size'=>'60',
-            'value'=>$this->config->item('BUsavepath'))); ?>
-        </span>
-    </div>
-
-    <h3>MaJ Prix Achat/Vente</h3>
-
-    <!-- PP save path -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_PPsavepath').':', 'PPsavepath', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'PPsavepath',
-            'id'=>'PPsavepath',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('PPsavepath'))); ?>
-        </span>
-    </div>
-
-    <!-- PP filename -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_PPfilename').':', 'PPfilename', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'PPfilename',
-            'id'=>'PPfilename',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('PPfilename'))); ?>
-        </span>
-    </div>
-
-    <!-- SP save path -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_SPsavepath').':', 'SPsavepath', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'SPsavepath',
-            'id'=>'SPsavepath',
-            'class'=>'colorobligatoire',
-            'size'=>'60',
-            'value'=>$this->config->item('SPsavepath'))); ?>
-        </span>
-    </div>
-
-    <!-- SP filename -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_SPfilename').':', 'SPfilename', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'SPfilename',
-            'id'=>'SPfilename',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('SPfilename'))); ?>
-        </span>
-    </div>
-
-    <h3>Parametres des etiquettes</h3>
-
-    <!-- Police etiquette -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_label_font').':', 'default_label_font', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_label_font',
-            'id'=>'default_label_font',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_label_font'))); ?>
-        </span>
-    </div>
-
-    <!-- Image etiquette -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_label_image').':', 'default_label_image', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_label_image',
-            'id'=>'default_label_image',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_label_image'))); ?>
-        </span>
-    </div>
-
-    <!-- Chemin etiquettes -->
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_label_store').':', 'default_label_store', array('class'=>'Fwide required')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'default_label_store',
-            'id'=>'default_label_store',
-            'size'=>'60',
-            'class'=>'colorobligatoire',
-            'value'=>$this->config->item('default_label_store'))); ?>
-        </span>
-    </div>
-
-    <h3>Configuration Custom</h3>
-
-    <?php for ($i = 2; $i <= 10; $i++) { ?>
-    <div class="config_row clearfix">
-        <?php echo form_label($this->lang->line('config_custom'.$i).':', 'custom'.$i.'_name', array('class'=>'Fwide')); ?>
-        <span class='zone_champ_saisie'>
-        <?php echo form_input(array(
-            'name'=>'custom'.$i.'_name',
-            'id'=>'custom'.$i.'_name',
-            'value'=>$this->config->item('custom'.$i.'_name'))); ?>
-        </span>
-    </div>
-    <?php } ?>
 
 </div>
 
