@@ -1,10 +1,4 @@
-<style>
-.unified-header, .unified-footer { display: none !important; }
-.branch-form.md-modal-overlay { z-index: 10000; }
-.branch-form .md-modal { max-height: none !important; max-width: 700px; overflow: visible !important; }
-.branch-form .md-form-row { align-items: flex-end; }
-.branch-form .md-tab { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
-</style>
+<?php $this->load->view("partial/header"); ?>
 
 <?php
 $is_new  = (($_SESSION['new'] ?? 0) == 1);
@@ -12,10 +6,18 @@ $is_del  = (($_SESSION['del'] ?? 0) == 1);
 $is_undel = (($_SESSION['undel'] ?? 0) == 1);
 $info    = $_SESSION['transaction_info'];
 $title = 'Succursale';
+
+// Detect message class before show_messages unsets it
+$_branch_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_branch_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
 ?>
 
-<div class="md-modal-overlay branch-form">
-<div class="md-modal" style="max-width:700px;">
+<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
+
+<div style="max-width:700px; margin:20px auto;">
+<div class="md-modal" style="position:relative; max-height:none; overflow:visible;">
 
 <!-- ========== HEADER ========== -->
 <div class="md-modal-header">
@@ -30,21 +32,12 @@ $title = 'Succursale';
             <h2 class="md-modal-name" style="font-size:1.1em;"><?php echo $title; ?></h2>
         </div>
     </div>
-    <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+    <a href="<?php echo site_url('branches'); ?>" class="md-modal-close" title="Fermer">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
     </a>
 </div>
-
-<!-- ========== MESSAGES ========== -->
-<?php
-$_branch_msg_class = '';
-if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
-    $_branch_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
-}
-include('../wrightetmathon/application/views/partial/show_messages.php');
-?>
 
 <!-- ========== BODY ========== -->
 <div class="md-modal-body">
@@ -167,7 +160,7 @@ include('../wrightetmathon/application/views/partial/show_messages.php');
 <div class="md-modal-footer">
     <div class="md-modal-footer-left"></div>
     <div class="md-modal-footer-right">
-        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+        <a href="<?php echo site_url('branches'); ?>" class="md-btn md-btn-secondary">
             <?php echo $this->lang->line('common_reset'); ?>
         </a>
         <button type="submit" form="item_form" name="submit" id="submit" class="md-btn md-btn-primary">
@@ -182,21 +175,25 @@ include('../wrightetmathon/application/views/partial/show_messages.php');
 <?php endif; ?>
 
 </div><!-- /md-modal -->
-</div><!-- /md-modal-overlay -->
+</div><!-- /max-width wrapper -->
+
+<style>
+.branch-tab-panel .md-form-row { align-items: flex-end; }
+</style>
 
 <script type="text/javascript">
 $(document).ready(function() {
     // Tab switching
-    $('.branch-form .md-tab').on('click', function() {
+    $('.md-tab').on('click', function() {
         var target = $(this).data('tab');
-        $('.branch-form .md-tab').removeClass('md-tab-active');
+        $('.md-tab').removeClass('md-tab-active');
         $(this).addClass('md-tab-active');
         $('.branch-tab-panel').hide();
         $('#' + target).show();
     });
 
     <?php if ($_branch_msg_class === 'success_message'): ?>
-    // Auto-close modal after 1s on success
+    // Auto-redirect to manage page after 1s on success
     setTimeout(function(){ window.location.href = '<?php echo site_url("branches"); ?>'; }, 1000);
     <?php elseif ($is_new): ?>
     $('#branch_code').focus();
@@ -205,3 +202,6 @@ $(document).ready(function() {
     <?php endif; ?>
 });
 </script>
+
+<?php $this->load->view("partial/pre_footer"); ?>
+<?php $this->load->view("partial/footer"); ?>

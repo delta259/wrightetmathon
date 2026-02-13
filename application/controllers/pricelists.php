@@ -115,9 +115,6 @@ class Pricelists extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']								=	1;
-
 		// set data
 		switch ($pricelist_id)
 		{
@@ -145,7 +142,7 @@ class Pricelists extends CI_Controller
 			break;
 		}
 
-		redirect("pricelists");
+		$this->load->view('pricelists/form');
 	}
 
 	function save()
@@ -184,15 +181,16 @@ class Pricelists extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05080';
-					$this->												view($_SESSION['transaction_info']->pricelist_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05090';
-					$this->												view($_SESSION['transaction_info']->pricelist_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("pricelists");
 	}
 
 	function delete($pricelist_id)
@@ -220,8 +218,7 @@ class Pricelists extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']			=	'00030';
-			$_SESSION['show_dialog']		=	1;
-			redirect("pricelists");
+			redirect("pricelists/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check pricelist code duplicate only if new or changed
@@ -231,8 +228,7 @@ class Pricelists extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']		=	'05060';
-				$_SESSION['show_dialog']	=	1;
-				redirect("pricelists");
+				redirect("pricelists/view/" . $_SESSION['transaction_id']);
 			}
 		}
 
@@ -245,8 +241,7 @@ class Pricelists extends CI_Controller
 				if ($count > 0)
 				{
 					$_SESSION['error_code']		=	'05070';
-					$_SESSION['show_dialog']	=	1;
-					redirect("pricelists");
+					redirect("pricelists/view/" . $_SESSION['transaction_id']);
 				}
 			}
 		}

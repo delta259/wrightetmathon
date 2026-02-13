@@ -99,9 +99,6 @@ class Customer_profiles extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-
 		// set data
 		switch ($profile_id)
 		{
@@ -129,7 +126,7 @@ class Customer_profiles extends CI_Controller
 			break;
 		}
 
-		redirect															("customer_profiles");
+		$this->load->view('customer_profiles/form');
 	}
 
 	function save()
@@ -164,15 +161,16 @@ class Customer_profiles extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05320';
-					$this->												view($_SESSION['transaction_info']->profile_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05330';
-					$this->												view($_SESSION['transaction_info']->profile_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("customer_profiles");
 	}
 
 	function delete($profile_id)
@@ -199,8 +197,7 @@ class Customer_profiles extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']										=	'00030';
-			$_SESSION['show_dialog']									=	1;
-			redirect														("customer_profiles");
+			redirect("customer_profiles/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check profile code duplicate only if new or changed
@@ -210,8 +207,7 @@ class Customer_profiles extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']									=	'05300';
-				$_SESSION['show_dialog']								=	1;
-				redirect													("customer_profiles");
+				redirect("customer_profiles/view/" . $_SESSION['transaction_id']);
 			}
 		}
 
@@ -221,8 +217,7 @@ class Customer_profiles extends CI_Controller
 			if (!is_numeric($_SESSION['transaction_info']->profile_discount))
 			{
 				$_SESSION['error_code']									=	'05310';
-				$_SESSION['show_dialog']								=	1;
-				redirect													("customer_profiles");
+				redirect("customer_profiles/view/" . $_SESSION['transaction_id']);
 			}
 		}
 	}

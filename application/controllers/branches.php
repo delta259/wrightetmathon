@@ -93,34 +93,31 @@ class Branches extends CI_Controller
 		// intialise
 		$_SESSION['transaction_info']							=	new stdClass();
 		$_SESSION['transaction_id']								=	$branch_code;
-		
+
 		// set origin
 		switch ($origin)
 		{
 			case	'0':
 					unset($_SESSION['origin']);
 			break;
-			
+
 			default:
 					$_SESSION['origin']							=	$origin;
 			break;
 		}
-		
-		// manage session
-		$_SESSION['show_dialog']								=	1;
-		
+
 		// load branch type pick list
 		$_SESSION['branch_type_pick_list']						=	array('I'=>$this->lang->line('branches_branch_type_I'), 'F'=>$this->lang->line('branches_branch_type_F'));
-		
+
 		// set data
-		switch ($branch_code) 
+		switch ($branch_code)
 		{
 			// create new
 			case	-1:
 					$_SESSION['$title']							=	$this->lang->line($_SESSION['controller_name'].'_new');
 					$_SESSION['new']							=	1;
 			break;
-			
+
 			// update existing
 			default:
 					$_SESSION['transaction_info']				=	$this->Branch->get_info($branch_code);
@@ -131,16 +128,16 @@ class Branches extends CI_Controller
 						case	1:
 								$_SESSION['$title']				=	$this->lang->line('common_undelete').'  '.$_SESSION['transaction_info']->branch_description;
 						break;
-						
+
 						default:
 								$_SESSION['$title']				=	$this->lang->line('common_edit').'  '.$_SESSION['transaction_info']->branch_description;
-						break;	
+						break;
 					}
 					unset($_SESSION['new']);
 			break;
 		}
 
-		redirect("branches");
+		$this->load->view('branches/form');
 	}
 	
 	function save()
@@ -184,10 +181,9 @@ class Branches extends CI_Controller
 			break;
 		}
 
-		// reopen modal to show message, JS will auto-close after 1s
+		// redirect back to manage page
 		unset($_SESSION['new']);
 		unset($_SESSION['first_time']);
-		$_SESSION['show_dialog']								=	1;
 		redirect("branches");
 	}
 
@@ -215,8 +211,7 @@ class Branches extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']			=	'00030';
-			$_SESSION['show_dialog']		=	1;
-			redirect("branches");
+			redirect("branches/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check branch code duplicate only if new or changed
@@ -226,8 +221,7 @@ class Branches extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']		=	'01620';
-				$_SESSION['show_dialog']	=	1;
-				redirect("branches");
+				redirect("branches/view/" . $_SESSION['transaction_id']);
 			}
 		}
 
@@ -242,8 +236,7 @@ class Branches extends CI_Controller
 				)
 			{
 				$_SESSION['error_code']			=	'00030';
-				$_SESSION['show_dialog']		=	1;
-				redirect("branches");
+				redirect("branches/view/" . $_SESSION['transaction_id']);
 			}
 
 			// check branch ip duplicate
@@ -252,12 +245,11 @@ class Branches extends CI_Controller
 				if (!$this	->	Branch->check_duplicate_ip())
 				{
 					$_SESSION['error_code']			=	'01630';
-					$_SESSION['show_dialog']		=	1;
-					redirect("branches");
+					redirect("branches/view/" . $_SESSION['transaction_id']);
 				}
 			}
 		}
-		
+
 		// if allows_check is N, blank fields
 		if ($_SESSION['transaction_info']->branch_allows_check == 'N')
 		{

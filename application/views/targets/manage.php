@@ -207,19 +207,8 @@ foreach ($targets_rows as $r) {
 </div><!-- /tgt-card -->
 </div><!-- /tgt-page -->
 
-<!-- output messages if not modal -->
-<?php
-if (!isset($_SESSION['show_dialog']) || $_SESSION['show_dialog'] == 0) {
-    include('../wrightetmathon/application/views/partial/show_messages.php');
-}
-?>
-
-<!-- Modal dialog for create/edit -->
-<?php
-if (($_SESSION['show_dialog'] ?? 0) == 1) {
-    include('../wrightetmathon/application/views/targets/form.php');
-}
-?>
+<!-- Messages -->
+<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
 </div>
 

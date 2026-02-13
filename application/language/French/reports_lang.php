@@ -176,6 +176,7 @@ $lang['reports_start'] = 'Début';
 $lang['reports_end'] = 'Fin';
 $lang['reports_offered_count'] = 'Nombre d\'articles offerts dans la période sélectionnée';
 $lang['reports_invoice_count'] = 'Nombre de factures';
+$lang['reports_credit_note_count'] = 'Nombre d\'avoirs';
 $lang['reports_average_basket'] = 'Panier moy. HT';
 $lang['reports_nb_sales'] = 'Nombre Ventes';
 

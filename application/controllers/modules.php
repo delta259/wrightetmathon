@@ -103,9 +103,6 @@ class modules extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-
 		// set data
 		switch ($module_id)
 		{
@@ -133,7 +130,7 @@ class modules extends CI_Controller
 			break;
 		}
 
-		redirect("modules");
+		$this->load->view('modules/form');
 	}
 
 	function save()
@@ -172,15 +169,16 @@ class modules extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05440';
-					$this												->	view($_SESSION['transaction_info']->module_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05450';
-					$this												->	view($_SESSION['transaction_info']->module_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("modules");
 	}
 
 	function delete($module_id)
@@ -207,8 +205,7 @@ class modules extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']										=	'00030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("modules");
+			redirect("modules/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check module name duplicate only if new or changed
@@ -218,8 +215,7 @@ class modules extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']									=	'05430';
-				$_SESSION['show_dialog']								=	1;
-				redirect("modules");
+				redirect("modules/view/" . $_SESSION['transaction_id']);
 			}
 		}
 
@@ -227,8 +223,7 @@ class modules extends CI_Controller
 		if (!is_numeric($_SESSION['transaction_info']->sort))
 		{
 			$_SESSION['error_code']										=	'02030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("modules");
+			redirect("modules/view/" . $_SESSION['transaction_id']);
 		}
 	}
 }

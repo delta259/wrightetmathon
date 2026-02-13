@@ -1,8 +1,4 @@
-<style>
-.unified-header, .unified-footer { display: none !important; }
-.tracker-form.md-modal-overlay { z-index: 10000; }
-.tracker-form .md-modal { max-height: none !important; max-width: 600px; overflow: visible !important; }
-</style>
+<?php $this->load->view("partial/header"); ?>
 
 <?php
 $is_new  = (($_SESSION['new'] ?? 0) == 1);
@@ -11,8 +7,17 @@ $is_undel = (($_SESSION['undel'] ?? 0) == 1);
 $info    = $_SESSION['transaction_info'];
 ?>
 
-<div class="md-modal-overlay tracker-form">
-<div class="md-modal" style="max-width:600px;">
+<!-- Messages -->
+<?php
+$_tracker_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_tracker_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
+include('../wrightetmathon/application/views/partial/show_messages.php');
+?>
+
+<div style="max-width:600px; margin:20px auto;">
+<div class="md-modal" style="position:relative; max-height:none; overflow:visible;">
 
 <!-- ========== HEADER ========== -->
 <div class="md-modal-header">
@@ -29,21 +34,12 @@ $info    = $_SESSION['transaction_info'];
             <h2 class="md-modal-name" style="font-size:1.1em;"><?php echo $this->lang->line('modules_trackers'); ?></h2>
         </div>
     </div>
-    <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+    <a href="<?php echo site_url('trackers'); ?>" class="md-modal-close" title="Fermer">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
     </a>
 </div>
-
-<!-- ========== MESSAGES ========== -->
-<?php
-$_tracker_msg_class = '';
-if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
-    $_tracker_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
-}
-include('../wrightetmathon/application/views/partial/show_messages.php');
-?>
 
 <!-- ========== BODY ========== -->
 <div class="md-modal-body">
@@ -75,7 +71,7 @@ include('../wrightetmathon/application/views/partial/show_messages.php');
             </div>
         </div>
 
-        <!-- Ligne 2: Résumé commit -->
+        <!-- Ligne 2: Resume commit -->
         <div class="md-form-row" style="margin-top:12px;">
             <div class="md-form-group" style="flex:1;">
                 <label class="md-form-label"><?php echo $this->lang->line('trackers_tracker_commit_summary'); ?></label>
@@ -113,7 +109,7 @@ include('../wrightetmathon/application/views/partial/show_messages.php');
 <div class="md-modal-footer">
     <div class="md-modal-footer-left"></div>
     <div class="md-modal-footer-right">
-        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+        <a href="<?php echo site_url('trackers'); ?>" class="md-btn md-btn-secondary">
             <?php echo $this->lang->line('common_reset'); ?>
         </a>
         <button type="submit" form="item_form" name="submit" id="submit" class="md-btn md-btn-primary">
@@ -128,7 +124,7 @@ include('../wrightetmathon/application/views/partial/show_messages.php');
 <?php endif; ?>
 
 </div><!-- /md-modal -->
-</div><!-- /md-modal-overlay -->
+</div><!-- /max-width wrapper -->
 
 <script type="text/javascript">
 $(document).ready(function() {
@@ -141,3 +137,6 @@ $(document).ready(function() {
     <?php endif; ?>
 });
 </script>
+
+<?php $this->load->view("partial/pre_footer"); ?>
+<?php $this->load->view("partial/footer"); ?>

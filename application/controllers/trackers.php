@@ -105,9 +105,6 @@ class trackers extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-
 		// set data
 		switch ($tracker_id)
 		{
@@ -135,7 +132,7 @@ class trackers extends CI_Controller
 			break;
 		}
 
-		redirect("trackers");
+		$this->load->view('trackers/form');
 	}
 
 	function save()
@@ -167,15 +164,16 @@ class trackers extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05600';
-					$this												->	view($_SESSION['transaction_info']->tracker_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05610';
-					$this												->	view($_SESSION['transaction_info']->tracker_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("trackers");
 	}
 
 	function delete($tracker_id)
@@ -200,16 +198,14 @@ class trackers extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']										=	'00030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("trackers");
+			redirect("trackers/view/" . $_SESSION['transaction_id']);
 		}
 
 		// verify commit summary is entered if commit status
 		if ($_SESSION['transaction_info']->tracker_status == 5 AND empty($_SESSION['transaction_info']->tracker_commit_summary))
 		{
 			$_SESSION['error_code']										=	'05590';
-			$_SESSION['show_dialog']									=	1;
-			redirect("trackers");
+			redirect("trackers/view/" . $_SESSION['transaction_id']);
 		}
 	}
 }

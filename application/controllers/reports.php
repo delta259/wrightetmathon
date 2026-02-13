@@ -114,7 +114,7 @@ class Reports extends CI_Controller
 					$column1 = $column_data['sales_column1'];
 					eval ('$column1 = ' . $column1 . ';');
 					$column2 = $column_data['sales_column2'];
-					eval ('$column2 = ' . $column2 . ';');
+					if ($column2 !== 'none') { eval ('$column2 = ' . $column2 . ';'); }
 					
 					if ($column2 == 'none')
 					{
@@ -130,7 +130,7 @@ class Reports extends CI_Controller
 					$column1 = $column_data['receivings_column1'];
 					eval ('$column1 = ' . $column1 . ';');
 					$column2 = $column_data['receivings_column2'];
-					eval ('$column2 = ' . $column2 . ';');
+					if ($column2 !== 'none') { eval ('$column2 = ' . $column2 . ';'); }
 					
 					if ($column2 == 'none')
 					{
@@ -252,7 +252,7 @@ class Reports extends CI_Controller
 					$column1 = $column_data['sales_column1'];
 					eval ('$column1 = ' . $column1 . ';');
 					$column2 = $column_data['sales_column2'];
-					eval ('$column2 = ' . $column2 . ';');
+					if ($column2 !== 'none') { eval ('$column2 = ' . $column2 . ';'); }
 					
 					if ($column2 == 'none')
 					{
@@ -268,7 +268,7 @@ class Reports extends CI_Controller
 					$column1 = $column_data['receivings_column1'];
 					eval ('$column1 = ' . $column1 . ';');
 					$column2 = $column_data['receivings_column2'];
-					eval ('$column2 = ' . $column2 . ';');
+					if ($column2 !== 'none') { eval ('$column2 = ' . $column2 . ';'); }
 					
 					if ($column2 == 'none')
 					{
@@ -292,7 +292,7 @@ class Reports extends CI_Controller
 			"subtitle" 		=> $this->lang->line('reports_'.$transaction_subtype).' '.$this->lang->line('common_from') .' '.date($this->config->item('dateformat'), strtotime($start_date)) .' '.$this->lang->line('common_to').' '.date($this->config->item('dateformat'), strtotime($end_date)),
 			"headers" 		=> $this->$model_name->getDataColumns(),
 			"data" 			=> $tabular_data,
-		    "summary_data" 	=> $this->$model_name->getSummaryDataz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype)),
+		    "summary_data" 	=> method_exists($this->$model_name, 'getSummaryDataz') ? $this->$model_name->getSummaryDataz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype)) : $this->$model_name->getSummaryData(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype)),
 			"export_excel" 	=> $export_excel,
 			"start_date"	=> $start_date,
 			"end_date"		=> $end_date,
@@ -302,17 +302,14 @@ class Reports extends CI_Controller
 			"company_phone"	=> $this->config->item('phone')
 		);
 		$data2 = array(
-		  "summary_data" 	=> $this->$model_name->getSummaryDataz2(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype))
+		  "summary_data" 	=> method_exists($this->$model_name, 'getSummaryDataz2') ? $this->$model_name->getSummaryDataz2(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype)) : array()
 		);
-			
-		//var_dump($data);
-		//exit;
 
 		// if sales report
 		if ($transaction_type == 'SR')
 		{
 			// get offered count
-			$offered = $this->$model_name->offered_countz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype));
+			$offered = method_exists($this->$model_name, 'offered_countz') ? $this->$model_name->offered_countz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype)) : array();
 			if (!empty($offered) && !empty($data['summary_data']))
 			{
 				$data['summary_data'] += $offered;
@@ -325,11 +322,31 @@ class Reports extends CI_Controller
 				$data['summary_data']['average_basket'] = $data['summary_data']['subtotal'] / $invoice_count;
 			}
 
-			// tax breakdown by rate for Ticket Z
-			if (method_exists($this->$model_name, 'getTaxBreakdownz'))
+			// credit note count (avoirs = returns)
+			$this->db->select('COUNT(DISTINCT s.sale_id) as credit_note_count', false);
+			$this->db->from('sales s');
+			$this->db->join('sales_payments sp', 'sp.sale_id = s.sale_id');
+			$this->db->where("sp.payment_method_code != 'FIDE'");
+			$this->db->where("date(s.sale_time) BETWEEN '".$start_date."' AND '".$end_date."'");
+			$this->db->where('s.mode', 'returns');
+			$cn = $this->db->get()->row_array();
+			if (!empty($cn['credit_note_count']))
 			{
-				$data['tax_breakdown'] = $this->$model_name->getTaxBreakdownz(array('start_date'=>$start_date, 'end_date'=>$end_date, 'transaction_subtype' => $transaction_subtype));
+				$data['summary_data']['credit_note_count'] = $cn['credit_note_count'];
 			}
+
+			// tax breakdown by rate for Ticket Z (direct query, independent of model)
+			$this->db->select('
+				si.line_tax_percentage AS tax_rate,
+				SUM(si.item_unit_price * si.quantity_purchased * (1 - si.discount_percent / 100)) AS base_ht,
+				SUM(si.line_tax) AS tax_amount', false);
+			$this->db->from('sales_items si');
+			$this->db->join('sales s', 'si.sale_id = s.sale_id');
+			$this->db->where("s.sale_id IN (SELECT DISTINCT sale_id FROM ".$this->db->dbprefix('sales_payments')." WHERE payment_method_code != 'FIDE')");
+			$this->db->where("date(s.sale_time) BETWEEN '".$start_date."' AND '".$end_date."'");
+			$this->db->group_by('si.line_tax_percentage');
+			$this->db->order_by('si.line_tax_percentage', 'DESC');
+			$data['tax_breakdown'] = $this->db->get()->result_array();
 		}
 
 		// test to see if CSV file is required
@@ -3282,7 +3299,7 @@ function rapport_detaille_famille1($start_date, $end_date, $transaction_subtype,
 			else
 			{
 				// test for changed item_id and update stock qty in table.
-				if ($row['item_id'] == $_SESSION['transaction_info']->item_id)
+				if (isset($_SESSION['transaction_info']->item_id) && $row['item_id'] == $_SESSION['transaction_info']->item_id)
 				{
 					$cur_item_info 					= 	$this->Item->get_info($row['item_id']);
 					$row['quantity']				=	$cur_item_info->quantity;
@@ -3421,7 +3438,7 @@ function rapport_detaille_famille1($start_date, $end_date, $transaction_subtype,
 				if ($row['item_number'] == NULL) {$row['item_number'] = $this->lang->line('common_edit');}
 				
 				// test for changed item_id and update stock qty in table.
-				if ($row['item_id'] == $_SESSION['transaction_info']->item_id)
+				if (isset($_SESSION['transaction_info']->item_id) && $row['item_id'] == $_SESSION['transaction_info']->item_id)
 				{
 					$cur_item_info 					= 	$this->Item->get_info($row['item_id']);
 					$row['quantity']				=	$cur_item_info->quantity;

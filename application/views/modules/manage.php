@@ -51,12 +51,7 @@ function init_table_sorting()
 </div>
 
 <!-- Messages -->
-<?php
-if (!isset($_SESSION['show_dialog']) || $_SESSION['show_dialog'] == 0)
-{
-    include('../wrightetmathon/application/views/partial/show_messages.php');
-}
-?>
+<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
 <!-- Table -->
 <div class="table-container">
@@ -187,11 +182,3 @@ $(document).ready(function() {
 <?php $this->load->view("partial/pre_footer"); ?>
 <?php $this->load->view("partial/footer"); ?>
 
-<?php
-// Modal dialog for add/edit (after footer, like branches/manage.php)
-if (($_SESSION['show_dialog'] ?? 0) == 1)
-{
-    include('../wrightetmathon/application/views/modules/form.php');
-    $_SESSION['show_dialog'] = 0;
-}
-?>

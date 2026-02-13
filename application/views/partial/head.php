@@ -121,10 +121,36 @@ else {
 
 
 
-<!-- <style type="text/css">
-html	{
-		overflow: auto;
-		}
-</style> -->
+<!-- Auto-detect iframe mode (admin panel) — runs before <body> to prevent FOUC -->
+<style>
+html.iframe-admin .unified-header,
+html.iframe-admin .unified-footer,
+html.iframe-admin .theme-toggle,
+html.iframe-admin #theme-toggle,
+html.iframe-admin .theme-toggle-btn,
+html.iframe-admin [class*="theme-toggle"] { display: none !important; }
+html.iframe-admin, html.iframe-admin body {
+    background: var(--bg-container, #fff) !important;
+    background-image: none !important;
+    margin: 0 !important;
+}
+html.iframe-admin[data-theme="dark"], html.iframe-admin[data-theme="dark"] body {
+    background: var(--bg-container, #1e293b) !important;
+}
+html.iframe-admin .body_colonne > h2 { display: none; }
+html.iframe-admin .body_page { padding: 8px 16px; }
+html.iframe-admin #wrapper { background: transparent !important; }
+</style>
+<script>
+(function(){
+    if (window.self !== window.top) {
+        document.documentElement.classList.add('iframe-admin');
+        try {
+            var pt = window.parent.document.documentElement.getAttribute('data-theme');
+            if (pt) document.documentElement.setAttribute('data-theme', pt);
+        } catch(e) {}
+    }
+})();
+</script>
 
 </head>

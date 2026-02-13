@@ -96,9 +96,6 @@ class timezones extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-
 		// set data
 		switch ($timezone_id)
 		{
@@ -126,7 +123,7 @@ class timezones extends CI_Controller
 			break;
 		}
 
-		redirect("timezones");
+		$this->load->view('timezones/form');
 	}
 
 	function save()
@@ -162,15 +159,16 @@ class timezones extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05410';
-					$this												->	view($_SESSION['transaction_info']->timezone_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05420';
-					$this												->	view($_SESSION['transaction_info']->timezone_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("timezones");
 	}
 
 	function delete($timezone_id)
@@ -199,8 +197,7 @@ class timezones extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']										=	'00030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("timezones");
+			redirect("timezones/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check timezone code duplicate only if new or changed
@@ -210,8 +207,7 @@ class timezones extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']									=	'5400';
-				$_SESSION['show_dialog']								=	1;
-				redirect("timezones");
+				redirect("timezones/view/" . $_SESSION['transaction_id']);
 			}
 		}
 	}

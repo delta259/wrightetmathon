@@ -66,24 +66,21 @@ class Targets extends CI_Controller
 		// intialise
 		$_SESSION['transaction_info']							=	new stdClass();
 		$_SESSION['transaction_id']								=	$target_id;
-		
+
 		// set origin
 		switch ($origin)
 		{
 			case	'0':
 					unset($_SESSION['origin']);
 			break;
-			
+
 			default:
 					$_SESSION['origin']									=	$origin;
 			break;
 		}
-		
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-		
+
 		// set data
-		switch ($target_id) 
+		switch ($target_id)
 		{
 			// create new
 			case	-1:
@@ -94,7 +91,7 @@ class Targets extends CI_Controller
 					$_SESSION['transaction_info']->target_shop_open_days=	0;
 					$_SESSION['transaction_info']->target_shop_turnover	=	0;
 			break;
-			
+
 			// update existing
 			default:
 					$_SESSION['transaction_info']				=	$this->Target->get_info($target_id);
@@ -104,18 +101,18 @@ class Targets extends CI_Controller
 						case	1:
 								$_SESSION['$title']				=	$this->lang->line('common_undelete').'  '.$_SESSION['transaction_info']->target_year.'/'.$_SESSION['transaction_info']->target_month;
 						break;
-						
+
 						default:
-								$_SESSION['$title']				=	$this->lang->line('common_edit').' 
-								 
+								$_SESSION['$title']				=	$this->lang->line('common_edit').'
+
 								 '.$_SESSION['transaction_info']->target_year.'/'.$_SESSION['transaction_info']->target_month;
-						break;	
+						break;
 					}
 					unset($_SESSION['new']);
 			break;
 		}
 
-		redirect("targets");
+		$this->load->view('targets/form');
 	}
 	
 	function save()
@@ -154,16 +151,18 @@ class Targets extends CI_Controller
 			case	1:
 					// set message
 					$_SESSION['error_code']								=	'04080';
-					$this->												view($_SESSION['transaction_id'], $_SESSION['origin']);
 			break;
-					
+
 			default:
 					// set message
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'04090';
-					$this->												view($_SESSION['transaction_info']->target_id, $_SESSION['origin']);
-			break;	
+			break;
 		}
+
+		// redirect back to manage page
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("targets");
 	}
 
 	function delete()
@@ -207,33 +206,33 @@ class Targets extends CI_Controller
 		{
 			// set message
 			$_SESSION['error_code']			=	'04060';
-			redirect("targets");
+			redirect("targets/view/" . $_SESSION['transaction_id']);
 		}
-		
+
 		// test if year is valid
 		if ($_SESSION['transaction_info']->target_year < date("Y"))
 		{
 			// set message
 			$_SESSION['error_code']			=	'03060';
-			redirect("targets");
+			redirect("targets/view/" . $_SESSION['transaction_id']);
 		}
-		
+
 		// test if month is valid
 		if ($_SESSION['transaction_info']->target_month < 1 OR  $_SESSION['transaction_info']->target_month > 12)
 		{
 			// set message
 			$_SESSION['error_code']			=	'03070';
-			redirect("targets");
+			redirect("targets/view/" . $_SESSION['transaction_id']);
 		}
-		
+
 		// test if shop open days is valid
 		if ($_SESSION['transaction_info']->target_shop_open_days < 0 OR  $_SESSION['transaction_info']->target_shop_open_days > 31)
 		{
 			// set message
 			$_SESSION['error_code']			=	'05000';
-			redirect("targets");
+			redirect("targets/view/" . $_SESSION['transaction_id']);
 		}
-		
+
 		// check year/month duplicate only if new or changed
 		if (($_SESSION['new'] ?? 0) == 1)
 		{
@@ -242,7 +241,7 @@ class Targets extends CI_Controller
 			{
 				// set message
 				$_SESSION['error_code']		=	'04070';
-				redirect("targets");
+				redirect("targets/view/" . $_SESSION['transaction_id']);
 			}
 		}
 	}

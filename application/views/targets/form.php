@@ -1,3 +1,5 @@
+<?php $this->load->view("partial/header"); ?>
+
 <?php
 $is_new   = (($_SESSION['new'] ?? 0) == 1);
 $is_del   = (($_SESSION['del'] ?? 0) == 1);
@@ -16,10 +18,18 @@ if (!$is_new) {
     $m = intval($info->target_month ?? 0);
     $title .= ' — ' . ($month_names[$m] ?? $m) . ' ' . ($info->target_year ?? '');
 }
+
+// Detect message class before show_messages unsets it
+$_msg_class = '';
+if (isset($_SESSION['error_code']) && $_SESSION['error_code'] !== '' && isset($_SESSION['G']->messages[$_SESSION['error_code']])) {
+    $_msg_class = $_SESSION['G']->messages[$_SESSION['error_code']][1] ?? '';
+}
 ?>
 
-<div class="md-modal-overlay" style="z-index: 2000;">
-<div class="md-modal" style="max-width: 480px;">
+<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
+
+<div style="max-width:480px; margin:20px auto;">
+<div class="md-modal" style="position:relative; max-height:none; overflow:visible;">
 
 <!-- Header -->
 <div class="md-modal-header" style="padding: 0.7em 1em;">
@@ -35,16 +45,13 @@ if (!$is_new) {
         </div>
     </div>
     <div class="md-modal-header-actions">
-        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-modal-close" title="Fermer">
+        <a href="<?php echo site_url('targets'); ?>" class="md-modal-close" title="Fermer">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         </a>
     </div>
 </div>
-
-<!-- Messages -->
-<?php include('../wrightetmathon/application/views/partial/show_messages.php'); ?>
 
 <!-- Body -->
 <div class="md-modal-body" style="padding: 0.8em 1.2em;">
@@ -128,7 +135,7 @@ if (!$is_new) {
 <div class="md-modal-footer" style="padding: 0.5em 1em;">
     <div class="md-modal-footer-left"></div>
     <div class="md-modal-footer-right">
-        <a href="<?php echo site_url('common_controller/common_exit/'); ?>" class="md-btn md-btn-secondary">
+        <a href="<?php echo site_url('targets'); ?>" class="md-btn md-btn-secondary">
             <?php echo $this->lang->line('common_reset') ?: 'Annuler'; ?>
         </a>
         <?php if (!$is_undel && !$is_del) { ?>
@@ -144,7 +151,7 @@ if (!$is_new) {
 </div>
 
 </div><!-- /md-modal -->
-</div><!-- /md-modal-overlay -->
+</div><!-- /max-width wrapper -->
 
 <script>
 $(document).ready(function() {
@@ -156,5 +163,17 @@ $(document).ready(function() {
         $('#tgt-daily-display').text(daily.toLocaleString('fr-FR'));
     }
     $('#target_shop_open_days, #target_shop_turnover').on('input', updateDaily);
+
+    <?php if ($_msg_class === 'success_message'): ?>
+    // Auto-redirect to manage page after 1s on success
+    setTimeout(function(){ window.location.href = '<?php echo site_url("targets"); ?>'; }, 1000);
+    <?php elseif ($is_new): ?>
+    $('#target_year').focus();
+    <?php else: ?>
+    $('#target_shop_open_days').focus();
+    <?php endif; ?>
 });
 </script>
+
+<?php $this->load->view("partial/pre_footer"); ?>
+<?php $this->load->view("partial/footer"); ?>

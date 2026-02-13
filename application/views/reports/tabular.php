@@ -629,12 +629,11 @@
 <script type="text/javascript">
 var Printer = {
     print: function(HTML) {
-        var win = window.open('', '_blank');
         var magasin = '<?php echo addslashes($title); ?>';
         var subtitleEl = document.querySelector('.rpt-subtitle');
         var subtitle = subtitleEl ? subtitleEl.innerHTML : '';
         var resume = document.getElementById('report_summary') ? document.getElementById('report_summary').innerHTML : '';
-        win.document.write(
+        var content =
             '<html><head><title>' + document.title + '</title>' +
             '<style>' +
                 'body { font-family: Arial, sans-serif; font-size: 11px; }' +
@@ -649,11 +648,17 @@ var Printer = {
             '<h3>' + subtitle + '</h3>' +
             '<table>' + HTML + '</table>' +
             '<br/><br/>' + resume +
-            '</body></html>'
-        );
-        win.document.close();
-        win.print();
-        win.close();
+            '</body></html>';
+        var frame = document.getElementById('rpt-print-frame');
+        if (frame) frame.parentNode.removeChild(frame);
+        frame = document.createElement('iframe');
+        frame.id = 'rpt-print-frame';
+        frame.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;visibility:hidden;';
+        document.body.appendChild(frame);
+        frame.contentDocument.open();
+        frame.contentDocument.write(content);
+        frame.contentDocument.close();
+        setTimeout(function() { frame.contentWindow.print(); }, 200);
     }
 };
 </script>
@@ -706,34 +711,44 @@ Printer.print = function() {
 
     // Summary chips
     var chips = document.querySelectorAll('.rpt-summary-chip');
-    var total = '', subtotalHT = '', taxTotal = '', profit = '', invoiceCount = '', avgBasket = '', offered = '';
+    var total = '', subtotalHT = '', taxTotal = '', profit = '', invoiceCount = '', creditNoteCount = '', avgBasket = '', offered = '';
     for (var c = 0; c < chips.length; c++) {
         var lbl = (chips[c].querySelector('.rpt-chip-label') || {}).textContent || '';
         var val = (chips[c].querySelector('.rpt-chip-value') || {}).textContent || '';
         lbl = lbl.replace(/^\s+|\s+$/g, '').toLowerCase();
         val = val.replace(/^\s+|\s+$/g, '');
-        if (lbl.indexOf('total') > -1 && lbl.indexOf('ht') === -1 && lbl.indexOf('tax') === -1 && lbl.indexOf('tva') === -1) total = val;
-        else if (lbl.indexOf('subtotal') > -1 || lbl.indexOf('ht') > -1) subtotalHT = val;
-        else if (lbl.indexOf('tax') > -1 || lbl.indexOf('tva') > -1) taxTotal = val;
-        else if (lbl.indexOf('profit') > -1 || lbl.indexOf('b\u00e9n\u00e9fice') > -1 || lbl.indexOf('benefice') > -1) profit = val;
+        if (lbl.indexOf('sous total') > -1 || lbl.indexOf('subtotal') > -1) subtotalHT = val;
+        else if (lbl === 'tva' || (lbl.indexOf('tax') > -1 && lbl.indexOf('taxe') === -1)) taxTotal = val;
+        else if (lbl.indexOf('total') > -1 && lbl.indexOf('sous') === -1 && lbl.indexOf('remise') === -1) total = val;
+        else if (lbl.indexOf('marge') > -1 || lbl.indexOf('profit') > -1 || lbl.indexOf('b\u00e9n\u00e9fice') > -1 || lbl.indexOf('benefice') > -1) profit = val;
+        else if (lbl.indexOf('avoir') > -1 || lbl.indexOf('credit') > -1) creditNoteCount = val;
         else if (lbl.indexOf('invoice') > -1 || lbl.indexOf('facture') > -1 || lbl.indexOf('ticket') > -1) invoiceCount = val;
         else if (lbl.indexOf('basket') > -1 || lbl.indexOf('panier') > -1) avgBasket = val;
         else if (lbl.indexOf('offer') > -1) offered = val;
     }
 
-    // Tax breakdown rows
+    // Tax breakdown rows — also compute accurate totals from line-level data
     var taxRows = '';
+    var sumHT = 0, sumTVA = 0;
     var taxEls = document.querySelectorAll('#tz-tax-data .tz-tax-row');
     for (var t = 0; t < taxEls.length; t++) {
         var rate = parseFloat(taxEls[t].getAttribute('data-rate'));
         var ht   = parseFloat(taxEls[t].getAttribute('data-ht'));
         var tax  = parseFloat(taxEls[t].getAttribute('data-tax'));
+        sumHT += ht;
+        sumTVA += tax;
         taxRows += '<tr>' +
             '<td style="text-align:center;">' + fmt(rate) + '%</td>' +
             '<td style="text-align:right;">' + fmt(ht) + '</td>' +
             '<td style="text-align:right;">' + fmt(tax) + '</td>' +
             '<td style="text-align:right;">' + fmt(ht + tax) + '</td>' +
         '</tr>';
+    }
+    // Override totals with accurate line-level sums if available
+    if (taxEls.length > 0) {
+        subtotalHT = fmt(sumHT);
+        taxTotal = fmt(sumTVA);
+        total = fmt(sumHT + sumTVA);
     }
 
     var html =
@@ -801,6 +816,7 @@ Printer.print = function() {
     // Stats
     '<table>' +
         (invoiceCount ? '<tr><td>Nb tickets</td><td class="right">' + invoiceCount + '</td></tr>' : '') +
+        (creditNoteCount ? '<tr><td>Nb avoirs</td><td class="right">' + creditNoteCount + '</td></tr>' : '') +
         (avgBasket ? '<tr><td>Panier moyen</td><td class="right">' + avgBasket + '</td></tr>' : '') +
         (offered ? '<tr><td>Articles offerts</td><td class="right">' + offered + '</td></tr>' : '') +
     '</table>' +
@@ -816,9 +832,17 @@ Printer.print = function() {
 
     '</div></body></html>';
 
-    win.document.write(html);
-    win.document.close();
-    setTimeout(function() { win.print(); }, 200);
+    // Print via hidden iframe (no new tab)
+    var frame = document.getElementById('tz-print-frame');
+    if (frame) frame.parentNode.removeChild(frame);
+    frame = document.createElement('iframe');
+    frame.id = 'tz-print-frame';
+    frame.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;visibility:hidden;';
+    document.body.appendChild(frame);
+    frame.contentDocument.open();
+    frame.contentDocument.write(html);
+    frame.contentDocument.close();
+    setTimeout(function() { frame.contentWindow.print(); }, 200);
 };
 </script>
 <?php endif; ?>
@@ -918,7 +942,6 @@ $(document).ready(function() {
 <script type="text/javascript">
 var PrinterIR = {
     print: function() {
-        var win = window.open('', '_blank');
         var magasin = '<?php echo addslashes($title); ?>';
         var subtitleEl = document.querySelector('.rpt-subtitle');
         var subtitle = subtitleEl ? subtitleEl.innerHTML : '';
@@ -936,7 +959,7 @@ var PrinterIR = {
             rows.push('<tr><td>' + ref + '</td><td>' + designation + '</td><td style="text-align:right;font-family:Consolas,monospace;">' + stk + '</td><td style="width:80px;">&nbsp;</td><td style="width:160px;">&nbsp;</td></tr>');
         }
 
-        win.document.write(
+        var content =
             '<html><head><title>Inventaire Tournant - ' + dateStr + '</title>' +
             '<style>' +
                 '@page { size: A4 portrait; margin: 12mm; }' +
@@ -958,11 +981,17 @@ var PrinterIR = {
             '<tbody>' + rows.join('') + '</tbody>' +
             '</table>' +
             '<div style="margin-top:12px;font-size:10px;color:#777;">Total articles : ' + rows.length + '</div>' +
-            '</body></html>'
-        );
-        win.document.close();
-        win.print();
-        win.close();
+            '</body></html>';
+        var frame = document.getElementById('ir-print-frame');
+        if (frame) frame.parentNode.removeChild(frame);
+        frame = document.createElement('iframe');
+        frame.id = 'ir-print-frame';
+        frame.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;visibility:hidden;';
+        document.body.appendChild(frame);
+        frame.contentDocument.open();
+        frame.contentDocument.write(content);
+        frame.contentDocument.close();
+        setTimeout(function() { frame.contentWindow.print(); }, 200);
     }
 };
 </script>

@@ -97,9 +97,6 @@ class countries extends CI_Controller
 			break;
 		}
 
-		// manage session
-		$_SESSION['show_dialog']										=	1;
-
 		// set data
 		switch ($country_id)
 		{
@@ -127,7 +124,7 @@ class countries extends CI_Controller
 			break;
 		}
 
-		redirect("countries");
+		$this->load->view('countries/form');
 	}
 
 	function save()
@@ -161,15 +158,16 @@ class countries extends CI_Controller
 		{
 			case	1:
 					$_SESSION['error_code']								=	'05380';
-					$this												->	view($_SESSION['transaction_info']->country_id, $_SESSION['origin']);
 			break;
 
 			default:
-					unset($_SESSION['new']);
 					$_SESSION['error_code']								=	'05390';
-					$this												->	view($_SESSION['transaction_info']->country_id, $_SESSION['origin']);
 			break;
 		}
+
+		unset($_SESSION['new']);
+		unset($_SESSION['first_time']);
+		redirect("countries");
 	}
 
 	function delete($country_id)
@@ -197,8 +195,7 @@ class countries extends CI_Controller
 			)
 		{
 			$_SESSION['error_code']										=	'00030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("countries");
+			redirect("countries/view/" . $_SESSION['transaction_id']);
 		}
 
 		// check Country code duplicate only if new or changed
@@ -208,8 +205,7 @@ class countries extends CI_Controller
 			if ($count > 0)
 			{
 				$_SESSION['error_code']									=	'05370';
-				$_SESSION['show_dialog']								=	1;
-				redirect("countries");
+				redirect("countries/view/" . $_SESSION['transaction_id']);
 			}
 		}
 
@@ -217,8 +213,7 @@ class countries extends CI_Controller
 		if (!is_numeric($_SESSION['transaction_info']->country_display_order))
 		{
 			$_SESSION['error_code']										=	'02030';
-			$_SESSION['show_dialog']									=	1;
-			redirect("countries");
+			redirect("countries/view/" . $_SESSION['transaction_id']);
 		}
 	}
 }
