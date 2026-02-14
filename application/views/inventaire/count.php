@@ -104,7 +104,9 @@ $progress_pct = ($session->total_items > 0) ? round(($session->items_counted / $
                     <col><!-- Désignation (auto) -->
                     <col style="width:80px;"><!-- Stk théorique -->
                     <col style="width:110px;"><!-- Qté comptée -->
-                    <col style="width:200px;"><!-- Commentaire -->
+                    <col style="width:180px;"><!-- Commentaire -->
+                    <col style="width:120px;"><!-- Modifié le -->
+                    <col style="width:90px;"><!-- Par -->
                     <col style="width:40px;"><!-- Valider -->
                 </colgroup>
                 <thead>
@@ -115,6 +117,8 @@ $progress_pct = ($session->total_items > 0) ? round(($session->items_counted / $
                         <th class="sortable-server col-number" data-col="3" data-type="num"><?php echo $this->lang->line('inventaire_theoretical_stock'); ?> <span class="sort-arrow"></span></th>
                         <th class="sortable-server col-number" data-col="4" data-type="num"><?php echo $this->lang->line('inventaire_counted_qty'); ?> <span class="sort-arrow"></span></th>
                         <th><?php echo $this->lang->line('inventaire_comment'); ?></th>
+                        <th class="sortable-server" data-col="6" data-type="text">Modifi&eacute; le <span class="sort-arrow"></span></th>
+                        <th class="sortable-server" data-col="7" data-type="text">Par <span class="sort-arrow"></span></th>
                         <th class="col-action"></th>
                     </tr>
                 </thead>
@@ -135,6 +139,14 @@ $progress_pct = ($session->total_items > 0) ? round(($session->items_counted / $
                         </td>
                         <td>
                             <input type="text" id="comment_<?php echo $item->item_id; ?>" class="inv-comment-input" data-item-id="<?php echo $item->item_id; ?>" value="<?php echo htmlspecialchars($item->comment ?? ''); ?>" placeholder="">
+                        </td>
+                        <td class="cell-date" id="date_<?php echo $item->item_id; ?>" style="font-size:0.78rem;color:var(--text-secondary, #64748b);white-space:nowrap;">
+                            <?php echo $is_counted ? date('d/m/Y H:i', strtotime($item->counted_at)) : ''; ?>
+                        </td>
+                        <td class="cell-user" id="user_<?php echo $item->item_id; ?>" style="font-size:0.78rem;color:var(--text-secondary, #64748b);white-space:nowrap;">
+                            <?php if ($is_counted && !empty($item->counted_by_first_name)): ?>
+                                <?php echo htmlspecialchars($item->counted_by_first_name); ?>
+                            <?php endif; ?>
                         </td>
                         <td class="cell-action">
                             <button type="button" id="btn_<?php echo $item->item_id; ?>" class="inv-validate-btn btn-icon" data-item-id="<?php echo $item->item_id; ?>" title="<?php echo $this->lang->line('inventaire_validate'); ?>">
@@ -364,6 +376,10 @@ function submitCount(itemId) {
                 qtyInput.removeAttr('disabled').css('border-color', '#22c55e');
                 commentInput.removeAttr('disabled').css('border-color', '#22c55e');
                 btn.removeAttr('disabled').find('svg').attr('stroke', '#22c55e');
+
+                // Update date and user cells
+                $('#date_' + itemId).text(response.counted_at || '');
+                $('#user_' + itemId).text(response.counted_by_name || '');
 
                 // Update progress
                 $('#progress_counted').text(response.items_counted);

@@ -2849,15 +2849,18 @@ class Items extends CI_Controller
 		$_SESSION['transaction_tax_info']->tax_name_1					=	$this->input->post('tax_name_1');
 		$_SESSION['transaction_tax_info']->tax_percent_1				=	$this->input->post('tax_percent_1');
 
-		if(!isset($_SESSION['transaction_info']->cost_price))
+		// Pour les nouveaux articles, initialiser les prix à 0 (seront définis via pricelists/suppliers)
+		// Pour les articles existants, ne pas inclure ces champs dans le UPDATE pour préserver les valeurs en base
+		if (($_SESSION['new'] ?? 0) == 1)
 		{
-			//valeur à 0.0
-			$_SESSION['transaction_info']->cost_price = 0.0;
-		}		
-		if(!isset($_SESSION['transaction_info']->unit_price))
-		{
-			//valeur à 0.0
-			$_SESSION['transaction_info']->unit_price = 0.0;
+			if(!isset($_SESSION['transaction_info']->cost_price))
+			{
+				$_SESSION['transaction_info']->cost_price = 0.0;
+			}
+			if(!isset($_SESSION['transaction_info']->unit_price))
+			{
+				$_SESSION['transaction_info']->unit_price = 0.0;
+			}
 		}
 		if($this->config->item('distributeur_vapeself') == 'Y')
 		{

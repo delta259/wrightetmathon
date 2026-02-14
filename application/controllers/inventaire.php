@@ -217,12 +217,23 @@ class Inventaire extends CI_Controller
 		// Get updated session info for progress
 		$updated_session = $this->Inventory_session->get_session($session_id);
 
+		// Get employee name for display
+		$employee_name = '';
+		$this->db->select('first_name');
+		$this->db->where('person_id', $employee_id);
+		$person_query = $this->db->get('people');
+		if ($person_query && $person_query->num_rows() > 0) {
+			$employee_name = $person_query->row()->first_name;
+		}
+
 		header('Content-Type: application/json');
 		echo json_encode(array(
 			'success' => $result,
 			'message' => $result ? 'Comptage enregistré' : 'Erreur',
 			'items_counted' => $updated_session ? $updated_session->items_counted : 0,
-			'total_items' => $updated_session ? $updated_session->total_items : 0
+			'total_items' => $updated_session ? $updated_session->total_items : 0,
+			'counted_at' => date('d/m/Y H:i'),
+			'counted_by_name' => $employee_name
 		));
 	}
 

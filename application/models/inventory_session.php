@@ -581,7 +581,8 @@ class Inventory_session extends CI_Model
         $this->db->from('inventory_session_items si');
         $this->db->join('items i', 'i.item_id = si.item_id');
         $this->db->join('categories c', 'c.category_id = i.category_id', 'left');
-        $this->db->select('si.*, i.name as item_name, i.item_number, i.quantity as current_stock, i.category_id, c.category_name as category_name, i.dluo_indicator');
+        $this->db->join('people p_counter', 'p_counter.person_id = si.counted_by', 'left');
+        $this->db->select('si.*, i.name as item_name, i.item_number, i.quantity as current_stock, i.category_id, c.category_name as category_name, i.dluo_indicator, p_counter.first_name as counted_by_first_name, p_counter.last_name as counted_by_last_name');
         $this->db->where('si.session_id', $session_id);
 
         switch ($filter) {
